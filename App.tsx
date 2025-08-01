@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { supabase } from './supabase';
+import { supabase } from './lib/supabase';
 import * as SecureStore from 'expo-secure-store'
 import * as React from 'react';
 
