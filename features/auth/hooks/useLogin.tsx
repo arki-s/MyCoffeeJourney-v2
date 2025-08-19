@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import { makeRedirectUri } from "expo-auth-session";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -9,10 +10,14 @@ export const useLogin = () => {
     setLoading(true);
     setError(null);
 
+    const redirectTo = makeRedirectUri({ path: "auth-callback" });
+    console.log("📨 redirectTo:", redirectTo);
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
+        emailRedirectTo: redirectTo,
       }
     });
 

@@ -5,11 +5,15 @@ import { supabase } from './lib/supabase';
 import * as React from 'react';
 import LoginScreen from './features/auth/screens/LoginScreen';
 import { useUserStore } from './stores/userStore';
+import { useSessionWatcher } from './features/auth/hooks/useSessionWatcher';
 
 export default function App() {
+  useSessionWatcher();
+
   const setUser = useUserStore(state => state.setUser)
   const resetUser = useUserStore(state => state.resetUser)
   const user = useUserStore((state) => state.user)
+  console.log('App user:', user);
 
   useEffect(() => {
     // 初回にセッション確認
