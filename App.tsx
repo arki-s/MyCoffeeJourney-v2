@@ -1,18 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { supabase } from './lib/supabase';
 import * as React from 'react';
 import LoginScreen from './features/auth/screens/LoginScreen';
 import { useUserStore } from './stores/userStore';
 import { useSessionWatcher } from './features/auth/hooks/useSessionWatcher';
+import { useLogout } from './features/auth/hooks/useLogout';
 
 export default function App() {
   useSessionWatcher();
 
-  const setUser = useUserStore(state => state.setUser)
-  const resetUser = useUserStore(state => state.resetUser)
-  const user = useUserStore((state) => state.user)
+  const setUser = useUserStore(state => state.setUser);
+  const resetUser = useUserStore(state => state.resetUser);
+  const user = useUserStore((state) => state.user);
+  const { logout } = useLogout();
+
   console.log('App user:', user);
 
   useEffect(() => {
@@ -63,7 +66,13 @@ export default function App() {
       <Text>Enjoy your coffee adventures!</Text>
       <Text>Stay tuned for more features.</Text>
       <Text>Happy brewing!</Text>
-      {user ? <Text>Logged in as: {user.email}</Text> : <Text>Please log in.</Text>}
+
+      {user ?
+        <View>
+          <Text>Logged in as: {user.email}</Text>
+          <Button onPress={logout} title="ログアウト" />
+        </View>
+        : <Text>Please log in.</Text>}
       <LoginScreen />
 
     </View>
