@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View } from 'react-native';
 import { supabase } from './lib/supabase';
 import * as React from 'react';
 // import LoginScreen from './features/auth/screens/LoginScreen';
-import { useUserStore } from './stores/userStore';
+import { useUserStore } from './stores/useUserStore';
 import { useSessionWatcher } from './features/auth/hooks/useSessionWatcher';
 import { NavigationContainer } from '@react-navigation/native';
 import AppStack from './features/main/navigation/AppStack';
@@ -12,41 +12,10 @@ import AuthStack from './features/main/navigation/AuthStack';
 export default function App() {
   useSessionWatcher();
 
-  const setUser = useUserStore(state => state.setUser);
-  const resetUser = useUserStore(state => state.resetUser);
   const user = useUserStore((state) => state.user);
+  const initializing = useUserStore((state) => state.initializing);
 
   // console.log('App user:', user);
-
-  useEffect(() => {
-    // 初回にセッション確認
-    const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setUser(session.user)
-      } else {
-        resetUser()
-      }
-    }
-
-    initSession()
-
-    // サブスクライブして、ログイン／ログアウト時の状態も反映
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session?.user) {
-          setUser(session.user)
-        } else {
-          resetUser()
-        }
-      }
-    )
-
-    // クリーンアップ（サブスク解除）
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
-  }, [])
 
   // デバッグ用：Supabaseからデータを取得してログに出力
   // useEffect(() => {
@@ -61,33 +30,16 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {user ? <AppStack /> : <AuthStack />}
+      {initializing ? null : user ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
-    // <View style={styles.container}>
-    //   <StatusBar style="auto" />
-    //   <Text>Welcome to My Coffee Journey!</Text>
-    //   <Text>Explore your coffee journey with us.</Text>
-    //   <Text>Enjoy your coffee adventures!</Text>
-    //   <Text>Stay tuned for more features.</Text>
-    //   <Text>Happy brewing!</Text>
-
-    //   {user ?
-    //     <View>
-    //       <Text>Logged in as: {user.email}</Text>
-    //       <Button onPress={logout} title="ログアウト" />
-    //     </View>
-    //     : <Text>Please log in.</Text>}
-    //   <LoginScreen />
-
-    // </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });

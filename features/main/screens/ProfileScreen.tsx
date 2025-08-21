@@ -1,7 +1,7 @@
 import { Button, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
-import { useUserStore } from '../../../stores/userStore';
+import { useUserStore } from '../../../stores/useUserStore';
 
 export default function ProfileScreen() {
   const { logout } = useLogout();

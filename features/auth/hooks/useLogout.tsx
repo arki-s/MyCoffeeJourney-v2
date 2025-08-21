@@ -1,5 +1,5 @@
 import { supabase } from "../../../lib/supabase";
-import { useUserStore } from "../../../stores/userStore";
+import { useUserStore } from "../../../stores/useUserStore";
 
 export const useLogout = () => {
   const resetUser = useUserStore((state) => state.resetUser);
