@@ -1,12 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { supabase } from './lib/supabase';
 import * as React from 'react';
-import LoginScreen from './features/auth/screens/LoginScreen';
+// import LoginScreen from './features/auth/screens/LoginScreen';
 import { useUserStore } from './stores/userStore';
 import { useSessionWatcher } from './features/auth/hooks/useSessionWatcher';
-import { useLogout } from './features/auth/hooks/useLogout';
+import { NavigationContainer } from '@react-navigation/native';
+import AppStack from './features/main/navigation/AppStack';
+import AuthStack from './features/main/navigation/AuthStack';
 
 export default function App() {
   useSessionWatcher();
@@ -14,9 +15,8 @@ export default function App() {
   const setUser = useUserStore(state => state.setUser);
   const resetUser = useUserStore(state => state.resetUser);
   const user = useUserStore((state) => state.user);
-  const { logout } = useLogout();
 
-  console.log('App user:', user);
+  // console.log('App user:', user);
 
   useEffect(() => {
     // 初回にセッション確認
@@ -48,34 +48,38 @@ export default function App() {
     }
   }, [])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase.from('coffee').select('*');
-      if (error) console.error(error);
-      else console.log('Beans:', data);
-    };
+  // デバッグ用：Supabaseからデータを取得してログに出力
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const { data, error } = await supabase.from('coffee').select('*');
+  //     if (error) console.error(error);
+  //     else console.log('Beans:', data);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Text>Welcome to My Coffee Journey!</Text>
-      <Text>Explore your coffee journey with us.</Text>
-      <Text>Enjoy your coffee adventures!</Text>
-      <Text>Stay tuned for more features.</Text>
-      <Text>Happy brewing!</Text>
+    <NavigationContainer>
+      {user ? <AppStack /> : <AuthStack />}
+    </NavigationContainer>
+    // <View style={styles.container}>
+    //   <StatusBar style="auto" />
+    //   <Text>Welcome to My Coffee Journey!</Text>
+    //   <Text>Explore your coffee journey with us.</Text>
+    //   <Text>Enjoy your coffee adventures!</Text>
+    //   <Text>Stay tuned for more features.</Text>
+    //   <Text>Happy brewing!</Text>
 
-      {user ?
-        <View>
-          <Text>Logged in as: {user.email}</Text>
-          <Button onPress={logout} title="ログアウト" />
-        </View>
-        : <Text>Please log in.</Text>}
-      <LoginScreen />
+    //   {user ?
+    //     <View>
+    //       <Text>Logged in as: {user.email}</Text>
+    //       <Button onPress={logout} title="ログアウト" />
+    //     </View>
+    //     : <Text>Please log in.</Text>}
+    //   <LoginScreen />
 
-    </View>
+    // </View>
   );
 }
 
