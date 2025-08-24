@@ -1,11 +1,11 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomStackParamList } from '../../../type';
-import CoffeeListScreen from '../screens/CoffeeListScreen';
 import ReviewListScreen from '../screens/ReviewListScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import AnalysisScreen from '../screens/AnalysisScreen';
 import CoffeeRecordsStack from './CoffeeRecordsStack';
+import CoffeeStack from './CoffeeStack';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
@@ -15,7 +15,7 @@ export default function BottomTabs() {
       <Tab.Screen name="Records" component={CoffeeRecordsStack} options={{
         tabBarLabel: 'Records', title: 'Records'
       }} />
-      <Tab.Screen name="Coffee" component={CoffeeListScreen} options={{
+      <Tab.Screen name="Coffee" component={CoffeeStack} options={{
         tabBarLabel: 'Coffee', title: 'Coffee'
       }} />
       <Tab.Screen name="Reviews" component={ReviewListScreen} options={{
