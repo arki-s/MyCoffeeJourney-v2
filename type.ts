@@ -26,3 +26,7 @@ export type ReviewStackParamList = {
   Reviews: undefined;
   ReviewDetails: { id: string | undefined };
 };
+
+export type Brand = {
+  id: string; name: string; user_id: string; created_at: string;
+};
