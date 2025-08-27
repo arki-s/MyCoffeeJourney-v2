@@ -30,3 +30,7 @@ export type ReviewStackParamList = {
 export type Brand = {
   id: string; name: string; user_id: string; created_at: string;
 };
+
+export type Bean = {
+  id: string; name: string; user_id: string; created_at: string;
+};

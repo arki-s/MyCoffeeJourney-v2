@@ -1,41 +1,41 @@
 import { supabase } from "../../../lib/supabase";
-import { Brand } from "../../../type";
+import { Bean } from "../../../type";
 
-export async function listBrands(): Promise<Brand[]> {
+export async function listBeans(): Promise<Bean[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("not authenticated");
 
   const { data, error } = await supabase
-    .from("coffee_brands")
+    .from("coffee_beans")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data as Brand[];
+  return data as Bean[];
 }
 
-export async function createBrand(name: string, userId: string): Promise<Brand> {
+export async function createBean(name: string, userId: string): Promise<Bean> {
   const { data, error } = await supabase
-    .from("coffee_brands")
+    .from("coffee_beans")
     .insert({ name, user_id: userId })
     .select()
     .single();
   if (error) throw error;
-  return data as Brand;
+  return data as Bean;
 }
 
-export async function updateBrand(id: string, name: string): Promise<Brand> {
+export async function updateBean(id: string, name: string): Promise<Bean> {
   const { data, error } = await supabase
-    .from("coffee_brands")
+    .from("coffee_beans")
     .update({ name })
     .eq("id", id)
     .select()
     .single();
   if (error) throw error;
-  return data as Brand;
+  return data as Bean;
 }
 
-export async function deleteBrand(id: string): Promise<void> {
-  const { error } = await supabase.from("coffee_brands").delete().eq("id", id);
+export async function deleteBean(id: string): Promise<void> {
+  const { error } = await supabase.from("coffee_beans").delete().eq("id", id);
   if (error) throw error;
 }
