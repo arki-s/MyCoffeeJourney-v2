@@ -9,14 +9,14 @@ FOR ALL
 USING (user_id = auth.uid());
 
 CREATE POLICY "Only owner can modify or read coffee brands"
-on coffee_brands
-FOR ALL
-USING (user_id = auth.uid());
+ON coffee_brands
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "Only owner can modify or read coffee beans"
 ON coffee_beans
-FOR ALL
-USING (user_id = auth.uid());
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "Access only own coffee bean mappings"
 ON coffee_bean_inclusions

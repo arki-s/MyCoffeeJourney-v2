@@ -3,6 +3,7 @@ import { Brand } from "../../../type";
 
 
 export async function listBrands(): Promise<Brand[]> {
+
   const { data, error } = await supabase
     .from("coffee_brands")
     .select("*")
