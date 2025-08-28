@@ -2,10 +2,10 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomStackParamList } from '../../../type';
 import ReviewListScreen from '../screens/ReviewListScreen';
-import ProfileScreen from '../screens/ProfileScreen';
 import AnalysisScreen from '../screens/AnalysisScreen';
 import CoffeeRecordsStack from './CoffeeRecordsStack';
 import CoffeeStack from './CoffeeStack';
+import SettingStack from './SettingStack';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
@@ -24,8 +24,8 @@ export default function BottomTabs() {
       <Tab.Screen name="Analysis" component={AnalysisScreen} options={{
         tabBarLabel: 'Analysis', title: 'Analysis'
       }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{
-        tabBarLabel: 'Profile', title: 'Profile'
+      <Tab.Screen name="Settings" component={SettingStack} options={{
+        tabBarLabel: 'Settings', title: 'Settings'
       }} />
     </Tab.Navigator>
   )

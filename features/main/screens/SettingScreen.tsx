@@ -3,10 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createBrand, deleteBrand, listBrands, updateBrand } from '../../auth/services/brandService';
-import { Bean, Brand } from '../../../type';
+import { Bean, Brand, SettingStackParamList } from '../../../type';
 import { createBean, deleteBean, listBeans, updateBean } from '../../auth/services/beanService';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
-export default function ProfileScreen() {
+export default function SettingScreen() {
   const { logout } = useLogout();
   const user = useUserStore((state) => state.user);
 
@@ -18,6 +20,17 @@ export default function ProfileScreen() {
   const [beans, setBeans] = useState<Bean[]>([]);
   const [beanName, setBeanName] = useState<string>('');
   const [editBeanName, setEditBeanName] = useState<string>('');
+
+  type RecordsNav = NativeStackNavigationProp<SettingStackParamList, 'Settings'>;
+  const navigation = useNavigation<RecordsNav>();
+
+  const handleBrandPress = () => {
+    navigation.navigate('Brands');
+  };
+
+  const handleBeanPress = () => {
+    navigation.navigate('Beans');
+  };
 
   useEffect(() => {
     fetchBrands();
@@ -258,6 +271,32 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
           {beansList}
+          <TouchableOpacity
+            onPress={() => handleBrandPress()}
+            style={{
+              backgroundColor: '#34C759',
+              padding: 12,
+              marginTop: 16,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: '#fff', textAlign: 'center' }}>
+              コーヒーブランド管理画面へ
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleBeanPress()}
+            style={{
+              backgroundColor: '#34C759',
+              padding: 12,
+              marginTop: 16,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: '#fff', textAlign: 'center' }}>
+              コーヒー豆産地管理画面へ
+            </Text>
+          </TouchableOpacity>
         </View>
         : <Text>Please log in.</Text>}
     </View>

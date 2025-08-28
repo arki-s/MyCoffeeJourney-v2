@@ -8,8 +8,8 @@ export type BottomStackParamList = {
   Calendar:undefined;
   Coffee:undefined; // Coffee List
   Reviews:undefined;
-  Profile:undefined;
   Analysis:undefined;
+  Settings:undefined;
 }
 
 export type RecordsStackParamList = {
@@ -25,6 +25,12 @@ export type CoffeeStackParamList = {
 export type ReviewStackParamList = {
   Reviews: undefined;
   ReviewDetails: { id: string | undefined };
+};
+
+export type SettingStackParamList = {
+  Settings:undefined;
+  Brands:undefined;
+  Beans:undefined;
 };
 
 export type Brand = {
