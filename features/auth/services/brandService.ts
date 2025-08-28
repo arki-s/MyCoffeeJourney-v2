@@ -1,9 +1,18 @@
 import { supabase } from "../../../lib/supabase";
 import { Brand } from "../../../type";
 
-export async function listBrands(): Promise<Brand[]> {
-  const { data: { user } } = await supabase.auth.getUser();
+async function requireUser() {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error) throw error;
   if (!user) throw new Error("not authenticated");
+  return user;
+}
+
+export async function listBrands(): Promise<Brand[]> {
+  const user = await requireUser();
 
   const { data, error } = await supabase
     .from("coffee_brands")
@@ -15,6 +24,15 @@ export async function listBrands(): Promise<Brand[]> {
 }
 
 export async function createBrand(name: string, userId: string): Promise<Brand> {
+  const user = await requireUser();
+
+  const trimmed = name?.trim();
+  if (!trimmed) throw new Error("name is required");
+  if (trimmed.length > 100) throw new Error("name is too long");
+
+  // Defensive check: caller-provided userId must match the session user.
+  if (userId !== user.id) throw new Error("user mismatch");
+
   const { data, error } = await supabase
     .from("coffee_brands")
     .insert({ name, user_id: userId })
@@ -25,10 +43,17 @@ export async function createBrand(name: string, userId: string): Promise<Brand> 
 }
 
 export async function updateBrand(id: string, name: string): Promise<Brand> {
+  const user = await requireUser();
+
+  const trimmed = name?.trim();
+  if (!trimmed) throw new Error("name is required");
+  if (trimmed.length > 100) throw new Error("name is too long");
+
   const { data, error } = await supabase
     .from("coffee_brands")
     .update({ name })
     .eq("id", id)
+    .eq("user_id", user.id)
     .select()
     .single();
   if (error) throw error;
@@ -36,6 +61,12 @@ export async function updateBrand(id: string, name: string): Promise<Brand> {
 }
 
 export async function deleteBrand(id: string): Promise<void> {
-  const { error } = await supabase.from("coffee_brands").delete().eq("id", id);
+  const user = await requireUser();
+
+  const { error } = await supabase
+  .from("coffee_brands")
+  .delete()
+  .eq("id", id)
+  .eq("user_id", user.id);
   if (error) throw error;
 }
