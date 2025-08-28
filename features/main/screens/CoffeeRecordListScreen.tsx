@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function CoffeeRecordListScreen() {
-  type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'Records'>;
+  type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordsHome'>;
   const navigation = useNavigation<RecordsNav>();
 
   const handleDetailPress = (id: string) => {

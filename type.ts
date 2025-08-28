@@ -13,22 +13,22 @@ export type BottomStackParamList = {
 }
 
 export type RecordsStackParamList = {
-  Records: undefined;
+  RecordsHome: undefined;
   RecordDetails: { id: string | undefined };
 };
 
 export type CoffeeStackParamList = {
-  Coffee: undefined;
+  CoffeeHome: undefined;
   CoffeeDetails: { id: string | undefined };
 };
 
 export type ReviewStackParamList = {
-  Reviews: undefined;
+  ReviewsHome: undefined;
   ReviewDetails: { id: string | undefined };
 };
 
 export type SettingStackParamList = {
-  Settings:undefined;
+  SettingsHome:undefined;
   Brands:undefined;
   Beans:undefined;
 };

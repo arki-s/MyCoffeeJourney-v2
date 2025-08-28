@@ -6,6 +6,7 @@ import AnalysisScreen from '../screens/AnalysisScreen';
 import CoffeeRecordsStack from './CoffeeRecordsStack';
 import CoffeeStack from './CoffeeStack';
 import SettingStack from './SettingStack';
+import CalendarScreen from '../screens/CalendarScreen';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
@@ -14,6 +15,9 @@ export default function BottomTabs() {
     <Tab.Navigator screenOptions={{ headerShown: true, popToTopOnBlur: true }}>
       <Tab.Screen name="Records" component={CoffeeRecordsStack} options={{
         tabBarLabel: 'Records', title: 'Records'
+      }} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{
+        tabBarLabel: 'Calendar', title: 'Calendar'
       }} />
       <Tab.Screen name="Coffee" component={CoffeeStack} options={{
         tabBarLabel: 'Coffee', title: 'Coffee'

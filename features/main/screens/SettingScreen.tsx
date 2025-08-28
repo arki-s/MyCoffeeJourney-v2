@@ -1,10 +1,8 @@
-import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
 import { useUserStore } from '../../../stores/useUserStore';
-import { createBrand, deleteBrand, listBrands, updateBrand } from '../../auth/services/brandService';
-import { Bean, Brand, SettingStackParamList } from '../../../type';
-import { createBean, deleteBean, listBeans, updateBean } from '../../auth/services/beanService';
+import { SettingStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
@@ -12,7 +10,7 @@ export default function SettingScreen() {
   const { logout } = useLogout();
   const user = useUserStore((state) => state.user);
 
-  type RecordsNav = NativeStackNavigationProp<SettingStackParamList, 'Settings'>;
+  type RecordsNav = NativeStackNavigationProp<SettingStackParamList, 'SettingsHome'>;
   const navigation = useNavigation<RecordsNav>();
 
   const handleBrandPress = () => {

@@ -18,7 +18,7 @@ export default function CoffeeBeanScreen() {
   const navigation = useNavigation<RecordsNav>();
 
   const handleSettingPress = () => {
-    navigation.navigate('Settings');
+    navigation.navigate('SettingsHome');
   };
 
   useEffect(() => {

@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator<RecordsStackParamList>();
 export default function CoffeeRecordsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Records" component={CoffeeRecordListScreen} />
+      <Stack.Screen name="RecordsHome" component={CoffeeRecordListScreen} />
       <Stack.Screen name="RecordDetails" component={CoffeeRecordScreen} />
     </Stack.Navigator>
   )
