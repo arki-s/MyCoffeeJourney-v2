@@ -4,24 +4,20 @@ import { CoffeeStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
-export default function CoffeeListScreen() {
-  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeHome'>;
+export default function CoffeeCreateScreen() {
+  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeCreate'>;
   const navigation = useNavigation<RecordsNav>();
 
-  const handleCreatePress = () => {
-    navigation.navigate('CoffeeCreate');
-  };
-  const handleDetailPress = (id: string) => {
-    navigation.navigate('CoffeeDetails', { id });
+  const handleHomePress = () => {
+    navigation.navigate('CoffeeHome');
   };
 
   return (
     <View>
-      <Text>CoffeeListScreen</Text>
-      <Text onPress={() => handleDetailPress('123')}>Go to Coffee Details (ID: 123)</Text>
+      <Text>CoffeeCreateScreen</Text>
 
       <TouchableOpacity
-        onPress={() => handleCreatePress()}
+        onPress={() => handleHomePress()}
         style={{
           backgroundColor: '#34C759',
           padding: 12,
@@ -30,7 +26,7 @@ export default function CoffeeListScreen() {
         }}
       >
         <Text style={{ color: '#fff', textAlign: 'center' }}>
-          コーヒーを追加する
+          コーヒー一覧へ戻る
         </Text>
       </TouchableOpacity>
     </View>

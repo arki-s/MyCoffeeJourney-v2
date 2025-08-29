@@ -19,6 +19,8 @@ export type RecordsStackParamList = {
 
 export type CoffeeStackParamList = {
   CoffeeHome: undefined;
+  CoffeeCreate: undefined;
+  CoffeeEdit: { id: string | undefined };
   CoffeeDetails: { id: string | undefined };
 };
 
@@ -33,10 +35,32 @@ export type SettingStackParamList = {
   Beans:undefined;
 };
 
+export type Coffee = {
+  id: string;
+  name: string;
+  comments: string | null;
+  photo_url: string | null;
+  roast_level: number;
+  body: number;
+  sweetness: number;
+  fruity: number;
+  bitter: number;
+  aroma: number;
+  user_id: string;
+  brand_id: string;
+  created_at: string;
+};
+
 export type Brand = {
-  id: string; name: string; user_id: string; created_at: string;
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
 };
 
 export type Bean = {
-  id: string; name: string; user_id: string; created_at: string;
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
 };

@@ -16,6 +16,7 @@ sweetness int NOT NULL DEFAULT 1,
 fruity int NOT NULL DEFAULT 1,
 bitter int NOT NULL DEFAULT 1,
 aroma int NOT NULL DEFAULT 1,
+brand_id uuid REFERENCES coffee_brands(id),
 user_id uuid REFERENCES users(id),
 created_at timestamp with time zone DEFAULT now()
 );
