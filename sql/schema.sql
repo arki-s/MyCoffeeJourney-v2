@@ -39,6 +39,7 @@ CREATE TABLE coffee_bean_inclusions (
 id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 coffee_id uuid REFERENCES coffee(id),
 bean_id uuid REFERENCES coffee_beans(id),
+user_id uuid REFERENCES users(id),
 created_at timestamp with time zone DEFAULT now()
 );
 
