@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CoffeeRecordListScreen from '../screens/CoffeeRecordListScreen';
 import { RecordsStackParamList } from '../../../type';
+import CoffeeRecordCreateScreen from '../screens/CoffeeRecordCreateScreen';
 import CoffeeRecordScreen from '../screens/CoffeeRecordScreen';
 
 const Stack = createNativeStackNavigator<RecordsStackParamList>();
@@ -10,6 +11,7 @@ export default function CoffeeRecordsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="RecordsHome" component={CoffeeRecordListScreen} />
+      <Stack.Screen name="RecordCreate" component={CoffeeRecordCreateScreen} />
       <Stack.Screen name="RecordDetails" component={CoffeeRecordScreen} />
     </Stack.Navigator>
   )

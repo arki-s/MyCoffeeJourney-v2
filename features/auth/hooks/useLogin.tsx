@@ -11,7 +11,7 @@ export const useLogin = () => {
     setError(null);
 
     const redirectTo = makeRedirectUri({ path: "auth-callback" });
-    console.log("redirectTo:", redirectTo);
+    // console.log("redirectTo:", redirectTo);
 
     const { error } = await supabase.auth.signInWithOtp({
       email,

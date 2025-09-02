@@ -14,6 +14,7 @@ export type BottomStackParamList = {
 
 export type RecordsStackParamList = {
   RecordsHome: undefined;
+  RecordCreate: undefined;
   RecordDetails: { id: string | undefined };
 };
 
@@ -69,6 +70,18 @@ export type Bean = {
 export type GrindSize = {
   id: string;
   name: string;
+  user_id: string;
+  created_at: string;
+};
+
+export type DrinkingRecord = {
+  id: string;
+  weight_grams: number;
+  price_yen: number;
+  purchase_date: string;
+  coffee_id: string;
+  start_date: string;
+  end_date: string | null;
   user_id: string;
   created_at: string;
 };

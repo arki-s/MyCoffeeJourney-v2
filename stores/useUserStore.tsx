@@ -13,13 +13,13 @@ export const useUserStore = create<UserStore>((set) => ({
   initializing: true,
   user: null,
   setUser: (user) => {
-    console.log("setUser called:", user);
+    // console.log("setUser called:", user);
     set({ user });
   },
   // setUser: (user) => set({ user }),
   resetUser: () => set({ user: null }),
   setInitializing: (initializing) => {
-    console.log("setInitializing called:", initializing);
+    // console.log("setInitializing called:", initializing);
     set({ initializing });
   },
 }))

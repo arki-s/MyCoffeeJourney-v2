@@ -1,8 +1,4 @@
-import { useEffect } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
-import { supabase } from './lib/supabase';
 import * as React from 'react';
-// import LoginScreen from './features/auth/screens/LoginScreen';
 import { useUserStore } from './stores/useUserStore';
 import { useSessionWatcher } from './features/auth/hooks/useSessionWatcher';
 import { NavigationContainer } from '@react-navigation/native';
