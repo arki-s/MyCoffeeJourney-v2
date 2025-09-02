@@ -21,6 +21,10 @@ export default function SettingScreen() {
     navigation.navigate('Beans');
   };
 
+  const handleGrindSizePress = () => {
+    navigation.navigate('GrindSize');
+  };
+
 
   return (
     <View>
@@ -54,6 +58,19 @@ export default function SettingScreen() {
           >
             <Text style={{ color: '#fff', textAlign: 'center' }}>
               コーヒー豆産地管理画面へ
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleGrindSizePress()}
+            style={{
+              backgroundColor: '#34C759',
+              padding: 12,
+              marginTop: 16,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: '#fff', textAlign: 'center' }}>
+              挽き目管理画面へ
             </Text>
           </TouchableOpacity>
         </View>

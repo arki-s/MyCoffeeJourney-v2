@@ -33,6 +33,7 @@ export type SettingStackParamList = {
   SettingsHome:undefined;
   Brands:undefined;
   Beans:undefined;
+  GrindSize:undefined;
 };
 
 export type Coffee = {
@@ -59,6 +60,13 @@ export type Brand = {
 };
 
 export type Bean = {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
+};
+
+export type GrindSize = {
   id: string;
   name: string;
   user_id: string;
