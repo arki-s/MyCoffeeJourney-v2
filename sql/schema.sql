@@ -66,6 +66,7 @@ CREATE TABLE drinking_grind_sizes (
 id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 grind_size_id uuid REFERENCES grind_sizes(id),
 record_id uuid REFERENCES drinking_records(id),
+user_id uuid REFERENCES users(id),
 created_at timestamp with time zone DEFAULT now()
 );
 

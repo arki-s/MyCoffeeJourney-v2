@@ -39,7 +39,7 @@ ON drinking_records
 FOR ALL
 USING (user_id = auth.uid());
 
-CREATE POLICY "Access only own coffee bean mappings"
+CREATE POLICY "Access only own grind size mappings"
 ON drinking_grind_sizes
 FOR ALL
 USING (
