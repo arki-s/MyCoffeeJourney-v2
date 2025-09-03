@@ -94,23 +94,54 @@ export async function createCoffee(
 
 };
 
-export async function createCoffeeInclusion(
+export async function setCoffeeBeanInclusions(
   coffeeId: string,
-  beanId: string
-) {
+  beanIds: string[],
+): Promise<void> {
   const user = await requireUser();
 
-  const { data, error } = await supabase
+  // 入力の正規化: falsy を除去し、重複を排除（UI から重複が来ても安全に）
+  const desired = Array.from(
+    new Set((beanIds ?? []).filter((x): x is string => Boolean(x)))
+  );
+
+  // 現在の関連を取得（この時点では user_id も持っている前提）
+  const { data: existingData, error: existingErr } = await supabase
     .from("coffee_bean_inclusions")
-    .insert({
-      coffee_id: coffeeId,
-      bean_id: beanId,
-      user_id: user.id,
-    })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+    .select("id, bean_id")
+    .eq("user_id", user.id)
+    .eq("coffee_id", coffeeId);
+  if (existingErr) throw existingErr;
+
+  // Set を使って差分を計算
+  const currentSet = new Set<string>((existingData ?? []).map((d: any) => d.bean_id));
+  const desiredSet = new Set<string>(desired);
+
+  // 削除対象: 現在あるが、望ましい集合に含まれないもの
+  const idsToDelete = (existingData ?? [])
+    .filter((d: any) => !desiredSet.has(d.bean_id))
+    .map((d: any) => d.id);
+
+  if (idsToDelete.length > 0) {
+    const { error: deleteError } = await supabase
+      .from("coffee_bean_inclusions")
+      .delete()
+      .in("id", idsToDelete)
+      .eq("user_id", user.id)
+      .eq("coffee_id", coffeeId);
+    if (deleteError) throw deleteError;
+  }
+  // 追加対象: 望ましい集合にあるが、現在存在しないもの
+  const toInsert = desired
+    .filter((bean) => !currentSet.has(bean))
+    .map((bean) => ({ coffeeId, bean_id: bean, user_id: user.id }));
+
+  if (toInsert.length > 0) {
+    const { error: insertError } = await supabase
+      .from("coffee_bean_inclusions")
+      .insert(toInsert);
+    if (insertError) throw insertError;
+  }
 }
 
 export async function updateCoffee(
@@ -152,39 +183,6 @@ export async function updateCoffee(
     .single();
   if (error) throw error;
   return data as Coffee;
-}
-
-export async function updateCoffeeInclusion(
-  id: string,
-  coffeeId: string,
-  beanId: string
-) {
-  const user = await requireUser();
-
-  const duplicateCheck = await supabase
-    .from("coffee_bean_inclusions")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("coffee_id", coffeeId)
-    .eq("bean_id", beanId)
-    .neq("id", id); // 自分自身を除外
-
-  if (duplicateCheck.error) throw duplicateCheck.error;
-  if ((duplicateCheck.count ?? 0) > 0)
-    throw new Error("This coffee already has this bean included.");
-
-  const { data, error } = await supabase
-    .from("coffee_bean_inclusions")
-    .update({
-      coffee_id: coffeeId,
-      bean_id: beanId,
-    })
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
 }
 
 export async function deleteCoffee(id: string) {

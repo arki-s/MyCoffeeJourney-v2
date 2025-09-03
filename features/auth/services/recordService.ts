@@ -62,14 +62,14 @@ export async function createDrinkingRecord(
 }
 
 export async function setDrinkingGrindSizes(
-  record_id: string,
-  grind_size_ids: string[],
+  recordId: string,
+  grindSizeIds: string[],
 ): Promise<void> {
   const user = await requireUser();
 
   // 入力の正規化: falsy を除去し、重複を排除（UI から重複が来ても安全に）
   const desired = Array.from(
-    new Set((grind_size_ids ?? []).filter((x): x is string => Boolean(x)))
+    new Set((grindSizeIds ?? []).filter((x): x is string => Boolean(x)))
   );
 
   // 所有権の厳密チェックを行いたい場合は、以下のように親テーブルで確認する。
@@ -88,7 +88,7 @@ export async function setDrinkingGrindSizes(
     .from("drinking_grind_sizes")
     .select("id, grind_size_id")
     .eq("user_id", user.id)
-    .eq("record_id", record_id);
+    .eq("record_id", recordId);
   if (existingErr) throw existingErr;
 
   // Set を使って差分を計算
@@ -106,14 +106,14 @@ export async function setDrinkingGrindSizes(
       .delete()
       .in("id", idsToDelete)
       .eq("user_id", user.id)
-      .eq("record_id", record_id);
+      .eq("record_id", recordId);
     if (deleteError) throw deleteError;
   }
 
   // 追加対象: 望ましい集合にあるが、現在存在しないもの
   const toInsert = desired
     .filter((gid) => !currentSet.has(gid))
-    .map((gid) => ({ record_id, grind_size_id: gid, user_id: user.id }));
+    .map((gid) => ({ recordId, grind_size_id: gid, user_id: user.id }));
 
   if (toInsert.length > 0) {
     const { error: insertError } = await supabase
