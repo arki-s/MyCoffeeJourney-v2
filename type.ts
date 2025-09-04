@@ -85,3 +85,12 @@ export type DrinkingRecord = {
   user_id: string;
   created_at: string;
 };
+
+export type Review = {
+  id: string;
+  score: number;
+  comments: string | null;
+  record_id: string;
+  user_id: string;
+  created_at: string;
+};
