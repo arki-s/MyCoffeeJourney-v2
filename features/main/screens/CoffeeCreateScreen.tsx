@@ -4,7 +4,7 @@ import { CoffeeStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '../../../stores/useUserStore';
-import { createCoffee, createCoffeeInclusion } from '../../auth/services/coffeeService';
+import { createCoffee, setCoffeeBeanInclusions } from '../../auth/services/coffeeService';
 
 export default function CoffeeCreateScreen() {
   const user = useUserStore((state) => state.user);
@@ -64,10 +64,7 @@ export default function CoffeeCreateScreen() {
       const response = await createCoffee(newCoffee.name, newCoffee.brand_id, newCoffee.comments, newCoffee.photo_url, newCoffee.roast_level, newCoffee.body, newCoffee.sweetness, newCoffee.fruity, newCoffee.bitter, newCoffee.aroma);
 
       try {
-        //コーヒー豆の登録 --- IGNORE ---
-        for (const beanId of includedBeans) {
-          await createCoffeeInclusion(response.id, beanId);
-        }
+        await setCoffeeBeanInclusions(response.id, includedBeans);
       } catch (error) {
         console.error("Error creating coffee inclusions:", error);
       }

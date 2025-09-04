@@ -17,7 +17,7 @@ export default function CoffeeListScreen() {
       const data = await listCoffees();
       setCoffees(data);
     } catch (error) {
-      console.error("Error fetching beans:", error);
+      console.error("Error fetching coffees:", error);
     }
   };
 

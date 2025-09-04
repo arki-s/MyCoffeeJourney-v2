@@ -1,10 +1,37 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { RecordsStackParamList } from '../../../type';
+import React, { useEffect, useState } from 'react'
+import { DrinkingRecord, RecordsStackParamList } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { finishDrinkingRecord, listFinishedDrinkingRecords, listUnfinishedDrinkingRecords } from '../../auth/services/recordService';
 
 export default function CoffeeRecordListScreen() {
+  const [ongoingRecords, setOngoingRecords] = useState<DrinkingRecord[]>([]);
+  const [finishedRecords, setFinishedRecords] = useState<DrinkingRecord[]>([]);
+
+  useEffect(() => {
+    fetchOngoingRecords();
+    fetchFinishedRecords();
+  }, []);
+
+  const fetchOngoingRecords = async () => {
+    try {
+      const data = await listUnfinishedDrinkingRecords();
+      setOngoingRecords(data);
+    } catch (error) {
+      console.error("Error fetching ongoing records:", error);
+    }
+  };
+
+  const fetchFinishedRecords = async () => {
+    try {
+      const data = await listFinishedDrinkingRecords();
+      setFinishedRecords(data);
+    } catch (error) {
+      console.error("Error fetching finished records:", error);
+    }
+  };
+
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordsHome'>;
   const navigation = useNavigation<RecordsNav>();
 
@@ -16,10 +43,55 @@ export default function CoffeeRecordListScreen() {
     navigation.navigate('RecordDetails', { id });
   };
 
+  const handleFinishPress = (id: string) => {
+    finishDrinking(id);
+  };
+
+  const finishDrinking = async (id: string) => {
+    try {
+
+      // 日付は仮で現在日時を使用
+      await finishDrinkingRecord(id, new Date().toISOString());
+
+      fetchOngoingRecords();
+      fetchFinishedRecords();
+    } catch (error) {
+      console.error("Error finishing drinking record:", error);
+    }
+  }
+
+  const ongoingRecordItems = ongoingRecords.map((record) => (
+    <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+      <Text style={{ fontSize: 18 }}>Started on {new Date(record.start_date).toLocaleDateString()}</Text>
+      <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
+        <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => handleFinishPress(record.id)}>
+        <Text style={{ color: '#007AFF', marginTop: 4 }}>飲み終えた！</Text>
+      </TouchableOpacity>
+    </View>
+  ));
+
+  const finishedRecordItems = finishedRecords.map((record) => {
+    if (record.end_date) {
+      return (
+        <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+          <Text style={{ fontSize: 18 }}>Finished on {new Date(record.end_date).toLocaleDateString()}</Text>
+          <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
+            <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  });
+
   return (
     <View>
       <Text>CoffeeRecordListScreen</Text>
-      <Text onPress={() => handleDetailPress('123')}>Go to Record Details (ID: 123)</Text>
+      <Text>飲んでるコーヒー</Text>
+      {ongoingRecordItems}
+      <Text>飲み終えたコーヒー</Text>
+      {finishedRecordItems}
 
       <TouchableOpacity
         onPress={() => handleCreatePress()}
