@@ -65,11 +65,10 @@ export default function CoffeeCreateScreen() {
 
       try {
         await setCoffeeBeanInclusions(response.id, includedBeans);
+        handleHomePress();
       } catch (error) {
         console.error("Error creating coffee inclusions:", error);
       }
-
-      handleHomePress();
 
     } catch (error) {
       console.error("Error creating coffee:", error);

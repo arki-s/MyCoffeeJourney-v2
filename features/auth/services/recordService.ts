@@ -37,6 +37,15 @@ export async function createDrinkingRecord(
 ): Promise<DrinkingRecord> {
   const user = await requireUser();
 
+  console.log("Creating drinking record with:", {
+    user_id: user.id,
+    weight_grams,
+    price_yen,
+    purchase_date,
+    coffee_id,
+    start_date,
+  });
+
   const { data, error } = await supabase.from("drinking_records").insert({
     user_id: user.id,
     weight_grams: weight_grams,
@@ -102,7 +111,7 @@ export async function setDrinkingGrindSizes(
   // 追加対象: 望ましい集合にあるが、現在存在しないもの
   const toInsert = desired
     .filter((gid) => !currentSet.has(gid))
-    .map((gid) => ({ recordId, grind_size_id: gid, user_id: user.id }));
+    .map((gid) => ({ record_id: recordId, grind_size_id: gid, user_id: user.id }));
 
   if (toInsert.length > 0) {
     const { error: insertError } = await supabase
