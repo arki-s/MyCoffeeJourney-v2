@@ -1,15 +1,6 @@
 import { supabase } from "../../../lib/supabase";
 import { DrinkingRecord } from "../../../type";
-
-async function requireUser() {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) throw error;
-  if (!user) throw new Error("not authenticated");
-  return user;
-}
+import { requireUser } from "../session";
 
 export async function listUnfinishedDrinkingRecords(): Promise<DrinkingRecord[]> {
   const user = await requireUser();
@@ -43,7 +34,6 @@ export async function createDrinkingRecord(
   purchase_date: string,
   coffee_id: string,
   start_date: string,
-  end_date?: string | null,
 ): Promise<DrinkingRecord> {
   const user = await requireUser();
 
@@ -54,7 +44,6 @@ export async function createDrinkingRecord(
     purchase_date: purchase_date,
     coffee_id: coffee_id,
     start_date: start_date,
-    end_date: end_date ?? null,
   }).select().single();
   if (error) throw error;
   if (!data) throw new Error("Failed to create drinking record");

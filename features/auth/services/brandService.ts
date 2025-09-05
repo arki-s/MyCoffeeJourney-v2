@@ -1,15 +1,6 @@
 import { supabase } from "../../../lib/supabase";
 import { Brand } from "../../../type";
-
-async function requireUser() {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) throw error;
-  if (!user) throw new Error("not authenticated");
-  return user;
-}
+import { requireUser } from "../session";
 
 function validateName(raw: string): string {
   const trimmed = raw?.trim();
