@@ -97,7 +97,7 @@ export default function CoffeeRecordCreateScreen() {
           const sanitized = text.replace(/[^0-9]/g, '');
           setNewRecord(prev => ({ ...prev, weight_grams: sanitized ? parseInt(sanitized) : 0 }))
         }}
-        keyboardType='number-pad'
+        keyboardType='numeric'
         autoCapitalize='none'
         autoCorrect={false}
       />
@@ -108,7 +108,7 @@ export default function CoffeeRecordCreateScreen() {
           const sanitized = text.replace(/[^0-9]/g, '');
           setNewRecord(prev => ({ ...prev, price_yen: sanitized ? parseInt(sanitized) : 0 }))
         }}
-        keyboardType='number-pad'
+        keyboardType='numeric'
         autoCapitalize='none'
         autoCorrect={false}
       />

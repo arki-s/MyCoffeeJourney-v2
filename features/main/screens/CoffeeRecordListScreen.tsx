@@ -4,10 +4,15 @@ import { DrinkingRecord, RecordsStackParamList } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { finishDrinkingRecord, listFinishedDrinkingRecords, listUnfinishedDrinkingRecords } from '../../auth/services/recordService';
+import { formatLocalYYYYMMDD } from '../../../utils/date';
+import ReviewForm from '../components/ReviewForm';
+import { createReview } from '../../auth/services/reviewService';
 
 export default function CoffeeRecordListScreen() {
   const [ongoingRecords, setOngoingRecords] = useState<DrinkingRecord[]>([]);
   const [finishedRecords, setFinishedRecords] = useState<DrinkingRecord[]>([]);
+  const [modalVisible, setModalVisible] = useState<"review" | null>(null);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOngoingRecords();
@@ -44,14 +49,34 @@ export default function CoffeeRecordListScreen() {
   };
 
   const handleFinishPress = (id: string) => {
+    setSelectedRecordId(id);
     finishDrinking(id);
+    setModalVisible("review");
+  };
+
+  const handleReviewSubmit = async (score: number, comments: string) => {
+    if (!selectedRecordId) return;
+
+    try {
+      await createReview(score, comments, selectedRecordId);
+      fetchFinishedRecords();
+      fetchOngoingRecords();
+
+    } catch (error) {
+      console.error("Error submitting review:", error);
+
+    } finally {
+      setModalVisible(null);
+    }
   };
 
   const finishDrinking = async (id: string) => {
     try {
 
       // 日付は仮で現在日時を使用
-      await finishDrinkingRecord(id, new Date().toISOString());
+      await finishDrinkingRecord(id, formatLocalYYYYMMDD(new Date()));
+
+      // 今後この時点でモーダルを表示させてレビュー登録を促す
 
       fetchOngoingRecords();
       fetchFinishedRecords();
@@ -80,6 +105,7 @@ export default function CoffeeRecordListScreen() {
           <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
             <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
           </TouchableOpacity>
+          {/* レビューが一個もない記録にはレビュー追加ボタンを表示する */}
         </View>
       )
     }
@@ -106,6 +132,12 @@ export default function CoffeeRecordListScreen() {
           飲んでるコーヒー記録登録画面へ
         </Text>
       </TouchableOpacity>
+      {modalVisible === "review" && (
+        <ReviewForm
+          onSubmit={({ score, comments }) => handleReviewSubmit(score, comments)}
+          onCancel={() => setModalVisible(null)}
+        />
+      )}
     </View>
   )
 }
