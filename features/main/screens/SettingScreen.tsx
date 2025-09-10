@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
 import { useUserStore } from '../../../stores/useUserStore';
@@ -79,4 +79,4 @@ export default function SettingScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

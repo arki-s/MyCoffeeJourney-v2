@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { DrinkingRecord, RecordsStackParamList } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
@@ -142,4 +142,4 @@ export default function CoffeeRecordListScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

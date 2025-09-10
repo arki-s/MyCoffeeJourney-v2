@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { GrindSize, SettingStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -147,4 +147,4 @@ export default function GrindSizeScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

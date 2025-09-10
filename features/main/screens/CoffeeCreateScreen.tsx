@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { CoffeeStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -146,4 +146,4 @@ export default function CoffeeCreateScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

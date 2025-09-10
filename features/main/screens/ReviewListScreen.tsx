@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Review } from '../../../type';
 import { listReviews } from '../../auth/services/reviewService';
@@ -34,4 +34,4 @@ export default function ReviewListScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

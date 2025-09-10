@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { useUserStore } from '../../../stores/useUserStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -150,4 +150,4 @@ export default function CoffeeRecordCreateScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

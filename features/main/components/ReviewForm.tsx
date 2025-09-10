@@ -8,7 +8,7 @@ type Props = {
   onCancel: () => void;
   loading?: boolean;
   error?: string | null;
-  title?: string;
+  title?: string; //コーヒー名を入れる予定
 }
 
 export default function ReviewForm(props: Props) {
