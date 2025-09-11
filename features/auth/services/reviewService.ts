@@ -1,17 +1,17 @@
 import { supabase } from "../../../lib/supabase";
-import { Review } from "../../../type";
+import { Review, ReviewWithContext } from "../../../type";
 import { requireUser } from "../session";
 
-export async function listReviews(): Promise<Review[]> {
+export async function listReviews(): Promise<ReviewWithContext[]> {
   const user = await requireUser();
 
   const { data, error } = await supabase
     .from("reviews")
-    .select("*")
+    .select("*, record:record_id (start_date, end_date, coffee:coffee_id (name, brand:brand_id (name)))")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data;
+  return (data ?? []);
 }
 
 export async function createReview(

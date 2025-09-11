@@ -1,5 +1,5 @@
 import { supabase } from "../../../lib/supabase";
-import { Coffee } from "../../../type";
+import { Coffee, CoffeeWithBrand } from "../../../type";
 import { requireUser } from "../session";
 
 function validateName(raw: string): string {
@@ -33,7 +33,7 @@ async function ensureNoDuplicateCoffee(
   if ((count ?? 0) > 0) throw new Error("coffee with this name already exists");
 }
 
-export async function listCoffees(): Promise<Coffee[]> {
+export async function listCoffees(): Promise<CoffeeWithBrand[]> {
   const user = await requireUser();
 
   const { data, error } = await supabase
@@ -42,7 +42,21 @@ export async function listCoffees(): Promise<Coffee[]> {
     .eq("user_id", user.id)
     .order("name", { ascending: true });
   if (error) throw error;
-  return data;
+  const coffeeIds = (data ?? []).map((coffee) => coffee.id);
+  if (coffeeIds.length === 0) return [];
+
+  // ブランド名を一括で取得
+  const { data: brandsData, error: brandsError } = await supabase
+    .from("coffee_brands")
+    .select("id, name")
+    .in("id", Array.from(new Set((data ?? []).map((c) => c.brand_id))));
+  if (brandsError) throw brandsError;
+  const brandMap = new Map((brandsData ?? []).map((b) => [b.id, b.name]));
+
+  return (data ?? []).map((coffee) => ({
+    ...coffee,
+    brandName: brandMap.get(coffee.brand_id) ?? "Unknown Brand",
+  }));
 }
 
 export async function createCoffee(

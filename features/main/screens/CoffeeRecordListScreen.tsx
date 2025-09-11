@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { DrinkingRecord, RecordsStackParamList } from '../../../type';
+import { FinishedWithReview, RecordsStackParamList, UnfinishedWithName } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { finishDrinkingRecord, listFinishedDrinkingRecords, listUnfinishedDrinkingRecords } from '../../auth/services/recordService';
@@ -9,8 +9,8 @@ import ReviewForm from '../components/ReviewForm';
 import { createReview } from '../../auth/services/reviewService';
 
 export default function CoffeeRecordListScreen() {
-  const [ongoingRecords, setOngoingRecords] = useState<DrinkingRecord[]>([]);
-  const [finishedRecords, setFinishedRecords] = useState<DrinkingRecord[]>([]);
+  const [ongoingRecords, setOngoingRecords] = useState<UnfinishedWithName[]>([]);
+  const [finishedRecords, setFinishedRecords] = useState<FinishedWithReview[]>([]);
   const [modalVisible, setModalVisible] = useState<"review" | null>(null);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
@@ -76,8 +76,6 @@ export default function CoffeeRecordListScreen() {
       // 日付は仮で現在日時を使用
       await finishDrinkingRecord(id, formatLocalYYYYMMDD(new Date()));
 
-      // 今後この時点でモーダルを表示させてレビュー登録を促す
-
       fetchOngoingRecords();
       fetchFinishedRecords();
     } catch (error) {
@@ -87,6 +85,9 @@ export default function CoffeeRecordListScreen() {
 
   const ongoingRecordItems = ongoingRecords.map((record) => (
     <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+      {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
+      <Text style={{ fontSize: 18 }}>{record.coffee?.brand?.name}</Text>
+      <Text style={{ fontSize: 18 }}>{record.coffee?.name}</Text>
       <Text style={{ fontSize: 18 }}>Started on {new Date(record.start_date).toLocaleDateString()}</Text>
       <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
         <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
@@ -101,11 +102,18 @@ export default function CoffeeRecordListScreen() {
     if (record.end_date) {
       return (
         <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+          {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
+          <Text style={{ fontSize: 18 }}>{record.coffee?.brand?.name}</Text>
+          <Text style={{ fontSize: 18 }}>{record.coffee?.name}</Text>
           <Text style={{ fontSize: 18 }}>Finished on {new Date(record.end_date).toLocaleDateString()}</Text>
           <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
             <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
           </TouchableOpacity>
-          {/* レビューが一個もない記録にはレビュー追加ボタンを表示する */}
+          {!record.hasReview && (
+            <TouchableOpacity onPress={() => { setSelectedRecordId(record.id); setModalVisible("review") }}>
+              <Text style={{ color: '#007AFF', marginTop: 4 }}>レビューを追加する</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )
     }

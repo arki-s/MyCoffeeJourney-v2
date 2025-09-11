@@ -1,31 +1,43 @@
 import { supabase } from "../../../lib/supabase";
-import { DrinkingRecord } from "../../../type";
+import { DrinkingRecord, FinishedWithReview, UnfinishedWithName } from "../../../type";
 import { requireUser } from "../session";
 
-export async function listUnfinishedDrinkingRecords(): Promise<DrinkingRecord[]> {
+export async function listUnfinishedDrinkingRecords(): Promise<UnfinishedWithName[]> {
   const user = await requireUser();
 
   const { data, error } = await supabase
     .from("drinking_records")
-    .select("*")
+    .select("*, coffee:coffee_id (name, brand:brand_id(name))")
     .eq("user_id", user.id)
     .is("end_date", null)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data;
+  return (data ?? []);
 }
 
-export async function listFinishedDrinkingRecords(): Promise<DrinkingRecord[]> {
+export async function listFinishedDrinkingRecords(): Promise<FinishedWithReview[]> {
   const user = await requireUser();
 
   const { data, error } = await supabase
     .from("drinking_records")
-    .select("*")
+    .select("*, coffee:coffee_id (name, brand:brand_id(name))")
     .eq("user_id", user.id)
     .not("end_date", "is", null)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return data;
+  const recordIds = (data ?? []).map((record) => record.id);
+  if (recordIds.length === 0) return [];
+
+  // レビューの有無を一括で取得
+  const { data: reviewsData, error: reviewsError } = await supabase
+    .from("reviews")
+    .select("record_id")
+    .in("record_id", recordIds)
+    .eq("user_id", user.id);
+  if (reviewsError) throw reviewsError;
+  const reviewedRecordIds = new Set((reviewsData ?? []).map((r) => r.record_id));
+
+  return (data ?? []).map((record)=>({...record, hasReview: reviewedRecordIds.has(record.id)}));
 }
 
 export async function createDrinkingRecord(

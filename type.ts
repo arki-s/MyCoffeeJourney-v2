@@ -53,6 +53,8 @@ export type Coffee = {
   created_at: string;
 };
 
+export type CoffeeWithBrand = Coffee & { brandName: string};
+
 export type Brand = {
   id: string;
   name: string;
@@ -86,6 +88,23 @@ export type DrinkingRecord = {
   created_at: string;
 };
 
+export type UnfinishedWithName = DrinkingRecord & {
+  coffee: CoffeeLite | null;
+};
+
+export type FinishedWithReview = DrinkingRecord & {
+  coffee: CoffeeLite | null;
+  hasReview: boolean;
+};
+
+export type BrandLite = {
+  name: string | null }| null;
+
+export type CoffeeLite = {
+  name: string | null;
+  brand: BrandLite | null
+};
+
 export type Review = {
   id: string;
   score: number;
@@ -93,4 +112,13 @@ export type Review = {
   record_id: string;
   user_id: string;
   created_at: string;
+};
+
+export type RecordLite = {
+  start_date: string;
+  end_date: string | null;
+  coffee: CoffeeLite } | null;
+
+export type ReviewWithContext = Review & {
+  record: RecordLite
 };

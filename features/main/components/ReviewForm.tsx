@@ -1,4 +1,4 @@
-import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
+import { Modal, Text, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 
 type Props = {
@@ -55,17 +55,17 @@ export default function ReviewForm(props: Props) {
         onPress={props.onCancel}
         disabled={props.loading}
       >
-        <Text>後で入力する</Text>
+        <Text>キャンセル</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => props.onSubmit({ score, comments })}
         disabled={props.loading || score === 0}
       >
-        <Text>送信</Text>
+        <Text>保存</Text>
       </TouchableOpacity>
       {props.error ? <Text style={{ color: 'red' }}>{props.error}</Text> : null}
     </Modal>
   )
 }
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

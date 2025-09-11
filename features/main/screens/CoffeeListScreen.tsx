@@ -1,12 +1,12 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Coffee, CoffeeStackParamList } from '../../../type';
+import { CoffeeStackParamList, CoffeeWithBrand } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { listCoffees } from '../../auth/services/coffeeService';
 
 export default function CoffeeListScreen() {
-  const [coffees, setCoffees] = useState<Coffee[]>([]);
+  const [coffees, setCoffees] = useState<CoffeeWithBrand[]>([]);
 
   useEffect(() => {
     fetchCoffees();
@@ -33,6 +33,7 @@ export default function CoffeeListScreen() {
 
   const coffeeItems = coffees.map((coffee) => (
     <View key={coffee.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+      <Text style={{ fontSize: 18 }}>{coffee.brandName}</Text>
       <Text style={{ fontSize: 18 }}>{coffee.name}</Text>
       <Text style={{ color: '#666' }}>{coffee.comments}</Text>
       <TouchableOpacity onPress={() => handleDetailPress(coffee.id)}>
