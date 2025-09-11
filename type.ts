@@ -128,3 +128,23 @@ export type RecordDetail = DrinkingRecord & {
   reviews: ReviewLite;
   coffee: CoffeeLite;
 };
+
+export type CoffeeDetail = Coffee & {
+  brand: { id: string; name: string | null } | null;
+  beans: { id: string; name: string | null }[];
+  stats: {
+    recordCount: number;
+    totalWeight: number;
+    pricePer100g: number | null;
+    avgScore: number | null;
+  };
+};
+
+export type CoffeeReviewItem = {
+  record_id: string;
+  score: number;
+  comments: string | null;
+  created_at: string;
+  start_date: string | null;
+  end_date: string | null;
+};
