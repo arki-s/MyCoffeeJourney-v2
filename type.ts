@@ -1,15 +1,17 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
+
 export type RootStackParamList = {
   Auth: undefined;
   App: undefined;
 };
 
 export type BottomStackParamList = {
-  Records:undefined; // Coffee Record List
+  Records:NavigatorScreenParams<RecordsStackParamList>;
   Calendar:undefined;
-  Coffee:undefined; // Coffee List
+  Coffee:NavigatorScreenParams<CoffeeStackParamList>;
   Reviews:undefined;
   Analysis:undefined;
-  Settings:undefined;
+  Settings:NavigatorScreenParams<SettingStackParamList>;
 }
 
 export type RecordsStackParamList = {
@@ -22,12 +24,7 @@ export type CoffeeStackParamList = {
   CoffeeHome: undefined;
   CoffeeCreate: undefined;
   CoffeeEdit: { id: string | undefined };
-  CoffeeDetails: { id: string | undefined };
-};
-
-export type ReviewStackParamList = {
-  ReviewsHome: undefined;
-  ReviewDetails: { id: string | undefined };
+  CoffeeDetails: { id: string };
 };
 
 export type SettingStackParamList = {
@@ -119,6 +116,15 @@ export type RecordLite = {
   end_date: string | null;
   coffee: CoffeeLite } | null;
 
+export type ReviewLite = {
+  score: string;
+  comments: string | null} | null;
+
 export type ReviewWithContext = Review & {
-  record: RecordLite
+  record: RecordLite;
+};
+
+export type RecordDetail = DrinkingRecord & {
+  reviews: ReviewLite;
+  coffee: CoffeeLite;
 };

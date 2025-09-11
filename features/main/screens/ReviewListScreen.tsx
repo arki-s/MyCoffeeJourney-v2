@@ -1,9 +1,11 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Review, ReviewWithContext } from '../../../type';
+import { BottomStackParamList, RecordsStackParamList, Review, ReviewWithContext } from '../../../type';
 import { deleteReview, listReviews, updateReview } from '../../auth/services/reviewService';
 import ReviewForm from '../components/ReviewForm';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 export default function ReviewListScreen() {
   const [reviews, setReviews] = useState<ReviewWithContext[]>([]);
@@ -11,6 +13,16 @@ export default function ReviewListScreen() {
   const [score, setScore] = useState<number>(0);
   const [comments, setComments] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
+
+  type TabsNav = BottomTabNavigationProp<BottomStackParamList, 'Reviews'>;
+  const navigation = useNavigation<TabsNav>();
+
+  const handleDetailPress = (id: string) => {
+    navigation.navigate('Records', {
+      screen: 'RecordDetails',
+      params: { id },
+    });
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -74,6 +86,9 @@ export default function ReviewListScreen() {
       </TouchableOpacity>
       <TouchableOpacity onPress={() => handleDeletePress(review.id)}>
         <Text style={{ color: '#FF3B30', marginTop: 4 }}>Delete</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => handleDetailPress(review.record_id)}>
+        <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
       </TouchableOpacity>
       {modalVisible === "edit" && (<ReviewForm
         initialScore={review.score}

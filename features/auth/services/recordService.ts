@@ -1,5 +1,5 @@
 import { supabase } from "../../../lib/supabase";
-import { DrinkingRecord, FinishedWithReview, UnfinishedWithName } from "../../../type";
+import { DrinkingRecord, FinishedWithReview, RecordDetail, UnfinishedWithName } from "../../../type";
 import { requireUser } from "../session";
 
 export async function listUnfinishedDrinkingRecords(): Promise<UnfinishedWithName[]> {
@@ -231,4 +231,19 @@ export async function deleteDrinkingRecord(id: string): Promise<DrinkingRecord> 
   if (error) throw error;
   if (!data) throw new Error("Failed to delete drinking record");
   return data;
+}
+
+export async function getRecordDetail(id:string): Promise<RecordDetail>{
+  const user = await requireUser();
+
+  const { data, error } = await supabase
+    .from("drinking_records")
+    .select("*, coffee:coffee_id (name, brand:brand_id(name)), reviews (score, comments)")
+    .eq("user_id", user.id)
+    .eq("id", id)
+    .order("created_at", {ascending:false})
+    .single();
+   if (error) throw error;
+   return data;
+
 }
