@@ -1,17 +1,16 @@
 import { Text, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { BottomStackParamList, RecordsStackParamList, Review, ReviewWithContext } from '../../../type';
+import React, { useCallback, useState } from 'react'
+import { BottomStackParamList, ReviewWithContext } from '../../../type';
 import { deleteReview, listReviews, updateReview } from '../../auth/services/reviewService';
 import ReviewForm from '../components/ReviewForm';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 export default function ReviewListScreen() {
   const [reviews, setReviews] = useState<ReviewWithContext[]>([]);
   const [editReviewId, setEditReviewId] = useState<string | null>(null);
-  const [score, setScore] = useState<number>(0);
-  const [comments, setComments] = useState<string>('');
+  const [, setScore] = useState<number>(0);
+  const [, setComments] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
 
   type TabsNav = BottomTabNavigationProp<BottomStackParamList, 'Reviews'>;

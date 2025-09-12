@@ -34,7 +34,7 @@ export default function CoffeeCreateScreen() {
     aroma: 1,
     brand_id: 'e8218a36-c99b-498c-8aed-bc05082b16de' //仮のbrand_id
   });
-  const [includedBeans, setIncludedBeans] = useState<string[]>([
+  const [includedBeans] = useState<string[]>([
     '2709d8a3-7b26-4af2-ae8b-ed0a45b29348' //仮のbean_id
   ]);
 
@@ -118,6 +118,7 @@ export default function CoffeeCreateScreen() {
         autoCapitalize='none'
         autoCorrect={false}
       />
+      {/* コーヒー豆産地を複数選択可能にする予定 */}
       <TextInput
         placeholder='コメントを入力'
         value={newCoffee.comments}
@@ -138,6 +139,9 @@ export default function CoffeeCreateScreen() {
       >
         <Text style={{ color: '#fff', textAlign: 'center' }}>
           {loading ? '保存中……' : 'コーヒーを登録'}
+        </Text>
+        <Text style={{ color: '#fd0303ff', textAlign: 'center' }}>
+          {error ? error : ''}
         </Text>
       </TouchableOpacity>
 

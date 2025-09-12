@@ -119,13 +119,13 @@ export async function setCoffeeBeanInclusions(
   if (existingErr) throw existingErr;
 
   // Set を使って差分を計算
-  const currentSet = new Set<string>((existingData ?? []).map((d: any) => d.bean_id));
+  const currentSet = new Set<string>((existingData ?? []).map((d) => d.bean_id));
   const desiredSet = new Set<string>(desired);
 
   // 削除対象: 現在あるが、望ましい集合に含まれないもの
   const idsToDelete = (existingData ?? [])
-    .filter((d: any) => !desiredSet.has(d.bean_id))
-    .map((d: any) => d.id);
+    .filter((d) => !desiredSet.has(d.bean_id))
+    .map((d) => d.id);
 
   if (idsToDelete.length > 0) {
     const { error: deleteError } = await supabase
@@ -226,3 +226,30 @@ export async function deleteCoffeeInclusion(id: string) {
   if (error) throw error;
   return data;
 }
+
+// export async function getCoffeeDetail(id:string) {
+//   const user = await requireUser();
+
+//   const { data, error } = await supabase
+//     .from("coffee")
+//     .select("*, brand:brand_id(name), beans (name)")
+//   //ブランド名
+//   //コーヒー豆産地名（複数）
+//   //飲んだ回数(レコードカウント)
+//   //飲んだ量(レコードのweight_gramのsum)
+//   //平均金額(レコードのprice_yenのAVG)
+//   //レビュー平均点(scoreのAVG)
+//   //レビュー一覧（recordのstart_date,end_date付き）→クリックでrecordDetailするのでrecord_idも必要
+
+//   function computePricePer100g(recs: { weight_grams: number; price_yen: number }[]): number | null {
+//     const valid = recs.filter(r => r.weight_grams > 0 && r.price_yen >= 0);
+//     if (valid.length === 0) return null;
+//     const totalWeight = valid.reduce((s, r) => s + r.weight_grams, 0);
+//     const totalPrice  = valid.reduce((s, r) => s + r.price_yen, 0);
+//     if (totalWeight === 0) return null;
+//     const per100 = (totalPrice / totalWeight) * 100;
+//     return Math.round(per100);
+//   }
+
+
+// }

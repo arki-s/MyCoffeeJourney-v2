@@ -102,13 +102,13 @@ export async function setDrinkingGrindSizes(
   if (existingErr) throw existingErr;
 
   // Set を使って差分を計算
-  const currentSet = new Set<string>((existingData ?? []).map((d: any) => d.grind_size_id));
+  const currentSet = new Set<string>((existingData ?? []).map((d) => d.grind_size_id));
   const desiredSet = new Set<string>(desired);
 
   // 削除対象: 現在あるが、望ましい集合に含まれないもの
   const idsToDelete = (existingData ?? [])
-    .filter((d: any) => !desiredSet.has(d.grind_size_id))
-    .map((d: any) => d.id);
+    .filter((d) => !desiredSet.has(d.grind_size_id))
+    .map((d) => d.id);
 
   if (idsToDelete.length > 0) {
     const { error: deleteError } = await supabase

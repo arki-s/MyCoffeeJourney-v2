@@ -1,14 +1,16 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useLogin } from '../hooks/useLogin';
 
 export default function LoginScreen() {
   const { loginWithEmail, loading, error } = useLogin();
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = useState('');
+  const [loginMessage, setLoginMessage] = useState<string>("");
 
   const handleLogin = async () => {
     const success = await loginWithEmail(email);
     if (success) {
+      setLoginMessage("メールアドレスにログインの案内を送付したのでご確認ください。")
     } else {
       console.error(error);
     }
@@ -39,6 +41,9 @@ export default function LoginScreen() {
         <Text style={{ color: '#fff', textAlign: 'center' }}>
           {loading ? 'ログイン中……' : 'メールアドレスでログイン'}
         </Text>
+        {loginMessage !== "" && (
+          <Text style={{ color: 'green', marginTop: 8 }}>{loginMessage}</Text>
+        )}
       </TouchableOpacity>
     </View>
   )

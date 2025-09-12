@@ -1,19 +1,20 @@
 import { Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useUserStore } from '../../../stores/useUserStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RecordsStackParamList } from '../../../type';
+import { GrindSize, RecordsStackParamList } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
 import { createDrinkingRecord, setDrinkingGrindSizes } from '../../auth/services/recordService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
+import { listGrindSizes } from '../../auth/services/grindSizeService';
 
 
 export default function CoffeeRecordCreateScreen() {
   const user = useUserStore((state) => state.user);
 
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState<boolean>(false);
 
   const [newRecord, setNewRecord] = useState<{
     coffee_id: string;
@@ -29,15 +30,31 @@ export default function CoffeeRecordCreateScreen() {
     start_date: '',
   });
 
-  const [selectedGrindSizes, setSelectedGrindSizes] = useState<string[]>([
+  const [selectedGrindSizes] = useState<string[]>([
     'e6b557c4-3079-4df3-9287-f1989d067485', // テスト用 ID
   ]);
+
+  const [grindSizes, setGrindSizes] = useState<GrindSize[]>([]);
 
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordCreate'>;
   const navigation = useNavigation<RecordsNav>();
 
   const handleHomePress = () => {
     navigation.navigate('RecordsHome');
+  };
+
+  useEffect(() => {
+    fetchGrindSizes();
+  }, [])
+
+  const fetchGrindSizes = async () => {
+    try {
+      const data = await listGrindSizes();
+      //プルダウンの選択肢に挿入する必要あり
+      setGrindSizes(data);
+    } catch (error) {
+      console.error("Error fetching grind sizes:", error);
+    }
   };
 
   const handleRecordCreate = async (newRecord: {
@@ -72,9 +89,18 @@ export default function CoffeeRecordCreateScreen() {
     }
   };
 
+  const GrindSizeNames = grindSizes ? grindSizes.map((g) => {
+    return (
+      <Text key={g.id}>{g.name}</Text>
+    )
+  }) : "";
+
   return (
     <View>
       <Text>CoffeeRecordCreateScreen</Text>
+      {/* コーヒー名のプルダウン選択追加予定 */}
+      {/* コーヒーの挽き目を複数選択追加予定 */}
+      {GrindSizeNames}
 
       <TouchableOpacity
         onPress={() => handleHomePress()}

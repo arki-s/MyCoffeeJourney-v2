@@ -56,6 +56,7 @@ export async function deleteReview(id: string): Promise<void> {
   if (error) throw error;
 }
 
+// coffee詳細画面表示用
 export async function listReviewsForCoffee (coffeeId:string): Promise<CoffeeReviewItem[]>{
   const user = await requireUser();
 

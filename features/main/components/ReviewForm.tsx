@@ -15,7 +15,7 @@ export default function ReviewForm(props: Props) {
 
   const [score, setScore] = useState<number>(props.initialScore || 0);
   const [comments, setComments] = useState<string>(props.initialComments || "");
-  const [title, setTitle] = useState<string>(props.title || "レビューを追加");
+  const [title] = useState<string>(props.title || "レビューを追加");
 
   // やることリスト
   //  props定義（initialScore, initialComments, onSubmit, onCancel, loading, error, title）

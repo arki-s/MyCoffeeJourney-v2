@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RecordDetail, RecordsStackParamList } from '../../../type';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 import { getRecordDetail } from '../../auth/services/recordService';
 
@@ -12,8 +12,8 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const { id } = route.params;
   const [recordDetail, setRecordDetail] = useState<RecordDetail>();
 
-  type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
-  const navigation = useNavigation<RecordsNav>();
+  // type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
+  // const navigation = useNavigation<RecordsNav>();
 
   useEffect(() => {
     if (id) fetchRecordDetail(id);
@@ -29,11 +29,9 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     }
   };
 
-  const handleHomePress = () => {
-    navigation.navigate('RecordsHome');
-  };
-
-
+  // const handleHomePress = () => {
+  //   navigation.navigate('RecordsHome');
+  // };
 
   //コーヒーレコード詳細画面
   // - 飲んだコーヒーの情報（名前、ブランド、焙煎日、購入日、購入価格、購入重量、挽き目）
@@ -41,9 +39,6 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   // - 飲み終わった場合はレビュー（スコア、コメント、編集・削除ボタン）
   // - 飲み終わっていない場合は「飲み終わった」ボタン
   // - 画面上部に「一覧に戻る」ボタン
-
-
-
   return (
     <View>
       <Text>CoffeeRecordScreen</Text>
