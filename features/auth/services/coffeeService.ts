@@ -259,7 +259,7 @@ export async function getCoffeeDetail(id:string): Promise<CoffeeDetail> {
   let beans: { id:string, name:string }[] = [];
   if(beanIds.length > 0) {
     const { data:beanRows, error:beansError } = await supabase
-      .from("beans")
+      .from("coffee_beans")
       .select("id, name")
       .in("id", beanIds)
       .eq("user_id", user.id)
@@ -272,6 +272,7 @@ export async function getCoffeeDetail(id:string): Promise<CoffeeDetail> {
     .select("id, weight_grams, price_yen")
     .eq("coffee_id", id)
     .eq("user_id", user.id)
+    .not("end_date", "is", null)
   if (recordsError) throw recordsError;
 
   const recordIds = (records ?? []).map(r=> r.id);
