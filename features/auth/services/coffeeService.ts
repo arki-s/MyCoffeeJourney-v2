@@ -1,5 +1,5 @@
 import { supabase } from "../../../lib/supabase";
-import { Coffee, CoffeeWithBrand } from "../../../type";
+import { Coffee, CoffeeDetail, CoffeeWithBrand } from "../../../type";
 import { requireUser } from "../session";
 
 function validateName(raw: string): string {
@@ -227,29 +227,95 @@ export async function deleteCoffeeInclusion(id: string) {
   return data;
 }
 
-// export async function getCoffeeDetail(id:string) {
-//   const user = await requireUser();
+export async function getCoffeeDetail(id:string): Promise<CoffeeDetail> {
+  const user = await requireUser();
 
-//   const { data, error } = await supabase
-//     .from("coffee")
-//     .select("*, brand:brand_id(name), beans (name)")
-//   //ブランド名
-//   //コーヒー豆産地名（複数）
-//   //飲んだ回数(レコードカウント)
-//   //飲んだ量(レコードのweight_gramのsum)
-//   //平均金額(レコードのprice_yenのAVG)
-//   //レビュー平均点(scoreのAVG)
-//   //レビュー一覧（recordのstart_date,end_date付き）→クリックでrecordDetailするのでrecord_idも必要
+  const { data: coffee, error: coffeeError } = await supabase
+    .from("coffee")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+  if (coffeeError) throw coffeeError;
+  if (!coffee) throw new Error("coffee not found");
 
-//   function computePricePer100g(recs: { weight_grams: number; price_yen: number }[]): number | null {
-//     const valid = recs.filter(r => r.weight_grams > 0 && r.price_yen >= 0);
-//     if (valid.length === 0) return null;
-//     const totalWeight = valid.reduce((s, r) => s + r.weight_grams, 0);
-//     const totalPrice  = valid.reduce((s, r) => s + r.price_yen, 0);
-//     if (totalWeight === 0) return null;
-//     const per100 = (totalPrice / totalWeight) * 100;
-//     return Math.round(per100);
-//   }
+  const { data: brand, error:brandError } = await supabase
+    .from("coffee_brands")
+    .select("*")
+    .eq("id", coffee.brand_id)
+    .eq("user_id", user.id)
+    .single();
+  if (brandError) throw brandError;
+  if (!brand) throw new Error("brand not found");
 
+  const { data:inclusionRows, error: inclusionError } = await supabase
+    .from("coffee_bean_inclusions")
+    .select("bean_id")
+    .eq("coffee_id", id)
+    .eq("user_id", user.id);
+  if (inclusionError) throw inclusionError;
 
-// }
+  const beanIds = Array.from(new Set(inclusionRows) ?? []).map(r => r.bean_id);
+  let beans: { id:string, name:string }[] = [];
+  if(beanIds.length > 0) {
+    const { data:beanRows, error:beansError } = await supabase
+      .from("beans")
+      .select("id, name")
+      .in("id", beanIds)
+      .eq("user_id", user.id)
+    if (beansError) throw beansError;
+    beans = beanRows ?? [];
+  }
+
+  const { data: records, error: recordsError } = await supabase
+    .from("drinking_records")
+    .select("id, weight_grams, price_yen")
+    .eq("coffee_id", id)
+    .eq("user_id", user.id)
+  if (recordsError) throw recordsError;
+
+  const recordIds = (records ?? []).map(r=> r.id);
+  const recordCount = records?.length ?? 0;
+  const totalWeight = (records ?? []).reduce((s, r) => s + (r.weight_grams ?? 0), 0);
+
+  // コーヒー100gあたりの金額を計算する
+  function computePricePer100g(recs: { weight_grams: number; price_yen: number }[]): number | null {
+    const valid = recs.filter(r => r.weight_grams > 0 && r.price_yen >= 0);
+    if (valid.length === 0) return null;
+    const totalWeight = valid.reduce((s, r) => s + r.weight_grams, 0);
+    const totalPrice  = valid.reduce((s, r) => s + r.price_yen, 0);
+    if (totalWeight === 0) return null;
+    const per100 = (totalPrice / totalWeight) * 100;
+    return Math.round(per100);
+  }
+
+  const pricePer100g = computePricePer100g(records);
+
+  let avgScore: number | null = null;
+  if (recordIds.length > 0) {
+    const {data: reviews, error: reviewError } = await supabase
+      .from("reviews")
+      .select("score")
+      .in("record_id", recordIds)
+      .eq("user_id", user.id);
+    if (reviewError) throw reviewError;
+
+    const scores = (reviews ?? []).map(r => r.score).filter(s => typeof s === "number");
+    if (scores.length > 0) {
+      avgScore = scores.reduce((s, v) => s + v, 0) / scores.length;
+    }
+  }
+
+  return {
+    ...(coffee as Coffee),
+    brand,
+    beans,
+    stats:{
+      recordCount,
+      totalWeight,
+      pricePer100g,
+      avgScore
+    }
+  }
+
+}
