@@ -255,7 +255,7 @@ export async function getCoffeeDetail(id:string): Promise<CoffeeDetail> {
     .eq("user_id", user.id);
   if (inclusionError) throw inclusionError;
 
-  const beanIds = Array.from(new Set(inclusionRows) ?? []).map(r => r.bean_id);
+  const beanIds = Array.from(new Set(inclusionRows ?? [])).map(r => r.bean_id);
   let beans: { id:string, name:string }[] = [];
   if(beanIds.length > 0) {
     const { data:beanRows, error:beansError } = await supabase
