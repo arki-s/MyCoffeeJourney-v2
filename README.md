@@ -1,7 +1,9 @@
 # ☕ MyCoffeeJourney v2 ☕
 
-コーヒー好きによるコーヒー好きのためのコーヒーのアプリ。
-以前作成した v1 を 1 から新規作成して継続利用可能なアプリを目指す。
+![CI](https://github.com/arki-s/MyCoffeeJourney-v2/actions/workflows/ci.yml/badge.svg)
+
+コーヒー好きによるコーヒー好きのためのコーヒーのアプリ。<br>
+以前作成した v1 を 1 から新規作成して継続利用可能なアプリを目指しています。
 
 ## 全体機能・画面遷移構成
 
@@ -39,6 +41,18 @@
 
 - Zustand
 - Context API との併用検討可能性あり
+
+---
+
+## 開発について
+
+本プロジェクトでは GitHub Actions を用いた CI（継続的インテグレーション）を導入しています。
+
+- ESLint（TypeScript + React ルール）による静的コード解析
+- push／pull request 時に自動実行
+- コード品質を一定水準に保つ仕組みを整備済み
+
+今後はユニットテストやビルド検証も追加予定です。
 
 ---
 
