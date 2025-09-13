@@ -1,9 +1,10 @@
-import { Text, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
-import { RouteProp } from '@react-navigation/native';
-import { getCoffeeDetail } from '../../auth/services/coffeeService';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { deleteCoffee, getCoffeeDetail } from '../../auth/services/coffeeService';
 import { listReviewsForCoffee } from '../../auth/services/reviewService';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -42,6 +43,18 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     }
   };
 
+  const handleDeletePress = async () => {
+    setLoading(true)
+    try {
+      await deleteCoffee(id);
+      navigation.navigate('CoffeeHome');
+    } catch (error) {
+      console.error("Error deleting coffee", error);
+    } finally {
+      setLoading(false)
+    }
+  };
+
   const coffeeDetails = coffeeDetail ? (
     <View>
       <Text style={{ fontSize: 18 }}>{coffeeDetail.brand?.name}</Text>
@@ -71,14 +84,49 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   //コーヒー詳細画面
   // コーヒーの情報、名前、ブランド、豆産地一覧、コメント
   //これまでに飲んだ回数や量、累計金額、平均レビュー点数も表示できると良い
-  // 画面上部に「一覧に戻る」ボタン
   // 将来的に画像表示もしたい
   // 編集ボタンと削除ボタンも実装予定
+  //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
+  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
+  const navigation = useNavigation<RecordsNav>();
+
+  const handleHomePress = () => {
+    navigation.navigate('CoffeeHome');
+  };
+
   return (
     <View>
       <Text>CoffeeDetailScreen</Text>
+      <TouchableOpacity
+        onPress={() => handleHomePress()}
+        style={{
+          backgroundColor: '#34C759',
+          padding: 12,
+          marginTop: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>
+          コーヒー一覧へ戻る
+        </Text>
+      </TouchableOpacity>
+
       {coffeeDetails}
       {coffeeReviewlist}
+
+      <TouchableOpacity
+        onPress={() => handleDeletePress()}
+        style={{
+          backgroundColor: '#c73434ff',
+          padding: 12,
+          marginTop: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>
+          削除する
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
