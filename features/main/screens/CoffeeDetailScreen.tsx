@@ -104,44 +104,6 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     }
   };
 
-  const coffeeDetails = coffeeDetail ? (
-    <View>
-      <Text style={{ fontSize: 18 }}>{coffeeDetail.brand?.name}</Text>
-      <Text style={{ fontSize: 18 }}>{coffeeDetail.name}</Text>
-      <Text style={{ fontSize: 18 }}>飲んだ回数： {coffeeDetail.stats.recordCount} 回</Text>
-      <Text style={{ fontSize: 18 }}>100gごとの金額： {coffeeDetail.stats.pricePer100g} 円</Text>
-      <Text style={{ fontSize: 18 }}>スコア平均点： {coffeeDetail.stats.avgScore}</Text>
-      <Text style={{ fontSize: 18 }}>今までに飲んだ量： {coffeeDetail.stats.totalWeight} g</Text>
-    </View>
-  ) : (
-    <Text style={{ fontSize: 18 }}>Loading...</Text>
-  );
-
-  const coffeeReviewlist = coffeeReviews.length > 0 ?
-    coffeeReviews.map((r) => {
-      return (
-        <View key={r.record_id}>
-          <Text style={{ fontSize: 18 }}>飲んだ期間：{r.start_date}〜{r.end_date}</Text>
-          <Text style={{ fontSize: 18 }}>{r.score}</Text>
-          <Text style={{ fontSize: 18 }}>{r.comments}</Text>
-        </View>
-      )
-    })
-    : (
-      <Text style={{ fontSize: 18 }}>Loading...</Text>
-    );
-  //コーヒー詳細画面
-  // コーヒーの情報、名前、ブランド、豆産地一覧、コメント
-  //これまでに飲んだ回数や量、累計金額、平均レビュー点数も表示できると良い
-  // 将来的に画像表示もしたい
-  //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
-  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
-  const navigation = useNavigation<RecordsNav>();
-
-  const handleHomePress = () => {
-    navigation.navigate('CoffeeHome');
-  };
-
   async function handleEditSubmit(form: {
     name: string;
     comments: string;
@@ -179,6 +141,45 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       setLoading(false);
     }
   }
+
+  const coffeeDetails = coffeeDetail ? (
+    <View>
+      <Text style={{ fontSize: 18 }}>{coffeeDetail.brand?.name}</Text>
+      <Text style={{ fontSize: 18 }}>{coffeeDetail.name}</Text>
+      <Text style={{ fontSize: 18 }}>{coffeeDetail.comments}</Text>
+      <Text style={{ fontSize: 18 }}>飲んだ回数： {coffeeDetail.stats.recordCount} 回</Text>
+      <Text style={{ fontSize: 18 }}>100gごとの金額： {coffeeDetail.stats.pricePer100g} 円</Text>
+      <Text style={{ fontSize: 18 }}>スコア平均点： {coffeeDetail.stats.avgScore}</Text>
+      <Text style={{ fontSize: 18 }}>今までに飲んだ量： {coffeeDetail.stats.totalWeight} g</Text>
+    </View>
+  ) : (
+    <Text style={{ fontSize: 18 }}>Loading...</Text>
+  );
+
+  const coffeeReviewlist = coffeeReviews.length > 0 ?
+    coffeeReviews.map((r) => {
+      return (
+        <View key={r.record_id}>
+          <Text style={{ fontSize: 18 }}>飲んだ期間：{r.start_date}〜{r.end_date}</Text>
+          <Text style={{ fontSize: 18 }}>{r.score}</Text>
+          <Text style={{ fontSize: 18 }}>{r.comments}</Text>
+        </View>
+      )
+    })
+    : (
+      <Text style={{ fontSize: 18 }}>まだレビューはありません。</Text>
+    );
+  //コーヒー詳細画面
+  // コーヒーの情報、名前、ブランド、豆産地一覧、コメント
+  //これまでに飲んだ回数や量、累計金額、平均レビュー点数も表示できると良い
+  // 将来的に画像表示もしたい
+  //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
+  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
+  const navigation = useNavigation<RecordsNav>();
+
+  const handleHomePress = () => {
+    navigation.navigate('CoffeeHome');
+  };
 
   return (
     <View>
