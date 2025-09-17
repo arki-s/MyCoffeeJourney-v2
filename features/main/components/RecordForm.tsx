@@ -1,5 +1,7 @@
 import { Modal, Text, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { formatLocalYYYYMMDD } from '../../../utils/date';
 
 type Props = {
   weight_grams: number;
@@ -9,6 +11,7 @@ type Props = {
   start_date: string;
   end_date: string | null;
   drinkingGrindSizes: string[];
+  canEditEndDate: boolean;
   onSubmit: (data: {
     weight_grams: number;
     price_yen: number;
@@ -25,7 +28,7 @@ type Props = {
 
 export default function RecordForm(props: Props) {
 
-  const [record] = useState<{
+  const [record, setRecord] = useState<{
     weight_grams: number;
     price_yen: number;
     purchase_date: string;
@@ -42,9 +45,47 @@ export default function RecordForm(props: Props) {
   });
   // const [drinkingGrindSizes] = useState<string[]>(props.drinkingGrindSizes);
 
+  const [canEditEndDate] = useState<boolean>(props.canEditEndDate);
+
   return (
     <Modal>
       <Text>RecordForm</Text>
+
+      <Text>購入日を選択</Text>
+      <DateTimePicker
+        value={record.purchase_date ? new Date(record.purchase_date) : new Date()}
+        mode="date"
+        display="default"
+        onChange={(event, selectedDate) => {
+          const currentDate = selectedDate || new Date();
+          setRecord(prev => ({ ...prev, purchase_date: formatLocalYYYYMMDD(currentDate) }))
+        }}
+      />
+      <Text>飲み始めた日を選択</Text>
+      <DateTimePicker
+        value={record.start_date ? new Date(record.start_date) : new Date()}
+        mode="date"
+        display="default"
+        onChange={(event, selectedDate) => {
+          const currentDate = selectedDate || new Date();
+          setRecord(prev => ({ ...prev, start_date: formatLocalYYYYMMDD(currentDate) }))
+        }}
+      />
+
+      {canEditEndDate && (
+        <>
+          <Text>飲み終えた日を選択</Text>
+          <DateTimePicker
+            value={record.end_date ? new Date(record.end_date) : new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              const currentDate = selectedDate || new Date();
+              setRecord(prev => ({ ...prev, end_date: formatLocalYYYYMMDD(currentDate) }))
+            }}
+          />
+        </>
+      )}
 
       <TouchableOpacity
         onPress={props.onCancel}
