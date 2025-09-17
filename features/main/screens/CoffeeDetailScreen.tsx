@@ -2,15 +2,43 @@ import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
 import { RouteProp, useNavigation } from '@react-navigation/native';
-import { deleteCoffee, getCoffeeDetail } from '../../auth/services/coffeeService';
+import { deleteCoffee, getBeanInclusions, getCoffeeDetail, setCoffeeBeanInclusions, updateCoffee } from '../../auth/services/coffeeService';
 import { listReviewsForCoffee } from '../../auth/services/reviewService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import CoffeeForm from '../components/CoffeeForm';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
 export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRouteProp }) {
   const [coffeeDetail, setCoffeeDetail] = useState<CoffeeDetail>();
   const [coffeeReviews, setCoffeeReviews] = useState<CoffeeReviewItem[]>([]);
+  const [coffee, setCoffee] = useState<{
+    id: string;
+    name: string;
+    comments: string;
+    photo_url: string;
+    roast_level: number;
+    body: number;
+    sweetness: number;
+    fruity: number;
+    bitter: number;
+    aroma: number;
+    brand_id: string;
+  }>({
+    id: '',
+    name: '',
+    comments: '',
+    photo_url: '',
+    roast_level: 1,
+    body: 1,
+    sweetness: 1,
+    fruity: 1,
+    bitter: 1,
+    aroma: 1,
+    brand_id: ''
+  });
+  const [includedBeans, setIncludedbeans] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
   const [, setLoading] = useState<boolean>(false);
   const { id } = route.params;
 
@@ -24,6 +52,27 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     try {
       const detail = await getCoffeeDetail(id);
       setCoffeeDetail(detail);
+      setCoffee({
+        id: id,
+        name: detail.name,
+        comments: detail.comments ?? '',
+        photo_url: detail.photo_url ?? '',
+        roast_level: detail.roast_level,
+        body: detail.body,
+        sweetness: detail.sweetness,
+        fruity: detail.fruity,
+        bitter: detail.bitter,
+        aroma: detail.aroma,
+        brand_id: detail.brand_id
+      });
+
+      try {
+        const beans = await getBeanInclusions(id);
+        setIncludedbeans(beans);
+      } catch (error) {
+        console.error("Error fetching bean inclusion", error);
+      }
+
     } catch (error) {
       console.error("Error fetching coffee detail", error);
     } finally {
@@ -85,7 +134,6 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   // コーヒーの情報、名前、ブランド、豆産地一覧、コメント
   //これまでに飲んだ回数や量、累計金額、平均レビュー点数も表示できると良い
   // 将来的に画像表示もしたい
-  // 編集ボタンと削除ボタンも実装予定
   //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
   const navigation = useNavigation<RecordsNav>();
@@ -93,6 +141,44 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   const handleHomePress = () => {
     navigation.navigate('CoffeeHome');
   };
+
+  async function handleEditSubmit(form: {
+    name: string;
+    comments: string;
+    photo_url: string;
+    roast_level: number;
+    body: number;
+    sweetness: number;
+    fruity: number;
+    bitter: number;
+    aroma: number;
+    brand_id: string;
+    includedBeans: string[];
+  }) {
+    try {
+      setLoading(true);
+      await updateCoffee(
+        coffee.id,
+        form.name,
+        form.brand_id,
+        form.comments,
+        form.photo_url,
+        form.roast_level,
+        form.body,
+        form.sweetness,
+        form.fruity,
+        form.bitter,
+        form.aroma
+      );
+      await setCoffeeBeanInclusions(id, form.includedBeans);
+      await fetchCoffeeDetail(id);
+      setModalVisible(null);
+    } catch (error) {
+      console.error("Error updating coffee:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <View>
@@ -115,6 +201,20 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       {coffeeReviewlist}
 
       <TouchableOpacity
+        onPress={() => setModalVisible("edit")}
+        style={{
+          backgroundColor: '#51c734ff',
+          padding: 12,
+          marginTop: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>
+          編集する
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         onPress={() => handleDeletePress()}
         style={{
           backgroundColor: '#c73434ff',
@@ -127,6 +227,22 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
           削除する
         </Text>
       </TouchableOpacity>
+
+      {modalVisible === "edit" && (<CoffeeForm
+        name={coffee.name}
+        comments={coffee.comments}
+        photo_url={coffee.photo_url}
+        roast_level={coffee.roast_level}
+        body={coffee.body}
+        sweetness={coffee.sweetness}
+        fruity={coffee.fruity}
+        bitter={coffee.bitter}
+        aroma={coffee.aroma}
+        brand_id={coffee.brand_id}
+        includedBeans={includedBeans}
+        onSubmit={(form) => handleEditSubmit(form)}
+        onCancel={() => setModalVisible(null)}
+      />)}
     </View>
   )
 }

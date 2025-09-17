@@ -139,7 +139,7 @@ export async function setCoffeeBeanInclusions(
   // 追加対象: 望ましい集合にあるが、現在存在しないもの
   const toInsert = desired
     .filter((bean) => !currentSet.has(bean))
-    .map((bean) => ({ coffeeId, bean_id: bean, user_id: user.id }));
+    .map((bean) => ({ coffee_id: coffeeId, bean_id: bean, user_id: user.id }));
 
   if (toInsert.length > 0) {
     const { error: insertError } = await supabase
@@ -318,5 +318,30 @@ export async function getCoffeeDetail(id:string): Promise<CoffeeDetail> {
       avgScore
     }
   }
+}
+
+export async function getBeanInclusions(id:string): Promise<string[]> {
+  const user = await requireUser();
+
+  const { data:inclusionRows, error: inclusionError } = await supabase
+    .from("coffee_bean_inclusions")
+    .select("bean_id")
+    .eq("coffee_id", id)
+    .eq("user_id", user.id);
+  if (inclusionError) throw inclusionError;
+
+  const beanIds = Array.from(new Set(inclusionRows ?? [])).map(r => r.bean_id);
+  let beans: string[] = [];
+  if(beanIds.length > 0) {
+    const { data:beanRows, error:beansError } = await supabase
+      .from("coffee_beans")
+      .select("id")
+      .in("id", beanIds)
+      .eq("user_id", user.id)
+    if (beansError) throw beansError;
+    beans = beanRows.map(r => r.id) ?? [];
+  }
+
+  return beans;
 
 }
