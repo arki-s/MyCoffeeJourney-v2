@@ -214,13 +214,21 @@ export async function updateFinishedDrinkingRecord(
 export async function deleteDrinkingRecord(id: string): Promise<DrinkingRecord> {
   const user = await requireUser();
 
-  // まず関連するgrind sizesを削除
+  // 関連するgrind sizesを削除
   const { error: delGrindError } = await supabase
     .from("drinking_grind_sizes")
     .delete()
     .eq("record_id", id)
     .eq("user_id", user.id);
   if (delGrindError) throw delGrindError;
+
+  // 関連するreviewsを削除
+  const { error: delReviewError } = await supabase
+    .from("reviews")
+    .delete()
+    .eq("record_id", id)
+    .eq("user_id", user.id);
+  if (delReviewError) throw delReviewError;
 
   // 次にrecord自体を削除
   const { data, error } = await supabase.from("drinking_records").delete()

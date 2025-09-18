@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 // import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RecordDetail, RecordsStackParamList } from '../../../type';
 // import { useNavigation } from '@react-navigation/native';
-import { RouteProp } from '@react-navigation/native';
-import { getDrinkingGrindSizes, getRecordDetail, updateFinishedDrinkingRecord, updateUnfinishedDrinkingRecord } from '../../auth/services/recordService';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { deleteDrinkingRecord, getDrinkingGrindSizes, getRecordDetail, updateFinishedDrinkingRecord, updateUnfinishedDrinkingRecord } from '../../auth/services/recordService';
 import RecordForm from '../components/RecordForm';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type CoffeeRecordScreenRouteProp = RouteProp<RecordsStackParamList, 'RecordDetails'>;
 
@@ -17,8 +18,8 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const [, setLoading] = useState<boolean>(false);
   const [canEditEndDate, setCanEditEndDate] = useState<boolean>(false);
 
-  // type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
-  // const navigation = useNavigation<RecordsNav>();
+  type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
+  const navigation = useNavigation<RecordsNav>();
 
   useEffect(() => {
     if (id) fetchRecordDetail(id);
@@ -88,6 +89,19 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     }
   };
 
+  const handleDeletePress = async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      await deleteDrinkingRecord(id);
+      navigation.navigate('RecordsHome');
+    } catch (error) {
+      console.error("Error deleting record", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   //コーヒーレコード詳細画面
   // - 飲んだコーヒーの情報（名前、ブランド、焙煎日、購入日、購入価格、購入重量、挽き目）
   // - 飲み始めた日、飲み終わった日
@@ -118,6 +132,20 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
       >
         <Text style={{ color: '#fff', textAlign: 'center' }}>
           編集する
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => handleDeletePress()}
+        style={{
+          backgroundColor: '#c73434ff',
+          padding: 12,
+          marginTop: 16,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>
+          削除する
         </Text>
       </TouchableOpacity>
 

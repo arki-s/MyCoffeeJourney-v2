@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FinishedWithReview, RecordsStackParamList, UnfinishedWithName } from '../../../type';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { finishDrinkingRecord, listFinishedDrinkingRecords, listUnfinishedDrinkingRecords } from '../../auth/services/recordService';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
@@ -14,10 +14,12 @@ export default function CoffeeRecordListScreen() {
   const [modalVisible, setModalVisible] = useState<"review" | null>(null);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchOngoingRecords();
-    fetchFinishedRecords();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchOngoingRecords();
+      fetchFinishedRecords();
+    }, [])
+  );
 
   const fetchOngoingRecords = async () => {
     try {

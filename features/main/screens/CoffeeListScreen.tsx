@@ -1,16 +1,18 @@
 import { Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { CoffeeStackParamList, CoffeeWithBrand } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { listCoffees } from '../../auth/services/coffeeService';
 
 export default function CoffeeListScreen() {
   const [coffees, setCoffees] = useState<CoffeeWithBrand[]>([]);
 
-  useEffect(() => {
-    fetchCoffees();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchCoffees();
+    }, [])
+  );
 
   const fetchCoffees = async () => {
     try {
