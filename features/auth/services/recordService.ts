@@ -247,3 +247,29 @@ export async function getRecordDetail(id:string): Promise<RecordDetail>{
    return data;
 
 }
+
+export async function getDrinkingGrindSizes(id:string): Promise<string[]> {
+  const user = await requireUser();
+
+  const { data:grindSizeRows, error: grindSizeError } = await supabase
+    .from("drinking_grind_sizes")
+    .select("grind_size_id")
+    .eq("record_id", id)
+    .eq("user_id", user.id);
+  if (grindSizeError) throw grindSizeError;
+
+  const grindSizeIds = Array.from(new Set(grindSizeRows ?? [])).map(r => r.grind_size_id);
+  let grindSizes: string[] = [];
+  if(grindSizeIds.length > 0) {
+    const { data:grindSizeRows, error:grindSizesError } = await supabase
+      .from("grind_sizes")
+      .select("id")
+      .in("id", grindSizeIds)
+      .eq("user_id", user.id)
+    if (grindSizesError) throw grindSizesError;
+    grindSizes = grindSizeRows.map(r => r.id) ?? [];
+  }
+
+  return grindSizes;
+
+}

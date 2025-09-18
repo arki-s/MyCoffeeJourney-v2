@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { RecordDetail, RecordsStackParamList } from '../../../type';
 // import { useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
-import { getRecordDetail, updateFinishedDrinkingRecord, updateUnfinishedDrinkingRecord } from '../../auth/services/recordService';
+import { getDrinkingGrindSizes, getRecordDetail, updateFinishedDrinkingRecord, updateUnfinishedDrinkingRecord } from '../../auth/services/recordService';
 import RecordForm from '../components/RecordForm';
 
 type CoffeeRecordScreenRouteProp = RouteProp<RecordsStackParamList, 'RecordDetails'>;
@@ -13,7 +13,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const { id } = route.params;
   const [recordDetail, setRecordDetail] = useState<RecordDetail>();
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
-  const [, setDrinkingGrindSizes] = useState<string[]>([]);
+  const [drinkingGrindSizes, setDrinkingGrindSizes] = useState<string[]>([]);
   const [, setLoading] = useState<boolean>(false);
   const [canEditEndDate, setCanEditEndDate] = useState<boolean>(false);
 
@@ -28,6 +28,8 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     try {
       const data = await getRecordDetail(id);
       setRecordDetail(data);
+      const grindSizes = await getDrinkingGrindSizes(id);
+      setDrinkingGrindSizes(grindSizes);
 
       if (data.end_date !== null && data.end_date !== "") setCanEditEndDate(true);
 
@@ -75,8 +77,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
         );
       }
 
-      setDrinkingGrindSizes(form.drinkingGrindSizes);
-      fetchRecordDetail(id);
+      await fetchRecordDetail(id);
 
     } catch (error) {
       console.error("Error updating record:", error);
@@ -127,7 +128,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
         coffee_id={recordDetail?.coffee_id ?? ''}
         start_date={recordDetail?.start_date ?? ''}
         end_date={recordDetail?.end_date ?? ''}
-        drinkingGrindSizes={[]}
+        drinkingGrindSizes={drinkingGrindSizes}
         canEditEndDate={canEditEndDate}
         onSubmit={(form) => handleEditSubmit(form)}
         onCancel={() => setModalVisible(null)} />)}
