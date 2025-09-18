@@ -1,10 +1,12 @@
 import { Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CoffeeStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createCoffee, setCoffeeBeanInclusions } from '../../auth/services/coffeeService';
+import { listBeans } from '../../auth/services/beanService';
+import MultiSelectModal from '../components/MultiSelectModal';
 
 export default function CoffeeCreateScreen() {
   const user = useUserStore((state) => state.user);
@@ -34,9 +36,9 @@ export default function CoffeeCreateScreen() {
     aroma: 1,
     brand_id: 'e8218a36-c99b-498c-8aed-bc05082b16de' //仮のbrand_id
   });
-  const [includedBeans] = useState<string[]>([
-    '2709d8a3-7b26-4af2-ae8b-ed0a45b29348' //仮のbean_id
-  ]);
+  const [beans, setBeans] = useState<{ id: string, label: string }[]>([]);
+  const [includedBeans, setIncludedbeans] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeCreate'>;
   const navigation = useNavigation<RecordsNav>();
@@ -92,6 +94,19 @@ export default function CoffeeCreateScreen() {
 
   };
 
+  useEffect(() => {
+    fetchBeans();
+  }, [])
+
+  const fetchBeans = async () => {
+    try {
+      const beanData = await listBeans();
+      setBeans(beanData.map((b) => { return { id: b.id, label: b.name } }));
+    } catch (error) {
+      console.error("Error fetching beans", error);
+    }
+  }
+
   return (
     <View>
       <Text>CoffeeCreateScreen</Text>
@@ -118,7 +133,21 @@ export default function CoffeeCreateScreen() {
         autoCapitalize='none'
         autoCorrect={false}
       />
-      {/* コーヒー豆産地を複数選択可能にする予定 */}
+
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+      >
+        <Text>コーヒー豆を選択</Text>
+      </TouchableOpacity>
+
+      <MultiSelectModal
+        visible={modalVisible}
+        options={beans}
+        selectedIds={includedBeans}
+        onChange={(ids) => setIncludedbeans(ids)}
+        onClose={() => setModalVisible(false)}
+      />
+
       <TextInput
         placeholder='コメントを入力'
         value={newCoffee.comments}

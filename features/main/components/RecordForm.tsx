@@ -1,7 +1,9 @@
 import { Modal, Text, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
+import { listGrindSizes } from '../../auth/services/grindSizeService';
+import MultiSelectModal from './MultiSelectModal';
 
 type Props = {
   weight_grams: number;
@@ -35,6 +37,7 @@ export default function RecordForm(props: Props) {
     coffee_id: string;
     start_date: string;
     end_date: string | null;
+    drinkingGrindSizes: string[];
   }>({
     weight_grams: props.weight_grams,
     price_yen: props.price_yen,
@@ -42,14 +45,38 @@ export default function RecordForm(props: Props) {
     coffee_id: props.coffee_id,
     start_date: props.start_date,
     end_date: props.end_date,
+    drinkingGrindSizes: props.drinkingGrindSizes,
   });
-  // const [drinkingGrindSizes] = useState<string[]>(props.drinkingGrindSizes);
+  const [grindSizes, setGrindSizes] = useState<{ id: string, label: string }[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const [canEditEndDate] = useState<boolean>(props.canEditEndDate);
 
+  useEffect(() => {
+    fetchGrindSizes();
+  }, []);
+
+  const fetchGrindSizes = async () => {
+    const grindSizes = await listGrindSizes();
+    setGrindSizes(grindSizes.map((g) => { return { id: g.id, label: g.name } }))
+  }
+
   return (
     <Modal>
-      <Text>RecordForm</Text>
+      <Text style={{ marginTop: 50 }}>RecordForm</Text>
+
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+      >
+        <Text>挽き目を選択</Text>
+      </TouchableOpacity>
+
+      <MultiSelectModal
+        visible={modalVisible}
+        options={grindSizes}
+        selectedIds={record.drinkingGrindSizes}
+        onChange={(id) => setRecord(prev => ({ ...prev, drinkingGrindSizes: id }))}
+        onClose={() => setModalVisible(false)} />
 
       <Text>購入日を選択</Text>
       <DateTimePicker
@@ -101,7 +128,7 @@ export default function RecordForm(props: Props) {
           coffee_id: record.coffee_id,
           start_date: record.start_date,
           end_date: record.end_date,
-          drinkingGrindSizes: props.drinkingGrindSizes,
+          drinkingGrindSizes: record.drinkingGrindSizes,
         })}
         disabled={props.loading}
       >

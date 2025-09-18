@@ -1,5 +1,7 @@
 import { Modal, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { listBeans } from '../../auth/services/beanService';
+import MultiSelectModal from './MultiSelectModal';
 
 type Props = {
   name: string;
@@ -55,11 +57,26 @@ export default function CoffeeForm(props: Props) {
     aroma: props.aroma,
     brand_id: props.brand_id
   });
-  // const [includedBeans] = useState<string[]>(props.includedBeans);
+  const [includedBeans, setIncludedbeans] = useState<string[]>(props.includedBeans);
+  const [beans, setBeans] = useState<{ id: string, label: string }[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchBeans();
+  }, []);
+
+  const fetchBeans = async () => {
+    try {
+      const beanData = await listBeans();
+      setBeans(beanData.map((b) => { return { id: b.id, label: b.name } }));
+    } catch (error) {
+      console.error("Error fetching beans", error);
+    }
+  };
 
   return (
     <Modal>
-      <Text>CoffeeUpdate</Text>
+      <Text style={{ marginTop: 30 }}>CoffeeUpdate</Text>
 
       <TextInput
         placeholder='コーヒー名を入力'
@@ -69,7 +86,22 @@ export default function CoffeeForm(props: Props) {
         autoCapitalize='none'
         autoCorrect={false}
       />
+
       {/* コーヒー豆産地を複数選択可能にする予定 */}
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+      >
+        <Text>コーヒー豆を選択</Text>
+      </TouchableOpacity>
+
+      <MultiSelectModal
+        visible={modalVisible}
+        options={beans}
+        selectedIds={includedBeans}
+        onChange={(ids) => setIncludedbeans(ids)}
+        onClose={() => setModalVisible(false)}
+      />
+
       <TextInput
         placeholder='コメントを入力'
         value={coffee.comments}

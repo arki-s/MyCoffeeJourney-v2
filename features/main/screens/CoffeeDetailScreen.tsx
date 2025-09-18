@@ -169,10 +169,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     : (
       <Text style={{ fontSize: 18 }}>まだレビューはありません。</Text>
     );
-  //コーヒー詳細画面
-  // コーヒーの情報、名前、ブランド、豆産地一覧、コメント
-  //これまでに飲んだ回数や量、累計金額、平均レビュー点数も表示できると良い
-  // 将来的に画像表示もしたい
+
   //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
   const navigation = useNavigation<RecordsNav>();

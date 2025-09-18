@@ -2,12 +2,13 @@ import { Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useUserStore } from '../../../stores/useUserStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { GrindSize, RecordsStackParamList } from '../../../type';
+import { RecordsStackParamList } from '../../../type';
 import { useNavigation } from '@react-navigation/native';
 import { createDrinkingRecord, setDrinkingGrindSizes } from '../../auth/services/recordService';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
+import MultiSelectModal from '../components/MultiSelectModal';
 
 
 export default function CoffeeRecordCreateScreen() {
@@ -30,11 +31,10 @@ export default function CoffeeRecordCreateScreen() {
     start_date: '',
   });
 
-  const [selectedGrindSizes] = useState<string[]>([
-    'e6b557c4-3079-4df3-9287-f1989d067485', // テスト用 ID
-  ]);
+  const [selectedGrindSizes, setSelectedGrindSizes] = useState<string[]>([]);
 
-  const [grindSizes, setGrindSizes] = useState<GrindSize[]>([]);
+  const [grindSizes, setGrindSizes] = useState<{ id: string, label: string }[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordCreate'>;
   const navigation = useNavigation<RecordsNav>();
@@ -50,8 +50,7 @@ export default function CoffeeRecordCreateScreen() {
   const fetchGrindSizes = async () => {
     try {
       const data = await listGrindSizes();
-      //プルダウンの選択肢に挿入する必要あり
-      setGrindSizes(data);
+      setGrindSizes(data.map((d) => { return { id: d.id, label: d.name } }));
     } catch (error) {
       console.error("Error fetching grind sizes:", error);
     }
@@ -89,18 +88,22 @@ export default function CoffeeRecordCreateScreen() {
     }
   };
 
-  const GrindSizeNames = grindSizes ? grindSizes.map((g) => {
-    return (
-      <Text key={g.id}>{g.name}</Text>
-    )
-  }) : "";
-
   return (
     <View>
       <Text>CoffeeRecordCreateScreen</Text>
       {/* コーヒー名のプルダウン選択追加予定 */}
-      {/* コーヒーの挽き目を複数選択追加予定 */}
-      {GrindSizeNames}
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+      >
+        <Text>挽き目を選択</Text>
+      </TouchableOpacity>
+
+      <MultiSelectModal
+        visible={modalVisible}
+        options={grindSizes}
+        selectedIds={selectedGrindSizes}
+        onChange={(ids) => setSelectedGrindSizes(ids)}
+        onClose={() => setModalVisible(false)} />
 
       <TouchableOpacity
         onPress={() => handleHomePress()}
