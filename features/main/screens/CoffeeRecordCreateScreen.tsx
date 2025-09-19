@@ -8,7 +8,7 @@ import { createDrinkingRecord, setDrinkingGrindSizes } from '../../auth/services
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
-import MultiSelectModal from '../components/MultiSelectModal';
+import SelectModal from '../components/SelectModal';
 
 
 export default function CoffeeRecordCreateScreen() {
@@ -98,7 +98,7 @@ export default function CoffeeRecordCreateScreen() {
         <Text>挽き目を選択</Text>
       </TouchableOpacity>
 
-      <MultiSelectModal
+      <SelectModal
         visible={modalVisible}
         options={grindSizes}
         selectedIds={selectedGrindSizes}

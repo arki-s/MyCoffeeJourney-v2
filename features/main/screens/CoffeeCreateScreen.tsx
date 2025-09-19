@@ -6,7 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createCoffee, setCoffeeBeanInclusions } from '../../auth/services/coffeeService';
 import { listBeans } from '../../auth/services/beanService';
-import MultiSelectModal from '../components/MultiSelectModal';
+import SelectModal from '../components/SelectModal';
+import { listBrands } from '../../auth/services/brandService';
 
 export default function CoffeeCreateScreen() {
   const user = useUserStore((state) => state.user);
@@ -34,11 +35,12 @@ export default function CoffeeCreateScreen() {
     fruity: 1,
     bitter: 1,
     aroma: 1,
-    brand_id: 'e8218a36-c99b-498c-8aed-bc05082b16de' //仮のbrand_id
+    brand_id: ''
   });
+  const [brands, setBarnds] = useState<{ id: string, label: string }[]>([]);
   const [beans, setBeans] = useState<{ id: string, label: string }[]>([]);
   const [includedBeans, setIncludedbeans] = useState<string[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<"brand" | "bean" | null>(null);
 
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeCreate'>;
   const navigation = useNavigation<RecordsNav>();
@@ -95,8 +97,18 @@ export default function CoffeeCreateScreen() {
   };
 
   useEffect(() => {
+    fetchBrands();
     fetchBeans();
   }, [])
+
+  const fetchBrands = async () => {
+    try {
+      const brandData = await listBrands();
+      setBarnds(brandData.map((b) => { return { id: b.id, label: b.name } }));
+    } catch (error) {
+      console.error("Error fetching brands", error);
+    }
+  }
 
   const fetchBeans = async () => {
     try {
@@ -125,6 +137,21 @@ export default function CoffeeCreateScreen() {
         </Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={() => setModalVisible("brand")}
+      >
+        <Text>コーヒーブランドを選択</Text>
+      </TouchableOpacity>
+
+      <SelectModal
+        visible={modalVisible === "brand"}
+        isMulti={false}
+        options={brands}
+        selectedIds={[]}
+        onChange={(id) => setNewCoffee({ ...newCoffee, brand_id: id[0] })}
+        onClose={() => setModalVisible(null)}
+      />
+
       <TextInput
         placeholder='コーヒー名を入力'
         value={newCoffee.name}
@@ -135,17 +162,17 @@ export default function CoffeeCreateScreen() {
       />
 
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalVisible("bean")}
       >
         <Text>コーヒー豆を選択</Text>
       </TouchableOpacity>
 
-      <MultiSelectModal
-        visible={modalVisible}
+      <SelectModal
+        visible={modalVisible === "bean"}
         options={beans}
         selectedIds={includedBeans}
         onChange={(ids) => setIncludedbeans(ids)}
-        onClose={() => setModalVisible(false)}
+        onClose={() => setModalVisible(null)}
       />
 
       <TextInput

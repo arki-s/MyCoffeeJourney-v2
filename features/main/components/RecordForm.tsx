@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
-import MultiSelectModal from './MultiSelectModal';
+import SelectModal from './SelectModal';
 
 type Props = {
   weight_grams: number;
@@ -71,7 +71,7 @@ export default function RecordForm(props: Props) {
         <Text>挽き目を選択</Text>
       </TouchableOpacity>
 
-      <MultiSelectModal
+      <SelectModal
         visible={modalVisible}
         options={grindSizes}
         selectedIds={record.drinkingGrindSizes}

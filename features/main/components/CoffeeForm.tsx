@@ -1,7 +1,8 @@
 import { Modal, Text, TextInput, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { listBeans } from '../../auth/services/beanService';
-import MultiSelectModal from './MultiSelectModal';
+import SelectModal from './SelectModal';
+import { listBrands } from '../../auth/services/brandService';
 
 type Props = {
   name: string;
@@ -58,12 +59,23 @@ export default function CoffeeForm(props: Props) {
     brand_id: props.brand_id
   });
   const [includedBeans, setIncludedbeans] = useState<string[]>(props.includedBeans);
+  const [brands, setBarnds] = useState<{ id: string, label: string }[]>([]);
   const [beans, setBeans] = useState<{ id: string, label: string }[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<"brand" | "bean" | null>(null);
 
   useEffect(() => {
+    fetchBrands();
     fetchBeans();
   }, []);
+
+  const fetchBrands = async () => {
+    try {
+      const brandData = await listBrands();
+      setBarnds(brandData.map((b) => { return { id: b.id, label: b.name } }));
+    } catch (error) {
+      console.error("Error fetching brands", error);
+    }
+  }
 
   const fetchBeans = async () => {
     try {
@@ -78,6 +90,21 @@ export default function CoffeeForm(props: Props) {
     <Modal>
       <Text style={{ marginTop: 30 }}>CoffeeUpdate</Text>
 
+      <TouchableOpacity
+        onPress={() => setModalVisible("brand")}
+      >
+        <Text>コーヒーブランドを選択</Text>
+      </TouchableOpacity>
+
+      <SelectModal
+        visible={modalVisible === "brand"}
+        isMulti={false}
+        options={brands}
+        selectedIds={[coffee.brand_id]}
+        onChange={(id) => setCoffee({ ...coffee, brand_id: id[0] })}
+        onClose={() => setModalVisible(null)}
+      />
+
       <TextInput
         placeholder='コーヒー名を入力'
         value={coffee.name}
@@ -87,19 +114,18 @@ export default function CoffeeForm(props: Props) {
         autoCorrect={false}
       />
 
-      {/* コーヒー豆産地を複数選択可能にする予定 */}
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalVisible("bean")}
       >
         <Text>コーヒー豆を選択</Text>
       </TouchableOpacity>
 
-      <MultiSelectModal
-        visible={modalVisible}
+      <SelectModal
+        visible={modalVisible === "bean"}
         options={beans}
         selectedIds={includedBeans}
         onChange={(ids) => setIncludedbeans(ids)}
-        onClose={() => setModalVisible(false)}
+        onClose={() => setModalVisible(null)}
       />
 
       <TextInput
