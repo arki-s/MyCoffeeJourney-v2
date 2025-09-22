@@ -1,16 +1,60 @@
 import { Text, View } from 'react-native'
-import React from 'react'
+import React, { useCallback } from 'react'
+import { Calendar } from 'react-native-calendars'
+import { useFocusEffect } from '@react-navigation/native'
 
 export default function CalendarScreen() {
-  //カレンダー画面
-  //飲み終えた記録をカレンダー形式で表示する
-  //日付をタップすると、その日のレビュー一覧がモーダルで表示される
-  //レビューがない場合は「レビューがありません」と表示する
-  //画面上部に月移動のための矢印ボタンを配置する
-  //画面下部に記録一覧画面への遷移ボタンを配置する
+
+  useFocusEffect(
+    useCallback(() => {
+      // 月毎のイベントフェッチ
+    }, [])
+  );
+
   return (
     <View>
       <Text>CalendarScreen</Text>
+      <Calendar
+        markingType='multi-period'
+        hideArrows={false}
+        markedDates={{
+          '2025-09-14': {
+            periods: [
+              { startingDay: true, endingDay: false, color: '#ffa500' },
+            ]
+          },
+          '2025-09-15': {
+            periods: [
+              { startingDay: false, endingDay: true, color: '#ffa500' },
+            ]
+          },
+          '2025-09-20': {
+            periods: [
+              { startingDay: true, endingDay: false, color: '#ffa500' },
+            ]
+          },
+          '2025-09-21': {
+            periods: [
+              { startingDay: false, endingDay: false, color: '#ffa500' },
+            ]
+          },
+          '2025-09-22': {
+            periods: [
+              { startingDay: false, endingDay: false, color: '#ffa500' },
+            ]
+          },
+          '2025-09-23': {
+            periods: [
+              { startingDay: false, endingDay: false, color: '#ffa500' },
+            ]
+          },
+          '2025-09-24': {
+            periods: [
+              { startingDay: false, endingDay: true, color: '#ffa500' },
+            ]
+          }
+        }}
+      />
     </View>
   )
 }
