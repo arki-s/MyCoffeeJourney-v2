@@ -148,3 +148,22 @@ export type CoffeeReviewItem = {
   start_date: string | null;
   end_date: string | null;
 };
+
+export type RecordCalendarEvent = {
+  id: string;
+  start_date: string;
+  end_date: string;
+  coffeeName: string | null;
+  brandName: string | null;
+  status: 'ongoing' | 'finished';
+  color?: string;
+};
+
+export type CalendarMarkedDates = Record<string, {
+  periods: {
+    color: string;
+    startingDay?: boolean;
+    endingDay?: boolean;
+    textColor?: string;
+  }[];
+}>;
