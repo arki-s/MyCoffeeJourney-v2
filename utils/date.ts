@@ -47,3 +47,39 @@ export const parseYYYYMMDDAsLocalDate = (s: string): Date => {
   // ここでの Date コンストラクタはローカルTZで 00:00 を指すDateを生成する。UTC解釈の罠を回避できる。
   return new Date(y, mon - 1, day);
 };
+
+/**
+ * 'YYYY-MM-DD' 形式をローカルタイムゾーン基準の Date に変換する。
+ * 既存の parse ヘルパーを薄く包んで名前の意図を明瞭にする。
+ */
+export function parseDate(iso: string): Date {
+  return parseYYYYMMDDAsLocalDate(iso);
+}
+
+/**
+ * ローカル日付の「今日 00:00」を返す。
+ * `new Date()` だと時刻が乗るので、format→parse で日付境界に正規化する。
+ */
+export function today(): Date {
+  return parseYYYYMMDDAsLocalDate(formatLocalYYYYMMDD());
+}
+
+/** 指定した日数を加算した新しい Date を返す（元の引数は不変）。 */
+export function addDays(date: Date, days: number): Date {
+  const next = new Date(date.getTime());
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+export function maxDate(a: Date, b: Date): Date { return a > b ? a : b; }
+
+export function minDate(a: Date, b: Date): Date { return a < b ? a : b; }
+
+/** 2つの日付がローカル年月日で一致するかを判定する。 */
+export function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}

@@ -151,8 +151,8 @@ export type CoffeeReviewItem = {
 
 export type RecordCalendarEvent = {
   id: string;
-  start_date: string;
-  end_date: string;
+  startDate: string;
+  endDate: string;
   coffeeName: string | null;
   brandName: string | null;
   status: 'ongoing' | 'finished';
