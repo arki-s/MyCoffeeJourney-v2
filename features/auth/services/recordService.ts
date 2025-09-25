@@ -401,3 +401,15 @@ export async function getMonthlyDrinkingRecords(year: number, month: number): Pr
   return markedDates;
 
 }
+
+export async function getDailyDrinkingRecords(date: string): Promise<UnfinishedWithName[]> {
+  const user = await requireUser();
+
+  const { data, error } = await supabase
+    .from("drinking_records")
+    .select("*, coffee:coffee_id (name, brand:brand_id(name))")
+    .eq("user_id", user.id)
+    .or(`and(start_date.lte.${date},or(end_date.gte.${date},end_date.is.null))`);
+  if (error) throw error;
+  return (data ?? []);
+}

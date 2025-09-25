@@ -3,11 +3,14 @@ import React, { useCallback, useState } from 'react'
 import { Calendar } from 'react-native-calendars'
 import { useFocusEffect } from '@react-navigation/native'
 import { getMonthlyDrinkingRecords } from '../../auth/services/recordService';
+import RecordEventModal from '../components/RecordEventModal';
 
 export default function CalendarScreen() {
   const [events, setEvents] = useState({});
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   useFocusEffect(
     useCallback(() => {
@@ -26,6 +29,13 @@ export default function CalendarScreen() {
   }
   //クリックしたらその日のイベント一覧を表示してレコード画面にも飛べるようにする？
 
+  const handleDayPress = (day: string) => {
+    console.log('Selected day', day);
+    // 選択した日付に存在するrecord情報を表示するモーダルをオンにする
+    setSelectedDate(day)
+    setVisibleModal(true);
+
+  };
 
   return (
     <View>
@@ -33,6 +43,7 @@ export default function CalendarScreen() {
       <Calendar
         markingType='multi-period'
         hideArrows={false}
+        onDayPress={(day) => handleDayPress(day.dateString)}
         onMonthChange={(monthInfo) => { setSelectedMonth(monthInfo.month); setSelectedYear(monthInfo.year); }}
         markedDates={
           events
@@ -77,6 +88,9 @@ export default function CalendarScreen() {
 
         }
       />
+      {visibleModal && (
+        <RecordEventModal date={selectedDate} onCancel={() => setVisibleModal(false)} />
+      )}
     </View>
   )
 }
