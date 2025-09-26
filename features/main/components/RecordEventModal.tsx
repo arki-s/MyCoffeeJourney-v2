@@ -5,7 +5,6 @@ import { getDailyDrinkingRecords } from '../../auth/services/recordService';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-//props作る
 type Props = {
   date: string; //YYYY-MM-DD
   onCancel: () => void;

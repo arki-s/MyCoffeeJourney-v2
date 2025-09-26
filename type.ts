@@ -167,3 +167,22 @@ export type CalendarMarkedDates = Record<string, {
     textColor?: string;
   }[];
 }>;
+
+export type AnalysisData = {
+  totals: {
+    grams: number;
+    yen: number;
+  };
+  count: number;
+  coffeeRanking: {
+    coffeeId: string;
+    count: number;
+    name: string;
+    brand: string;
+  }[];
+  monthlyData: {
+    grams: number;
+    yen: number;
+  }[];
+  monthLabels: string[];
+};
