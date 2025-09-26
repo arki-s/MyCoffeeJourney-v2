@@ -27,10 +27,20 @@ export default function AnalysisScreen() {
     }
   }
 
+  const ranking = analysisData?.coffeeRanking.map((item, index) => (
+    <View key={item.coffeeId}>
+      <Text>{index + 1}位: {item.brand} {item.name} - {item.count}回</Text>
+    </View>
+  ));
 
   return (
     <View>
       <Text>AnalysisScreen</Text>
+      <Text>飲んだ回数合計： {analysisData?.count}</Text>
+      <Text>飲んだ量合計： {analysisData?.totals.grams}g</Text>
+      <Text>払った金額合計： {analysisData?.totals.yen}円</Text>
+      <Text>よく飲んでるコーヒーランキング</Text>
+      {ranking}
       <View>
         <Text>合計金額</Text>
         <LineChart
