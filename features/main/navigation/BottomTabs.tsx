@@ -14,6 +14,7 @@ import CoffeeIcon from '../../../app/main/icons/CoffeeIcon';
 import BeanIcon from '../../../app/main/icons/BeanIcon';
 import MessageIcon from '../../../app/main/icons/MessageIcon';
 import SettingsIcon from '../../../app/main/icons/SettingsIcon';
+import { fonts } from '../../../app/main/theme/fonts';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
@@ -22,12 +23,27 @@ export default function BottomTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: true,
+        headerTitle: "My Coffee Journey",
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: colors.primary,
+        },
+        headerTitleStyle: {
+          backgroundColor: colors.primary,
+          fontFamily: fonts.body_bold,
+          fontSize: 24,
+          color: colors.accent,
+        },
         popToTopOnBlur: true,
         tabBarStyle: {
           backgroundColor: colors.primary
         },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.primary_light,
+        tabBarLabelStyle: {
+          fontFamily: fonts.body_regular,
+          fontSize: 12
+        },
         tabBarIcon: ({ color = colors.accent, size = 24 }) => {
           switch (route.name) {
             case 'Coffee':
