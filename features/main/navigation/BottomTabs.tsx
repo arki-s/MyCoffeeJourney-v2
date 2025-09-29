@@ -7,30 +7,77 @@ import CoffeeRecordsStack from './CoffeeRecordsStack';
 import CoffeeStack from './CoffeeStack';
 import SettingStack from './SettingStack';
 import CalendarScreen from '../screens/CalendarScreen';
+import CalendarIcon from '../../../app/main/icons/CalendarIcon';
+import { colors } from '../../../app/main/theme/colors';
+import AnalysisIcon from '../../../app/main/icons/AnalysisIcon';
+import CoffeeIcon from '../../../app/main/icons/CoffeeIcon';
+import BeanIcon from '../../../app/main/icons/BeanIcon';
+import MessageIcon from '../../../app/main/icons/MessageIcon';
+import SettingsIcon from '../../../app/main/icons/SettingsIcon';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
 export default function BottomTabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: true, popToTopOnBlur: true }}>
-      <Tab.Screen name="Records" component={CoffeeRecordsStack} options={{
-        tabBarLabel: 'Records', title: 'Records'
-      }} />
-      <Tab.Screen name="Calendar" component={CalendarScreen} options={{
-        tabBarLabel: 'Calendar', title: 'Calendar'
-      }} />
-      <Tab.Screen name="Coffee" component={CoffeeStack} options={{
-        tabBarLabel: 'Coffee', title: 'Coffee'
-      }} />
-      <Tab.Screen name="Reviews" component={ReviewListScreen} options={{
-        tabBarLabel: 'Reviews', title: 'Reviews'
-      }} />
-      <Tab.Screen name="Analysis" component={AnalysisScreen} options={{
-        tabBarLabel: 'Analysis', title: 'Analysis'
-      }} />
-      <Tab.Screen name="Settings" component={SettingStack} options={{
-        tabBarLabel: 'Settings', title: 'Settings'
-      }} />
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: true,
+        popToTopOnBlur: true,
+        tabBarStyle: {
+          backgroundColor: colors.primary
+        },
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.primary_light,
+        tabBarIcon: ({ color = colors.accent, size = 24 }) => {
+          switch (route.name) {
+            case 'Coffee':
+              return <BeanIcon color={color} size={size} />;
+            case 'Calendar':
+              return <CalendarIcon color={color} size={size} />;
+            case 'Analysis':
+              return <AnalysisIcon color={color} size={size} />;
+            case 'Records':
+              return <CoffeeIcon color={color} size={size} />;
+            case 'Reviews':
+              return <MessageIcon color={color} size={size} />;
+            case 'Settings':
+              return <SettingsIcon color={color} size={size} />;
+            default:
+              return null;
+          }
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Records"
+        component={CoffeeRecordsStack}
+        options={{ tabBarLabel: 'Records', title: 'Records' }}
+      />
+      <Tab.Screen
+        name="Calendar"
+        component={CalendarScreen}
+        options={{ tabBarLabel: 'Calendar', title: 'Calendar' }}
+      />
+      <Tab.Screen
+        name="Coffee"
+        component={CoffeeStack}
+        options={{ tabBarLabel: 'Coffee', title: 'Coffee' }}
+      />
+      <Tab.Screen
+        name="Reviews"
+        component={ReviewListScreen}
+        options={{ tabBarLabel: 'Reviews', title: 'Reviews' }}
+      />
+      <Tab.Screen
+        name="Analysis"
+        component={AnalysisScreen}
+        options={{ tabBarLabel: 'Analysis', title: 'Analysis' }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingStack}
+        options={{ tabBarLabel: 'Settings', title: 'Settings' }}
+      />
     </Tab.Navigator>
   )
 }
