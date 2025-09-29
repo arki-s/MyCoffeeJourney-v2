@@ -7,6 +7,7 @@ import { finishDrinkingRecord, listFinishedDrinkingRecords, listUnfinishedDrinki
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import ReviewForm from '../components/ReviewForm';
 import { createReview } from '../../auth/services/reviewService';
+import { fonts } from '../../../app/main/theme/fonts';
 
 export default function CoffeeRecordListScreen() {
   const [ongoingRecords, setOngoingRecords] = useState<UnfinishedWithName[]>([]);
@@ -124,9 +125,9 @@ export default function CoffeeRecordListScreen() {
   return (
     <View>
       <Text>CoffeeRecordListScreen</Text>
-      <Text>飲んでるコーヒー</Text>
+      <Text style={{ fontFamily: fonts.title_bold, fontSize: 30 }}>飲んでるコーヒー</Text>
       {ongoingRecordItems}
-      <Text>飲み終えたコーヒー</Text>
+      <Text style={{ fontFamily: fonts.body_bold, fontSize: 30 }}>飲み終えたコーヒー</Text>
       {finishedRecordItems}
 
       <TouchableOpacity
