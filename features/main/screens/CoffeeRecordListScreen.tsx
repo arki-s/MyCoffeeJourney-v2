@@ -122,9 +122,23 @@ export default function CoffeeRecordListScreen() {
     }
   });
 
+  const howToUse = ongoingRecords.length === 0 && finishedRecords.length === 0 && (
+    <Text style={{ fontFamily: fonts.body_regular, fontSize: 16, marginTop: 16 }}>
+      My Coffee Journeyの使い方
+      {'\n'}1. 設定画面でコーヒーブランド名、コーヒー豆産地、コーヒーの挽き目を登録します。
+      {'\n'}2. コーヒー画面でコーヒーの登録をします。
+      {'\n'}3. コーヒーを飲み始めたら、「飲んでるコーヒー記録登録画面へ」ボタンから記録を登録します。
+      {'\n'}4. コーヒーを飲み終えたら、記録の「飲み終えた！」ボタンを押して、レビューを追加します。
+      {'\n'}5. カレンダー画面で飲んだコーヒーの履歴を確認したり、分析画面で飲んだコーヒーの傾向を確認したりできます。
+      {'\n'}6. レビュー画面で過去のレビューを確認できます。
+      {'\n'}ぜひ、My Coffee Journeyであなたのコーヒーライフを充実させてください！
+    </Text>
+  );
+
   return (
     <View>
       <Text>CoffeeRecordListScreen</Text>
+      {howToUse}
       <Text style={{ fontFamily: fonts.title_bold, fontSize: 30 }}>飲んでるコーヒー</Text>
       {ongoingRecordItems}
       <Text style={{ fontFamily: fonts.body_bold, fontSize: 30 }}>飲み終えたコーヒー</Text>
