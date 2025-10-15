@@ -5,6 +5,8 @@ import { useUserStore } from '../../../stores/useUserStore';
 import { SettingStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import { fonts } from '../../../app/main/theme/fonts';
+import { colors } from '../../../app/main/theme/colors';
 
 export default function SettingScreen() {
   const { logout } = useLogout();
@@ -28,11 +30,10 @@ export default function SettingScreen() {
 
   return (
     <View>
-      <Text>ProfileScreen</Text>
+      <Text style={{ fontFamily: fonts.title_bold, fontSize: 28, textAlign: "center" }}>各種設定</Text>
       {user ?
         <View>
-          <Text>Logged in as: {user.email}</Text>
-          <Button onPress={logout} title="ログアウト" />
+          <Text style={{ fontFamily: fonts.body_regular, fontSize: 14, textAlign: "center" }}>{user.email} にてログイン中</Text>
 
           <TouchableOpacity
             onPress={() => handleBrandPress()}
@@ -71,6 +72,19 @@ export default function SettingScreen() {
           >
             <Text style={{ color: '#fff', textAlign: 'center' }}>
               挽き目管理画面へ
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={logout}
+            style={{
+              backgroundColor: colors.primary,
+              padding: 12,
+              marginTop: 16,
+              borderRadius: 8,
+              marginHorizontal: 50,
+            }}>
+            <Text style={{ fontFamily: fonts.title_bold, color: colors.primary_light, textAlign: 'center' }}>
+              ログアウト
             </Text>
           </TouchableOpacity>
         </View>
