@@ -1,4 +1,4 @@
-import { Button, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
 import { useUserStore } from '../../../stores/useUserStore';
