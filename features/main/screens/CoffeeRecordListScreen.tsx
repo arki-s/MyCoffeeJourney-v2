@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { FinishedWithReview, RecordsStackParamList, UnfinishedWithName } from '../../../type';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -87,16 +87,35 @@ export default function CoffeeRecordListScreen() {
   }
 
   const ongoingRecordItems = ongoingRecords.map((record) => (
-    <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+    <View
+      key={record.id}
+      className="mb-3 rounded-2xl border border-[#E6DACE] bg-white/90 px-4 py-4"
+    >
       {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
-      <Text style={{ fontSize: 18 }}>{record.coffee?.brand?.name}</Text>
-      <Text style={{ fontSize: 18 }}>{record.coffee?.name}</Text>
-      <Text style={{ fontSize: 18 }}>Started on {new Date(record.start_date).toLocaleDateString()}</Text>
-      <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
-        <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
+      <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+        {record.coffee?.brand?.name}
+      </Text>
+      <Text className="text-base text-[#6A1B1A]" style={{ fontFamily: fonts.title_medium }}>
+        {record.coffee?.name}
+      </Text>
+      <Text className="mt-1 text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_regular }}>
+        Started on {new Date(record.start_date).toLocaleDateString()}
+      </Text>
+      <TouchableOpacity
+        className="mt-3 self-start rounded-full border border-[#6A1B1A] px-4 py-2"
+        onPress={() => handleDetailPress(record.id)}
+      >
+        <Text className="text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_bold }}>
+          詳細画面へ
+        </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleFinishPress(record.id)}>
-        <Text style={{ color: '#007AFF', marginTop: 4 }}>飲み終えた！</Text>
+      <TouchableOpacity
+        className="mt-2 self-start rounded-full bg-[#A23E48] px-4 py-2"
+        onPress={() => handleFinishPress(record.id)}
+      >
+        <Text className="text-sm text-white" style={{ fontFamily: fonts.body_bold }}>
+          飲み終えた！
+        </Text>
       </TouchableOpacity>
     </View>
   ));
@@ -104,17 +123,36 @@ export default function CoffeeRecordListScreen() {
   const finishedRecordItems = finishedRecords.map((record) => {
     if (record.end_date) {
       return (
-        <View key={record.id} style={{ padding: 8, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+        <View
+          key={record.id}
+          className="mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4"
+        >
           {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
-          <Text style={{ fontSize: 18 }}>{record.coffee?.brand?.name}</Text>
-          <Text style={{ fontSize: 18 }}>{record.coffee?.name}</Text>
-          <Text style={{ fontSize: 18 }}>Finished on {new Date(record.end_date).toLocaleDateString()}</Text>
-          <TouchableOpacity onPress={() => handleDetailPress(record.id)}>
-            <Text style={{ color: '#007AFF', marginTop: 4 }}>詳細画面へ</Text>
+          <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+            {record.coffee?.brand?.name}
+          </Text>
+          <Text className="text-base text-[#6A1B1A]" style={{ fontFamily: fonts.title_medium }}>
+            {record.coffee?.name}
+          </Text>
+          <Text className="mt-1 text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_regular }}>
+            Finished on {new Date(record.end_date).toLocaleDateString()}
+          </Text>
+          <TouchableOpacity
+            className="mt-3 self-start rounded-full border border-[#6A1B1A] px-4 py-2"
+            onPress={() => handleDetailPress(record.id)}
+          >
+            <Text className="text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_bold }}>
+              詳細画面へ
+            </Text>
           </TouchableOpacity>
           {!record.hasReview && (
-            <TouchableOpacity onPress={() => { setSelectedRecordId(record.id); setModalVisible("review") }}>
-              <Text style={{ color: '#007AFF', marginTop: 4 }}>レビューを追加する</Text>
+            <TouchableOpacity
+              className="mt-2 self-start rounded-full bg-[#3B0D0C] px-4 py-2"
+              onPress={() => { setSelectedRecordId(record.id); setModalVisible("review") }}
+            >
+              <Text className="text-sm text-white" style={{ fontFamily: fonts.body_bold }}>
+                レビューを追加する
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -123,7 +161,10 @@ export default function CoffeeRecordListScreen() {
   });
 
   const howToUse = ongoingRecords.length === 0 && finishedRecords.length === 0 && (
-    <Text style={{ fontFamily: fonts.body_regular, fontSize: 16, marginTop: 16 }}>
+    <Text
+      className="mt-6 rounded-2xl bg-white/80 px-4 py-4 text-sm leading-6 text-[#3B0D0C]"
+      style={{ fontFamily: fonts.body_regular }}
+    >
       My Coffee Journeyの使い方
       {'\n'}1. 設定画面でコーヒーブランド名、コーヒー豆産地、コーヒーの挽き目を登録します。
       {'\n'}2. コーヒー画面でコーヒーの登録をします。
@@ -136,34 +177,49 @@ export default function CoffeeRecordListScreen() {
   );
 
   return (
-    <View>
-      <Text>CoffeeRecordListScreen</Text>
-      {howToUse}
-      <Text style={{ fontFamily: fonts.title_bold, fontSize: 30 }}>飲んでるコーヒー</Text>
-      {ongoingRecordItems}
-      <Text style={{ fontFamily: fonts.body_bold, fontSize: 30 }}>飲み終えたコーヒー</Text>
-      {finishedRecordItems}
-
-      <TouchableOpacity
-        onPress={() => handleCreatePress()}
-        style={{
-          backgroundColor: '#34C759',
-          padding: 12,
-          marginTop: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center' }}>
-          飲んでるコーヒー記録登録画面へ
+    <ScrollView className="flex-1 bg-[#F6EFE7]">
+      <View className="px-5 py-6">
+        {/* NativeWindを使って背景色やカードをTailwind記法で整え、記録一覧を視覚的に整理 */}
+        <Text
+          className="text-xs uppercase tracking-[4px] text-[#A23E48]"
+          style={{ fontFamily: fonts.body_bold }}
+        >
+          CoffeeRecordListScreen
         </Text>
-      </TouchableOpacity>
+        <Text
+          className="mt-4 text-3xl text-[#3B0D0C]"
+          style={{ fontFamily: fonts.title_bold }}
+        >
+          飲んでるコーヒー
+        </Text>
+        {howToUse}
+        <View className="mt-4">{ongoingRecordItems}</View>
+        <Text
+          className="mt-8 text-3xl text-[#3B0D0C]"
+          style={{ fontFamily: fonts.body_bold }}
+        >
+          飲み終えたコーヒー
+        </Text>
+        <View className="mt-4">{finishedRecordItems}</View>
+        <TouchableOpacity
+          className="mt-8 w-full rounded-full bg-[#6A1B1A] py-4"
+          onPress={() => handleCreatePress()}
+        >
+          <Text
+            className="text-center text-base text-white"
+            style={{ fontFamily: fonts.body_bold }}
+          >
+            飲んでるコーヒー記録登録画面へ
+          </Text>
+        </TouchableOpacity>
+      </View>
       {modalVisible === "review" && (
         <ReviewForm
           onSubmit={({ score, comments }) => handleReviewSubmit(score, comments)}
           onCancel={() => setModalVisible(null)}
         />
       )}
-    </View>
+    </ScrollView>
   )
 }
 

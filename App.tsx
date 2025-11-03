@@ -11,6 +11,7 @@ import title_medium from './assets/fonts/KaiseiDecol-Medium.ttf';
 import title_regular from './assets/fonts/KaiseiDecol-Regular.ttf';
 import body_bold from './assets/fonts/KleeOne-SemiBold.ttf';
 import body_regular from './assets/fonts/KleeOne-Regular.ttf';
+import "./global.css";
 
 export default function App() {
   useSessionWatcher();
