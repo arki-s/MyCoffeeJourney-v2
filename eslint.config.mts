@@ -16,6 +16,30 @@ export default defineConfig([
       },
     },
   },
+  {
+    // Allow CommonJS for build/config scripts that Metro/Babel expect.
+    files: ["babel.config.js", "metro.config.js", "*.config.cjs", "*.config.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: { ...globals.node },
+    },
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "no-undef": "off",
+    },
+  },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {
+    // Ensure the CJS overrides stay applied after the recommended configs merge.
+    files: ["babel.config.js", "metro.config.js", "*.config.cjs", "*.config.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: { ...globals.node },
+    },
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "no-undef": "off",
+    },
+  },
 ]);

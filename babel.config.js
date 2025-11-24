@@ -1,6 +1,6 @@
-import nativewindPreset from 'nativewind/babel';
+const nativewindPreset = require('nativewind/babel');
 
-export default function (api) {
+module.exports = function (api) {
   api.cache(true);
   const nativewindPlugins = nativewindPreset().plugins.filter(
     (plugin) => plugin !== 'react-native-worklets/plugin',
