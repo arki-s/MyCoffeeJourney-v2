@@ -8,6 +8,7 @@ import { formatLocalYYYYMMDD } from '../../../utils/date';
 import ReviewForm from '../components/ReviewForm';
 import { createReview } from '../../auth/services/reviewService';
 import { fonts } from '../../../app/main/theme/fonts';
+import { colors } from '../../../app/main/theme/colors';
 
 export default function CoffeeRecordListScreen() {
   const [ongoingRecords, setOngoingRecords] = useState<UnfinishedWithName[]>([]);
@@ -181,22 +182,25 @@ export default function CoffeeRecordListScreen() {
       <View className="px-5 py-6">
         {/* NativeWindを使って背景色やカードをTailwind記法で整え、記録一覧を視覚的に整理 */}
         <Text
-          className="text-xs uppercase tracking-[4px] text-[#A23E48]"
-          style={{ fontFamily: fonts.body_bold }}
-        >
-          CoffeeRecordListScreen
-        </Text>
-        <Text
           className="mt-4 text-3xl text-[#3B0D0C]"
           style={{ fontFamily: fonts.title_bold }}
         >
           飲んでるコーヒー
         </Text>
         {howToUse}
-        <View className="mt-4">{ongoingRecordItems}</View>
+        {ongoingRecordItems.length === 0 ? (
+          <View className="mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
+            <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+              現在飲んでいるコーヒーはありません。
+              {'\n'}登録しましょう！
+            </Text>
+          </View>
+        ) : (
+          <View className="mt-4">{ongoingRecordItems}</View>
+        )}
         <Text
-          className="mt-8 text-3xl text-[#3B0D0C]"
-          style={{ fontFamily: fonts.body_bold }}
+          className="mt-4 text-3xl text-[#3B0D0C]"
+          style={{ fontFamily: fonts.title_bold }}
         >
           飲み終えたコーヒー
         </Text>
@@ -207,7 +211,7 @@ export default function CoffeeRecordListScreen() {
         >
           <Text
             className="text-center text-base text-white"
-            style={{ fontFamily: fonts.body_bold }}
+            style={{ fontFamily: fonts.body_bold, color: colors.accent }}
           >
             飲んでるコーヒー記録登録画面へ
           </Text>
