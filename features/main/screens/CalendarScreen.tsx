@@ -5,9 +5,10 @@ import { useFocusEffect } from '@react-navigation/native'
 import { getMonthlyDrinkingRecords } from '../../auth/services/recordService';
 import RecordEventModal from '../components/RecordEventModal';
 import { fonts } from '../../../app/main/theme/fonts';
+import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking';
 
 export default function CalendarScreen() {
-  const [events, setEvents] = useState<Record<string, any>>({});
+  const [events, setEvents] = useState<{ [key: string]: MarkingProps }>({});
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
