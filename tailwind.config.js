@@ -1,4 +1,5 @@
 import nativewindPreset from "nativewind/preset";
+import { colors } from "./app/main/theme/colors";
 
 /** @type {import('tailwindcss').Config} */
 export const content = [
@@ -10,6 +11,8 @@ export const content = [
 ];
 export const presets = [nativewindPreset];
 export const theme = {
-  extend: {},
+  extend: {
+      colors,
+  }
 };
 export const plugins = [];
