@@ -11,6 +11,7 @@ import title_medium from './assets/fonts/KaiseiDecol-Medium.ttf';
 import title_regular from './assets/fonts/KaiseiDecol-Regular.ttf';
 import body_bold from './assets/fonts/KleeOne-SemiBold.ttf';
 import body_regular from './assets/fonts/KleeOne-Regular.ttf';
+import header_footer from './assets/fonts/Acme-Regular.ttf';
 import "./global.css";
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
     title_regular: title_regular,
     body_bold: body_bold,
     body_regular: body_regular,
+    header_footer: header_footer,
   });
 
   if (fontsLoaded == false) {
