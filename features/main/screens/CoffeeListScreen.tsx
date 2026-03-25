@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { CoffeeStackParamList, CoffeeWithBrand } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -6,6 +6,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { listCoffees } from '../../auth/services/coffeeService';
 import { fonts } from '../../../app/main/theme/fonts';
 import { colors } from '../../../app/main/theme/colors';
+import textureImage from '../../../assets/texture.jpg';
 
 export default function CoffeeListScreen() {
   const [coffees, setCoffees] = useState<CoffeeWithBrand[]>([]);
@@ -63,39 +64,45 @@ export default function CoffeeListScreen() {
   ));
 
   return (
-    <ScrollView className="flex-1 bg-[#F6EFE7]">
-      <View className="px-5 py-6">
-        <Text
-          className="mt-4 text-3xl text-[#3B0D0C]"
-          style={{ fontFamily: fonts.title_bold }}
-        >
-          コーヒー一覧
-        </Text>
-
-        {coffees.length === 0 ? (
-          <View className="mt-4 mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
-            <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
-              登録されているコーヒーはありません。
-              {'\n'}追加しましょう！
-            </Text>
-          </View>
-        ) : (
-          <View className="mt-4">{coffeeItems}</View>
-        )}
-
-        <TouchableOpacity
-          className="mt-8 w-full rounded-full bg-[#6A1B1A] py-4"
-          onPress={() => handleCreatePress()}
-        >
+    <ImageBackground
+      source={textureImage}
+      style={{ flex: 1 }}
+      imageStyle={{ resizeMode: 'cover' }}
+    >
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <View className="px-5 py-6">
           <Text
-            className="text-center text-base"
-            style={{ fontFamily: fonts.body_bold, color: colors.accent }}
+            className="mt-4 text-3xl text-[#3B0D0C]"
+            style={{ fontFamily: fonts.title_bold }}
           >
-            コーヒーを追加する
+            コーヒー一覧
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+
+          {coffees.length === 0 ? (
+            <View className="mt-4 mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
+              <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+                登録されているコーヒーはありません。
+                {'\n'}追加しましょう！
+              </Text>
+            </View>
+          ) : (
+            <View className="mt-4">{coffeeItems}</View>
+          )}
+
+          <TouchableOpacity
+            className="mt-8 w-full rounded-full bg-[#6A1B1A] py-4"
+            onPress={() => handleCreatePress()}
+          >
+            <Text
+              className="text-center text-base"
+              style={{ fontFamily: fonts.body_bold, color: colors.accent }}
+            >
+              コーヒーを追加する
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </ImageBackground>
   )
 }
 

@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { BottomStackParamList, ReviewWithContext } from '../../../type';
 import { deleteReview, listReviews, updateReview } from '../../auth/services/reviewService';
@@ -6,6 +6,7 @@ import ReviewForm from '../components/ReviewForm';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { fonts } from '../../../app/main/theme/fonts';
+import textureImage from '../../../assets/texture.jpg';
 
 export default function ReviewListScreen() {
   const [reviews, setReviews] = useState<ReviewWithContext[]>([]);
@@ -129,36 +130,42 @@ export default function ReviewListScreen() {
   ));
 
   return (
-    <ScrollView className="flex-1 bg-[#F6EFE7]">
-      <View className="px-5 py-6">
-        <Text
-          className="mt-4 text-3xl text-[#3B0D0C]"
-          style={{ fontFamily: fonts.title_bold }}
-        >
-          レビュー一覧
-        </Text>
+    <ImageBackground
+      source={textureImage}
+      style={{ flex: 1 }}
+      imageStyle={{ resizeMode: 'cover' }}
+    >
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <View className="px-5 py-6">
+          <Text
+            className="mt-4 text-3xl text-[#3B0D0C]"
+            style={{ fontFamily: fonts.title_bold }}
+          >
+            レビュー一覧
+          </Text>
 
-        {reviews.length === 0 ? (
-          <View className="mt-4 mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
-            <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
-              まだレビューがありません。
-              {'\n'}コーヒーを飲み終えたらレビューを追加しましょう！
-            </Text>
-          </View>
-        ) : (
-          <View className="mt-4">{reviewItems}</View>
+          {reviews.length === 0 ? (
+            <View className="mt-4 mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
+              <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+                まだレビューがありません。
+                {'\n'}コーヒーを飲み終えたらレビューを追加しましょう！
+              </Text>
+            </View>
+          ) : (
+            <View className="mt-4">{reviewItems}</View>
+          )}
+        </View>
+
+        {modalVisible === "edit" && (
+          <ReviewForm
+            initialScore={reviews.find(r => r.id === editReviewId)?.score ?? 0}
+            initialComments={reviews.find(r => r.id === editReviewId)?.comments || ""}
+            onSubmit={({ score, comments }) => handleReviewSubmit(score, comments)}
+            onCancel={() => setModalVisible(null)}
+          />
         )}
-      </View>
-
-      {modalVisible === "edit" && (
-        <ReviewForm
-          initialScore={reviews.find(r => r.id === editReviewId)?.score ?? 0}
-          initialComments={reviews.find(r => r.id === editReviewId)?.comments || ""}
-          onSubmit={({ score, comments }) => handleReviewSubmit(score, comments)}
-          onCancel={() => setModalVisible(null)}
-        />
-      )}
-    </ScrollView>
+      </ScrollView>
+    </ImageBackground>
   )
 }
 

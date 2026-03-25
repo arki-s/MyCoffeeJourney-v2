@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from 'react-native'
+import { ImageBackground, ScrollView, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { Calendar } from 'react-native-calendars'
 import { useFocusEffect } from '@react-navigation/native'
@@ -6,6 +6,7 @@ import { getMonthlyDrinkingRecords } from '../../auth/services/recordService';
 import RecordEventModal from '../components/RecordEventModal';
 import { fonts } from '../../../app/main/theme/fonts';
 import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking';
+import textureImage from '../../../assets/texture.jpg';
 
 export default function CalendarScreen() {
   const [events, setEvents] = useState<{ [key: string]: MarkingProps }>({});
@@ -40,47 +41,53 @@ export default function CalendarScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-[#F6EFE7]">
-      <View className="px-5 py-6">
-        <Text
-          className="mt-4 text-3xl text-[#3B0D0C] text-center"
-          style={{ fontFamily: fonts.title_bold }}
-        >
-          コーヒーカレンダー
-        </Text>
+    <ImageBackground
+      source={textureImage}
+      style={{ flex: 1 }}
+      imageStyle={{ resizeMode: 'cover' }}
+    >
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <View className="px-5 py-6">
+          <Text
+            className="mt-4 text-3xl text-[#3B0D0C] text-center"
+            style={{ fontFamily: fonts.title_bold }}
+          >
+            コーヒーカレンダー
+          </Text>
 
-        <View className="mt-4 rounded-2xl border border-[#E6DACE] bg-white/90 overflow-hidden">
-          <Calendar
-            markingType='multi-period'
-            hideArrows={false}
-            onDayPress={(day) => handleDayPress(day.dateString)}
-            onMonthChange={(monthInfo) => { setSelectedMonth(monthInfo.month); setSelectedYear(monthInfo.year); }}
-            theme={{
-              backgroundColor: 'transparent',
-              calendarBackground: 'transparent',
-              textSectionTitleColor: '#6A1B1A',
-              selectedDayBackgroundColor: '#A23E48',
-              selectedDayTextColor: '#ffffff',
-              todayTextColor: '#A23E48',
-              dayTextColor: '#3B0D0C',
-              textDisabledColor: '#E6DACE',
-              monthTextColor: '#3B0D0C',
-              textMonthFontFamily: fonts.title_bold,
-              textDayFontFamily: fonts.body_regular,
-              textDayHeaderFontFamily: fonts.body_bold,
-              textMonthFontSize: 18,
-              textDayFontSize: 14,
-              textDayHeaderFontSize: 12,
-            }}
-            markedDates={events}
-          />
+          <View className="mt-4 rounded-2xl border border-[#E6DACE] bg-white/90 overflow-hidden">
+            <Calendar
+              markingType='multi-period'
+              hideArrows={false}
+              onDayPress={(day) => handleDayPress(day.dateString)}
+              onMonthChange={(monthInfo) => { setSelectedMonth(monthInfo.month); setSelectedYear(monthInfo.year); }}
+              theme={{
+                backgroundColor: 'transparent',
+                calendarBackground: 'transparent',
+                textSectionTitleColor: '#6A1B1A',
+                selectedDayBackgroundColor: '#A23E48',
+                selectedDayTextColor: '#ffffff',
+                todayTextColor: '#A23E48',
+                dayTextColor: '#3B0D0C',
+                textDisabledColor: '#E6DACE',
+                monthTextColor: '#3B0D0C',
+                textMonthFontFamily: fonts.title_bold,
+                textDayFontFamily: fonts.body_regular,
+                textDayHeaderFontFamily: fonts.body_bold,
+                textMonthFontSize: 18,
+                textDayFontSize: 14,
+                textDayHeaderFontSize: 12,
+              }}
+              markedDates={events}
+            />
+          </View>
+
+          {visibleModal && (
+            <RecordEventModal date={selectedDate} onCancel={() => setVisibleModal(false)} />
+          )}
         </View>
-
-        {visibleModal && (
-          <RecordEventModal date={selectedDate} onCancel={() => setVisibleModal(false)} />
-        )}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </ImageBackground>
   )
 }
 

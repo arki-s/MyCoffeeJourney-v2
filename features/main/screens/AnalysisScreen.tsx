@@ -1,9 +1,11 @@
-import { Dimensions, Text, View } from 'react-native'
+import { Dimensions, ImageBackground, ScrollView, Text, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { LineChart } from 'react-native-chart-kit'
 import { useFocusEffect } from '@react-navigation/native'
 import { getAnalysisData } from '../../auth/services/analysisService';
 import { AnalysisData } from '../../../type';
+import { fonts } from '../../../app/main/theme/fonts';
+import textureImage from '../../../assets/texture.jpg';
 
 export default function AnalysisScreen() {
   const [, setLoading] = useState<boolean>(false);
@@ -34,106 +36,119 @@ export default function AnalysisScreen() {
   ));
 
   return (
-    <View>
-      <Text>AnalysisScreen</Text>
-      <Text>飲んだ回数合計： {analysisData?.count}</Text>
-      <Text>飲んだ量合計： {analysisData?.totals.grams}g</Text>
-      <Text>払った金額合計： {analysisData?.totals.yen}円</Text>
-      <Text>よく飲んでるコーヒーランキング</Text>
-      {ranking}
-      <View>
-        <Text>合計金額</Text>
-        <LineChart
-          data={{
-            labels: analysisData?.monthLabels ?? ["1月", "2月", "3月", "4月", "5月", "6月"],
-            datasets: [
-              {
-                data: analysisData?.monthlyData.map(d => d.yen) ?? [
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100
+    <ImageBackground
+      source={textureImage}
+      style={{ flex: 1 }}
+      imageStyle={{ resizeMode: 'cover' }}
+    >
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <View className="px-5 py-6">
+          <Text
+            className="mt-4 text-3xl text-[#3B0D0C]"
+            style={{ fontFamily: fonts.title_bold }}
+          >
+            AnalysisScreen
+          </Text>
+          <Text>飲んだ回数合計： {analysisData?.count}</Text>
+          <Text>飲んだ量合計： {analysisData?.totals.grams}g</Text>
+          <Text>払った金額合計： {analysisData?.totals.yen}円</Text>
+          <Text>よく飲んでるコーヒーランキング</Text>
+          {ranking}
+          <View>
+            <Text>合計金額</Text>
+            <LineChart
+              data={{
+                labels: analysisData?.monthLabels ?? ["1月", "2月", "3月", "4月", "5月", "6月"],
+                datasets: [
+                  {
+                    data: analysisData?.monthlyData.map(d => d.yen) ?? [
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100
+                    ]
+                  }
                 ]
-              }
-            ]
-          }}
-          width={Dimensions.get("window").width} // from react-native
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix="円"
-          yAxisInterval={1} // optional, defaults to 1
-          chartConfig={{
-            backgroundColor: "#e26a00",
-            backgroundGradientFrom: "#fb8c00",
-            backgroundGradientTo: "#ffa726",
-            decimalPlaces: 0, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-              borderRadius: 16
-            },
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#ffa726"
-            }
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
-            borderRadius: 16
-          }}
-        />
-      </View>
-      <View>
-        <Text>合計量</Text>
-        <LineChart
-          data={{
-            labels: analysisData?.monthLabels ?? ["1月", "2月", "3月", "4月", "5月", "6月"],
-            datasets: [
-              {
-                data: analysisData?.monthlyData.map(d => d.grams) ?? [
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100,
-                  Math.random() * 100
+              }}
+              width={Dimensions.get("window").width} // from react-native
+              height={220}
+              yAxisLabel=""
+              yAxisSuffix="円"
+              yAxisInterval={1} // optional, defaults to 1
+              chartConfig={{
+                backgroundColor: "#e26a00",
+                backgroundGradientFrom: "#fb8c00",
+                backgroundGradientTo: "#ffa726",
+                decimalPlaces: 0, // optional, defaults to 2dp
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726"
+                }
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+            />
+          </View>
+          <View>
+            <Text>合計量</Text>
+            <LineChart
+              data={{
+                labels: analysisData?.monthLabels ?? ["1月", "2月", "3月", "4月", "5月", "6月"],
+                datasets: [
+                  {
+                    data: analysisData?.monthlyData.map(d => d.grams) ?? [
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100,
+                      Math.random() * 100
+                    ]
+                  }
                 ]
-              }
-            ]
-          }}
-          width={Dimensions.get("window").width} // from react-native
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix="g"
-          yAxisInterval={1} // optional, defaults to 1
-          chartConfig={{
-            backgroundColor: "#e26a00",
-            backgroundGradientFrom: "#fb8c00",
-            backgroundGradientTo: "#ffa726",
-            decimalPlaces: 1, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-              borderRadius: 16
-            },
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#ffa726"
-            }
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
-            borderRadius: 16
-          }}
-        />
-      </View>
-    </View>
+              }}
+              width={Dimensions.get("window").width} // from react-native
+              height={220}
+              yAxisLabel=""
+              yAxisSuffix="g"
+              yAxisInterval={1} // optional, defaults to 1
+              chartConfig={{
+                backgroundColor: "#e26a00",
+                backgroundGradientFrom: "#fb8c00",
+                backgroundGradientTo: "#ffa726",
+                decimalPlaces: 1, // optional, defaults to 2dp
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726"
+                }
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </ImageBackground>
   )
 }
 
