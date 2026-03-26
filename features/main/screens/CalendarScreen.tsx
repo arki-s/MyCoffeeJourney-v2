@@ -1,4 +1,4 @@
-import { ImageBackground, ScrollView, Text, View } from 'react-native'
+import { ImageBackground, ScrollView, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { Calendar } from 'react-native-calendars'
 import { useFocusEffect } from '@react-navigation/native'
@@ -50,7 +50,7 @@ export default function CalendarScreen() {
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
         <View className="px-5 py-6 ios:shadow-md android:elevation-md">
 
-          <View className="mt-4 rounded-2xl border-2 border-accent bg-primary overflow-hidden">
+          <View className="rounded-2xl border-2 border-accent bg-primary overflow-hidden">
             <Calendar
               markingType='multi-period'
               hideArrows={false}
