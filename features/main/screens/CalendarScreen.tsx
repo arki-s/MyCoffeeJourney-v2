@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { getMonthlyDrinkingRecords } from '../../auth/services/recordService';
 import RecordEventModal from '../components/RecordEventModal';
 import { fonts } from '../../../app/main/theme/fonts';
+import { colors } from '../../../app/main/theme/colors';
 import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking';
 import textureImage from '../../../assets/texture.jpg';
 
@@ -47,15 +48,9 @@ export default function CalendarScreen() {
       imageStyle={{ resizeMode: 'cover' }}
     >
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
-        <View className="px-5 py-6">
-          <Text
-            className="mt-4 text-3xl text-[#3B0D0C] text-center"
-            style={{ fontFamily: fonts.title_bold }}
-          >
-            コーヒーカレンダー
-          </Text>
+        <View className="px-5 py-6 ios:shadow-md android:elevation-md">
 
-          <View className="mt-4 rounded-2xl border border-[#E6DACE] bg-white/90 overflow-hidden">
+          <View className="mt-4 rounded-2xl border-2 border-accent bg-primary overflow-hidden">
             <Calendar
               markingType='multi-period'
               hideArrows={false}
@@ -64,19 +59,20 @@ export default function CalendarScreen() {
               theme={{
                 backgroundColor: 'transparent',
                 calendarBackground: 'transparent',
-                textSectionTitleColor: '#6A1B1A',
-                selectedDayBackgroundColor: '#A23E48',
-                selectedDayTextColor: '#ffffff',
-                todayTextColor: '#A23E48',
-                dayTextColor: '#3B0D0C',
-                textDisabledColor: '#E6DACE',
-                monthTextColor: '#3B0D0C',
-                textMonthFontFamily: fonts.title_bold,
-                textDayFontFamily: fonts.body_regular,
-                textDayHeaderFontFamily: fonts.body_bold,
-                textMonthFontSize: 18,
-                textDayFontSize: 14,
-                textDayHeaderFontSize: 12,
+                textSectionTitleColor: colors.accent,
+                selectedDayBackgroundColor: colors.accent,
+                selectedDayTextColor: colors.primary_light,
+                todayTextColor: colors.accent,
+                dayTextColor: colors.primary_light,
+                textDisabledColor: colors.primary_dark,
+                monthTextColor: colors.accent,
+                textMonthFontFamily: fonts.header_footer,
+                textDayFontFamily: fonts.header_footer,
+                textDayHeaderFontFamily: fonts.header_footer,
+                textMonthFontSize: 24,
+                textDayFontSize: 18,
+                textDayHeaderFontSize: 16,
+                arrowColor: colors.primary_light,
               }}
               markedDates={events}
             />
