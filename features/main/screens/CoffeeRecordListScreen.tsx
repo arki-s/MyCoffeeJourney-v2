@@ -11,6 +11,8 @@ import { fonts } from '../../../app/main/theme/fonts';
 import { colors } from '../../../app/main/theme/colors';
 // @ts-expect-error: image module declaration unavailable in this project
 import textureImage from '../../../assets/texture.jpg';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Octicons from '@expo/vector-icons/Octicons';
 
 export default function CoffeeRecordListScreen() {
   const [ongoingRecords, setOngoingRecords] = useState<UnfinishedWithName[]>([]);
@@ -94,29 +96,28 @@ export default function CoffeeRecordListScreen() {
       key={record.id}
       className="mb-3 rounded-2xl border-2 border-accent bg-primary px-4 py-4 ios:shadow-md android:elevation-md"
     >
-      {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
-      <Text className="text-lg text-accent" style={{ fontFamily: fonts.title_bold }}>
-        {record.coffee?.brand?.name}
-      </Text>
-      <Text className="text-base text-accent" style={{ fontFamily: fonts.title_medium }}>
-        {record.coffee?.name}
-      </Text>
-      <Text className="mt-1 text-sm text-accent" style={{ fontFamily: fonts.body_regular }}>
-        Started on {new Date(record.start_date).toLocaleDateString()}
-      </Text>
       <TouchableOpacity
-        className="mt-3 self-start rounded-full border border-accent px-4 py-2"
+        className="self-end"
         onPress={() => handleDetailPress(record.id)}
       >
-        <Text className="text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_bold }}>
-          詳細画面へ
-        </Text>
+        <FontAwesome5 name="arrow-circle-right" size={28} color={colors.accent} />
       </TouchableOpacity>
+      <View className="self-center mb-4">
+        <Text className="text-lg text-accent" style={{ fontFamily: fonts.title_bold }}>
+          {record.coffee?.brand?.name}
+        </Text>
+        <Text className="text-2xl text-accent" style={{ fontFamily: fonts.title_medium }}>
+          {record.coffee?.name}
+        </Text>
+        <Text className="mt-1 text-md text-accent" style={{ fontFamily: fonts.body_regular }}>
+          Started on {new Date(record.start_date).toLocaleDateString()}
+        </Text>
+      </View>
       <TouchableOpacity
-        className="mt-2 self-start rounded-full bg-[#A23E48] px-4 py-2"
+        className="mb-1 self-center rounded-full border-2 border-accent  bg-primary_dark px-4 py-2"
         onPress={() => handleFinishPress(record.id)}
       >
-        <Text className="text-sm text-white" style={{ fontFamily: fonts.body_bold }}>
+        <Text className="text-md text-accent" style={{ fontFamily: fonts.title_medium }}>
           飲み終えた！
         </Text>
       </TouchableOpacity>
@@ -130,30 +131,30 @@ export default function CoffeeRecordListScreen() {
           key={record.id}
           className="mb-3 rounded-2xl border-2 border-primary_light bg-primary_dark px-4 py-4 ios:shadow-md android:elevation-md"
         >
-          {/* 詳細クリックした場合はcoffeeRecordの詳細画面に遷移予定 */}
-          <Text className="text-lg text-primary_light" style={{ fontFamily: fonts.title_bold }}>
-            {record.coffee?.brand?.name}
-          </Text>
-          <Text className="text-base text-primary_light" style={{ fontFamily: fonts.title_medium }}>
-            {record.coffee?.name}
-          </Text>
-          <Text className="mt-1 text-sm text-primary_light" style={{ fontFamily: fonts.body_regular }}>
-            Finished on {new Date(record.end_date).toLocaleDateString()}
-          </Text>
           <TouchableOpacity
-            className="mt-3 self-start rounded-full border border-primary_light px-4 py-2"
+            className="self-end"
             onPress={() => handleDetailPress(record.id)}
           >
-            <Text className="text-sm text-primary_light" style={{ fontFamily: fonts.body_bold }}>
-              詳細画面へ
-            </Text>
+            <FontAwesome5 name="arrow-circle-right" size={28} color={colors.primary_light} />
           </TouchableOpacity>
+          <View className="self-center mb-4">
+            <Text className="text-lg text-primary_light" style={{ fontFamily: fonts.title_bold }}>
+              {record.coffee?.brand?.name}
+            </Text>
+            <Text className="text-2xl text-primary_light" style={{ fontFamily: fonts.title_medium }}>
+              {record.coffee?.name}
+            </Text>
+            <Text className="mt-1 text-md text-primary_light" style={{ fontFamily: fonts.body_regular }}>
+              Finished on {new Date(record.end_date).toLocaleDateString()}
+            </Text>
+          </View>
+
           {!record.hasReview && (
             <TouchableOpacity
-              className="mt-2 self-start rounded-full bg-[#3B0D0C] px-4 py-2"
+              className="mt-2 self-center border-2 border-primary_light rounded-full bg-primary px-4 py-2"
               onPress={() => { setSelectedRecordId(record.id); setModalVisible("review") }}
             >
-              <Text className="text-sm text-white" style={{ fontFamily: fonts.body_bold }}>
+              <Text className="text-md text-primary_light" style={{ fontFamily: fonts.title_medium }}>
                 レビューを追加する
               </Text>
             </TouchableOpacity>
@@ -202,7 +203,7 @@ export default function CoffeeRecordListScreen() {
       style={{ flex: 1 }}
       imageStyle={{ resizeMode: 'cover' }}
     >
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 24 }}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 112 }}>
         <View className="px-5 py-6">
           {showHowToUseOnly ? (
             howToUse
@@ -235,17 +236,6 @@ export default function CoffeeRecordListScreen() {
               )}
             </>
           )}
-          <TouchableOpacity
-            className="mt-8 w-full rounded-full bg-[#6A1B1A] py-4"
-            onPress={() => handleCreatePress()}
-          >
-            <Text
-              className="text-center text-base text-white"
-              style={{ fontFamily: fonts.body_bold, color: colors.accent }}
-            >
-              飲んでるコーヒー記録登録画面へ
-            </Text>
-          </TouchableOpacity>
         </View>
         {modalVisible === "review" && (
           <ReviewForm
@@ -254,6 +244,12 @@ export default function CoffeeRecordListScreen() {
           />
         )}
       </ScrollView>
+      <TouchableOpacity
+        className="absolute bottom-6 right-5 h-16 w-16 items-center justify-center rounded-full border-2 border-accent bg-primary ios:shadow-md android:elevation-md"
+        onPress={() => handleCreatePress()}
+      >
+        <Octicons name="plus" size={34} color={colors.accent} />
+      </TouchableOpacity>
     </ImageBackground>
   )
 }
