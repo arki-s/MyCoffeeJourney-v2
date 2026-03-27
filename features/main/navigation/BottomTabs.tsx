@@ -53,13 +53,13 @@ export default function BottomTabs() {
           <View style={{ alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ marginRight: 8 }}>
-                <CoffeeIcon color={colors.accent} size={24} />
+                <CoffeeIcon color={colors.OCHER} size={24} />
               </View>
               <Text
                 style={{
                   fontFamily: fonts.header_footer,
                   fontSize: 24,
-                  color: colors.accent,
+                  color: colors.OCHER,
                 }}
               >
                 My Coffee Journey
@@ -69,7 +69,7 @@ export default function BottomTabs() {
               style={{
                 fontFamily: fonts.header_footer,
                 fontSize: 16,
-                color: colors.accent,
+                color: colors.OCHER,
                 textAlign: 'center',
                 marginTop: 2,
               }}
@@ -80,7 +80,7 @@ export default function BottomTabs() {
         ),
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: colors.primary,
+          backgroundColor: colors.DARK_BROWN,
           height: 104,
         },
         headerTitleContainerStyle: {
@@ -88,15 +88,15 @@ export default function BottomTabs() {
         },
         popToTopOnBlur: true,
         tabBarStyle: {
-          backgroundColor: colors.primary
+          backgroundColor: colors.DARK_BROWN
         },
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.primary_light,
+        tabBarActiveTintColor: colors.OCHER,
+        tabBarInactiveTintColor: colors.LIGHT_BROWN,
         tabBarLabelStyle: {
           fontFamily: fonts.header_footer,
           fontSize: 12
         },
-        tabBarIcon: ({ color = colors.accent, size = 24 }) => {
+        tabBarIcon: ({ color = colors.OCHER, size = 24 }) => {
           switch (route.name) {
             case 'Coffee':
               return <BeanIcon color={color} size={size} />;

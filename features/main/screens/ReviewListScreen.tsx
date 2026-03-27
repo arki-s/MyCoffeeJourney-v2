@@ -137,16 +137,9 @@ export default function ReviewListScreen() {
     >
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
         <View className="px-5 py-6">
-          <Text
-            className="mt-4 text-3xl text-[#3B0D0C]"
-            style={{ fontFamily: fonts.title_bold }}
-          >
-            レビュー一覧
-          </Text>
-
           {reviews.length === 0 ? (
-            <View className="mt-4 mb-3 rounded-2xl border border-[#E6DACE] bg-white/70 px-4 py-4">
-              <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+            <View className="rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
+              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
                 まだレビューがありません。
                 {'\n'}コーヒーを飲み終えたらレビューを追加しましょう！
               </Text>

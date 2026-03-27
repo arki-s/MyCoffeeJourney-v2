@@ -82,13 +82,13 @@ export default function CoffeeListScreen() {
       onPress={() => handleDetailPress(coffee.id)}
     >
       <View
-        className="mb-3 rounded-2xl border-2 border-accent bg-primary px-4 py-4 ios:shadow-md android:elevation-md"
+        className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
       >
         <View className="self-center">
-          <Text className="text-center text-lg text-accent" style={{ fontFamily: fonts.title_bold }}>
+          <Text className="text-center text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
             {coffee.brandName}
           </Text>
-          <Text className="text-center text-2xl text-accent" style={{ fontFamily: fonts.title_medium }}>
+          <Text className="text-center text-2xl text-OCHER" style={{ fontFamily: fonts.title_medium }}>
             {coffee.name}
           </Text>
         </View>
@@ -97,16 +97,16 @@ export default function CoffeeListScreen() {
   ));
 
   const initialSetupNotice = (
-    <View className="mb-3 rounded-2xl border-2 border-accent bg-primary px-4 py-4 ios:shadow-md android:elevation-md">
-      <Text className="text-lg text-accent text-center" style={{ fontFamily: fonts.title_bold }}>
+    <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
+      <Text className="text-lg text-OCHER text-center" style={{ fontFamily: fonts.title_bold }}>
         まずは初期設定として、
         {'\n'}コーヒー豆産地、コーヒーブランド、挽き目の登録を行いましょう！
       </Text>
       <TouchableOpacity
-        className="mt-4 mb-1 self-center rounded-full border-2 border-accent bg-primary_dark px-4 py-2"
+        className="mt-4 mb-1 self-center rounded-full border-2 border-OCHER bg-BROWN px-4 py-2"
         onPress={() => handleSettingsPress()}
       >
-        <Text className="text-md text-accent" style={{ fontFamily: fonts.title_medium }}>
+        <Text className="text-md text-OCHER" style={{ fontFamily: fonts.title_medium }}>
           設定画面へ
         </Text>
       </TouchableOpacity>
@@ -124,24 +124,24 @@ export default function CoffeeListScreen() {
           {needsInitialSetup && initialSetupNotice}
 
           {coffees.length === 0 && !needsInitialSetup ? (
-            <View className="mt-4 mb-3 rounded-2xl border-2 border-accent bg-primary px-4 py-4">
-              <Text className="text-lg text-accent" style={{ fontFamily: fonts.title_bold }}>
+            <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
+              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
                 登録されているコーヒーはありません。
                 {'\n'}追加しましょう！
               </Text>
             </View>
           ) : coffees.length > 0 ? (
-            <View className="mt-4">{coffeeItems}</View>
+            <View>{coffeeItems}</View>
           ) : null}
 
         </View>
       </ScrollView>
       {!needsInitialSetup && (
         <TouchableOpacity
-          className="absolute bottom-6 right-5 h-16 w-16 items-center justify-center rounded-full border-2 border-accent bg-primary ios:shadow-md android:elevation-md"
+          className="absolute bottom-6 right-5 h-16 w-16 items-center justify-center rounded-full border-2 border-OCHER bg-DARK_BROWN ios:shadow-md android:elevation-md"
           onPress={() => handleCreatePress()}
         >
-          <Octicons name="plus" size={34} color={colors.accent} />
+          <Octicons name="plus" size={34} color={colors.OCHER} />
         </TouchableOpacity>
       )}
     </ImageBackground>

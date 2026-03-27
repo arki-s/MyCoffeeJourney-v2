@@ -50,7 +50,7 @@ export default function CalendarScreen() {
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
         <View className="px-5 py-6 ios:shadow-md android:elevation-md">
 
-          <View className="rounded-2xl border-2 border-accent bg-primary overflow-hidden">
+          <View className="rounded-2xl border-2 border-OCHER bg-DARK_BROWN overflow-hidden">
             <Calendar
               markingType='multi-period'
               hideArrows={false}
@@ -59,20 +59,20 @@ export default function CalendarScreen() {
               theme={{
                 backgroundColor: 'transparent',
                 calendarBackground: 'transparent',
-                textSectionTitleColor: colors.accent,
-                selectedDayBackgroundColor: colors.accent,
-                selectedDayTextColor: colors.primary_light,
-                todayTextColor: colors.accent,
-                dayTextColor: colors.primary_light,
-                textDisabledColor: colors.primary_dark,
-                monthTextColor: colors.accent,
+                textSectionTitleColor: colors.OCHER,
+                selectedDayBackgroundColor: colors.OCHER,
+                selectedDayTextColor: colors.LIGHT_BROWN,
+                todayTextColor: colors.OCHER,
+                dayTextColor: colors.LIGHT_BROWN,
+                textDisabledColor: colors.BROWN,
+                monthTextColor: colors.OCHER,
                 textMonthFontFamily: fonts.header_footer,
                 textDayFontFamily: fonts.header_footer,
                 textDayHeaderFontFamily: fonts.header_footer,
                 textMonthFontSize: 24,
                 textDayFontSize: 18,
                 textDayHeaderFontSize: 16,
-                arrowColor: colors.primary_light,
+                arrowColor: colors.LIGHT_BROWN,
               }}
               markedDates={events}
             />

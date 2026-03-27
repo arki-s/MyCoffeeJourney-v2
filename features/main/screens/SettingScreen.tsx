@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useLogout } from '../../auth/hooks/useLogout';
 import { useUserStore } from '../../../stores/useUserStore';
@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { fonts } from '../../../app/main/theme/fonts';
 import { colors } from '../../../app/main/theme/colors';
+import textureImage from '../../../assets/texture.jpg';
 
 export default function SettingScreen() {
   const { logout } = useLogout();
@@ -29,87 +30,67 @@ export default function SettingScreen() {
 
 
   return (
-    <ScrollView className="flex-1 bg-[#F6EFE7]">
-      <View className="px-5 py-6">
-        <Text style={{ fontFamily: fonts.title_bold, fontSize: 28, textAlign: "center", color: colors.primary }}>各種設定</Text>
-        {user ?
-          <View>
-            <Text
-              className="text-center"
-              style={{ fontFamily: fonts.body_regular, fontSize: 14, color: colors.primary }}>{user.email} にてログイン中</Text>
+    <ImageBackground
+      source={textureImage}
+      style={{ flex: 1 }}
+      imageStyle={{ resizeMode: 'cover' }}
+    >
+      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <View className="px-5 py-6">
+          {user ?
+            <View>
+              <View className="self-center rounded-full border-2 border-DARK_BROWN bg-OCHER px-3 py-2 ios:shadow-md android:elevation-md">
+                <Text
+                  className="text-center text-DARK_BROWN text-md"
+                  style={{ fontFamily: fonts.body }}>{user.email}
+                  {'\n'}にてログイン中</Text>
+              </View>
 
-            <TouchableOpacity
-              onPress={() => handleBrandPress()}
-              style={{
-                backgroundColor: colors.primary,
-                padding: 12,
-                marginTop: 16,
-                borderRadius: 8,
-                marginHorizontal: 50,
-              }}
-            >
-              <Text style={{ color: colors.accent, textAlign: 'center', fontFamily: fonts.title_bold }}>
-                コーヒーブランド管理画面へ
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleBeanPress()}
-              style={{
-                backgroundColor: colors.primary,
-                padding: 12,
-                marginTop: 16,
-                borderRadius: 8,
-                marginHorizontal: 50,
-              }}
-            >
-              <Text style={{ color: colors.accent, textAlign: 'center', fontFamily: fonts.title_bold }}>
-                コーヒー豆産地管理画面へ
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleGrindSizePress()}
-              style={{
-                backgroundColor: colors.primary,
-                padding: 12,
-                marginTop: 16,
-                borderRadius: 8,
-                marginHorizontal: 50,
-              }}
-            >
-              <Text style={{ color: colors.accent, textAlign: 'center', fontFamily: fonts.title_bold }}>
-                挽き目管理画面へ
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => { }}
-              style={{
-                backgroundColor: '#FF9500',
-                padding: 12,
-                marginTop: 16,
-                borderRadius: 8,
-                marginHorizontal: 50,
-              }}>
-              <Text style={{ fontFamily: fonts.title_bold, color: colors.primary_light, textAlign: 'center' }}>
-                データ全削除（未実装）
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={logout}
-              style={{
-                backgroundColor: colors.primary,
-                padding: 12,
-                marginTop: 16,
-                borderRadius: 8,
-                marginHorizontal: 50,
-              }}>
-              <Text style={{ fontFamily: fonts.title_bold, color: colors.accent, textAlign: 'center' }}>
-                ログアウト
-              </Text>
-            </TouchableOpacity>
-          </View>
-          : <Text>Please log in.</Text>}
-      </View>
-    </ScrollView>
+              <TouchableOpacity
+                onPress={() => handleBrandPress()}
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+              >
+                <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
+                  コーヒーブランド管理画面へ
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleBeanPress()}
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+              >
+                <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
+                  コーヒー豆産地管理画面へ
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleGrindSizePress()}
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+              >
+                <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
+                  挽き目管理画面へ
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { }}
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+              >
+                <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
+                  データ全削除（未実装）
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={logout}
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+              >
+                <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
+                  ログアウト
+                </Text>
+              </TouchableOpacity>
+            </View>
+            : <Text>Please log in.</Text>}
+        </View>
+      </ScrollView>
+    </ImageBackground>
   )
 }
 
