@@ -85,10 +85,10 @@ export default function CoffeeListScreen() {
         className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
       >
         <View className="self-center">
-          <Text className="text-center text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
+          <Text className="text-center text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
             {coffee.brandName}
           </Text>
-          <Text className="text-center text-2xl text-OCHER" style={{ fontFamily: fonts.title_medium }}>
+          <Text className="text-center text-2xl text-OCHER" style={{ fontFamily: fonts.body }}>
             {coffee.name}
           </Text>
         </View>
@@ -98,7 +98,7 @@ export default function CoffeeListScreen() {
 
   const initialSetupNotice = (
     <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
-      <Text className="text-lg text-OCHER text-center" style={{ fontFamily: fonts.title_bold }}>
+      <Text className="text-lg text-OCHER text-center" style={{ fontFamily: fonts.body }}>
         まずは初期設定として、
         {'\n'}コーヒー豆産地、コーヒーブランド、挽き目の登録を行いましょう！
       </Text>
@@ -106,7 +106,7 @@ export default function CoffeeListScreen() {
         className="mt-4 mb-1 self-center rounded-full border-2 border-OCHER bg-BROWN px-4 py-2"
         onPress={() => handleSettingsPress()}
       >
-        <Text className="text-md text-OCHER" style={{ fontFamily: fonts.title_medium }}>
+        <Text className="text-md text-OCHER" style={{ fontFamily: fonts.body }}>
           設定画面へ
         </Text>
       </TouchableOpacity>
@@ -125,7 +125,7 @@ export default function CoffeeListScreen() {
 
           {coffees.length === 0 && !needsInitialSetup ? (
             <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
-              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
+              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
                 登録されているコーヒーはありません。
                 {'\n'}追加しましょう！
               </Text>

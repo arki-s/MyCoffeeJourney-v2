@@ -6,7 +6,6 @@ import { SettingStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { fonts } from '../../../app/main/theme/fonts';
-import { colors } from '../../../app/main/theme/colors';
 import textureImage from '../../../assets/texture.jpg';
 
 export default function SettingScreen() {

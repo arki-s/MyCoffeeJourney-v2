@@ -139,7 +139,7 @@ export default function ReviewListScreen() {
         <View className="px-5 py-6">
           {reviews.length === 0 ? (
             <View className="rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
-              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
+              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
                 まだレビューがありません。
                 {'\n'}コーヒーを飲み終えたらレビューを追加しましょう！
               </Text>
