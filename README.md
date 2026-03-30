@@ -5,9 +5,9 @@
 コーヒー好きによるコーヒー好きのためのコーヒーのアプリ。<br>
 以前作成した v1 を 1 から新規作成して継続利用可能なアプリを目指しています。
 
-![Top](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/HowToUseScreenshot.png)
-![Calendar](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/CalendarScreenshot.png)
-![Beans](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/BeansScreenshot.png)
+![Top](./screenshots/HowToUseScreenshot.png)
+![Calendar](./screenshots/CalendarScreenshot.png)
+![Beans](./screenshots/BeansScreenshot.png)
 
 ## 全体機能・画面遷移構成
 
