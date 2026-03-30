@@ -5,9 +5,11 @@
 コーヒー好きによるコーヒー好きのためのコーヒーのアプリ。<br>
 以前作成した v1 を 1 から新規作成して継続利用可能なアプリを目指しています。
 
-![Top](./screenshots/HowToUseScreenshot.png)
-![Calendar](./screenshots/CalendarScreenshot.png)
-![Beans](./screenshots/BeansScreenshot.png)
+<p align="center">
+  <img src="./screenshots/HowToUseScreenshot.png" alt="Top" width="30%" />
+  <img src="./screenshots/CalendarScreenshot.png" alt="Calendar" width="30%" />
+  <img src="./screenshots/BeansScreenshot.png" alt="Beans" width="30%" />
+</p>
 
 ## 全体機能・画面遷移構成
 
