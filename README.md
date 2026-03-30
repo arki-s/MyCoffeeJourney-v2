@@ -5,6 +5,10 @@
 コーヒー好きによるコーヒー好きのためのコーヒーのアプリ。<br>
 以前作成した v1 を 1 から新規作成して継続利用可能なアプリを目指しています。
 
+![Top](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/HowToUseScreenshot.png)
+![Calendar](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/CalendarScreenshot.png)
+![Beans](https://github.com/arki-s/MyCoffeeJourney-v2/screenshots/BeansScreenshot.png)
+
 ## 全体機能・画面遷移構成
 
 ### 主な機能一覧
@@ -24,7 +28,6 @@
 ### バックエンド
 
 - **Supabase**
-
   - PostgreSQL ベースの RDB
   - 認証：Email 対応
   - ストレージ：画像アップロードも将来的に検討
