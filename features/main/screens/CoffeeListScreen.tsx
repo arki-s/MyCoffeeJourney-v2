@@ -88,7 +88,7 @@ export default function CoffeeListScreen() {
           <Text className="text-center text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
             {coffee.brandName}
           </Text>
-          <Text className="text-center text-2xl text-OCHER" style={{ fontFamily: fonts.body }}>
+          <Text className="text-center text-2xl text-OCHER" style={{ fontFamily: fonts.title_bold }}>
             {coffee.name}
           </Text>
         </View>
