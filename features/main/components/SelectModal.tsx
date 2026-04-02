@@ -1,6 +1,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { FlatList, Modal, TouchableOpacity, View, Text } from "react-native";
+import { colors } from "../../../app/main/theme/colors";
+import { fonts } from "../../../app/main/theme/fonts";
 
 export default function MultiSelectModal({
   visible,
@@ -34,8 +36,8 @@ export default function MultiSelectModal({
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose} transparent>
       <View style={{ flex: 1, backgroundColor: '#0006', justifyContent: 'flex-end' }}>
-        <View style={{ maxHeight: '70%', backgroundColor: '#fff', borderTopLeftRadius: 12, borderTopRightRadius: 12, padding: 12 }}>
-          <Text style={{ fontSize: 18, fontWeight: '600' }}>{title}</Text>
+        <View className="bg-DARK_BROWN border-2 border-t-OCHER border-x-OCHER" style={{ maxHeight: '70%', borderTopLeftRadius: 12, borderTopRightRadius: 12, padding: 12 }}>
+          <Text style={{ fontSize: 18, fontFamily: fonts.body }} className="text-OCHER">{title}</Text>
           <FlatList
             data={options}
             extraData={local}
@@ -51,25 +53,29 @@ export default function MultiSelectModal({
                   {isMulti ? (
                     <View style={{
                       width: 20, height: 20, marginRight: 8, borderRadius: 4, borderWidth: 1,
-                      borderColor: checked ? '#007AFF' : '#aaa', backgroundColor: checked ? '#007AFF' : 'transparent'
+                      borderColor: checked ? colors.OCHER : colors.LIGHT_BROWN, backgroundColor: checked ? colors.OCHER : 'transparent'
                     }} />
                   ) : (
                     <View style={{
                       width: 20, height: 20, marginRight: 8, borderRadius: 50, borderWidth: 1,
-                      borderColor: checked ? '#007AFF' : '#aaa', backgroundColor: checked ? '#007AFF' : 'transparent'
+                      borderColor: checked ? colors.OCHER : colors.LIGHT_BROWN, backgroundColor: checked ? colors.OCHER : 'transparent'
                     }} />
                   )}
-                  <Text>{item.label}</Text>
+                  <Text className="text-OCHER" style={{ fontFamily: fonts.body }}>{item.label}</Text>
                 </TouchableOpacity>
               );
             }}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 12 }}>
-            <TouchableOpacity onPress={onClose}><Text>キャンセル</Text></TouchableOpacity>
+            <TouchableOpacity onPress={onClose}>
+              <Text className="text-LIGHT_BROWN" style={{ fontFamily: fonts.body }}>キャンセル</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               disabled={local.length === 0}
               onPress={() => { onChange(local); onClose(); }}>
-              <Text style={{ color: '#007AFF' }}>完了</Text>
+              <Text className="text-OCHER" style={{ fontFamily: fonts.body }}>
+                完了
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
