@@ -1,11 +1,13 @@
-import { Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
 import { CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { deleteCoffee, getBeanInclusions, getCoffeeDetail, setCoffeeBeanInclusions, updateCoffee } from '../../auth/services/coffeeService';
 import { listReviewsForCoffee } from '../../auth/services/reviewService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CoffeeForm from '../components/CoffeeForm';
+import { fonts } from '../../../app/main/theme/fonts';
+import { CoffeeFormSubmitValue } from '../components/CoffeeForm.shared';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -37,9 +39,10 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     aroma: 1,
     brand_id: ''
   });
-  const [includedBeans, setIncludedbeans] = useState<string[]>([]);
+  const [includedBeans, setIncludedBeans] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
-  const [, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const { id } = route.params;
 
   useEffect(() => {
@@ -68,7 +71,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
 
       try {
         const beans = await getBeanInclusions(id);
-        setIncludedbeans(beans);
+        setIncludedBeans(beans);
       } catch (error) {
         console.error("Error fetching bean inclusion", error);
       }
@@ -104,20 +107,9 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     }
   };
 
-  async function handleEditSubmit(form: {
-    name: string;
-    comments: string;
-    photo_url: string;
-    roast_level: number;
-    body: number;
-    sweetness: number;
-    fruity: number;
-    bitter: number;
-    aroma: number;
-    brand_id: string;
-    includedBeans: string[];
-  }) {
+  async function handleEditSubmit(form: CoffeeFormSubmitValue) {
     try {
+      setError(null);
       setLoading(true);
       await updateCoffee(
         coffee.id,
@@ -137,10 +129,33 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       setModalVisible(null);
     } catch (error) {
       console.error("Error updating coffee:", error);
+      setError('※コーヒーの更新に失敗しました。もう一度お試しください。');
     } finally {
       setLoading(false);
     }
   }
+
+  const handleEditCancel = () => {
+    setError(null);
+    setModalVisible(null);
+  };
+
+  const editInitialValue = useMemo(
+    (): CoffeeFormSubmitValue => ({
+      name: coffee.name,
+      comments: coffee.comments,
+      photo_url: coffee.photo_url,
+      roast_level: coffee.roast_level,
+      body: coffee.body,
+      sweetness: coffee.sweetness,
+      fruity: coffee.fruity,
+      bitter: coffee.bitter,
+      aroma: coffee.aroma,
+      brand_id: coffee.brand_id,
+      includedBeans,
+    }),
+    [coffee, includedBeans]
+  );
 
   const coffeeDetails = coffeeDetail ? (
     <View>
@@ -199,7 +214,10 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       {coffeeReviewlist}
 
       <TouchableOpacity
-        onPress={() => setModalVisible("edit")}
+        onPress={() => {
+          setError(null);
+          setModalVisible("edit");
+        }}
         style={{
           backgroundColor: '#51c734ff',
           padding: 12,
@@ -226,21 +244,35 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
         </Text>
       </TouchableOpacity>
 
-      {modalVisible === "edit" && (<CoffeeForm
-        name={coffee.name}
-        comments={coffee.comments}
-        photo_url={coffee.photo_url}
-        roast_level={coffee.roast_level}
-        body={coffee.body}
-        sweetness={coffee.sweetness}
-        fruity={coffee.fruity}
-        bitter={coffee.bitter}
-        aroma={coffee.aroma}
-        brand_id={coffee.brand_id}
-        includedBeans={includedBeans}
-        onSubmit={(form) => handleEditSubmit(form)}
-        onCancel={() => setModalVisible(null)}
-      />)}
+      <Modal
+        visible={modalVisible === "edit"}
+        animationType="slide"
+        transparent
+        onRequestClose={handleEditCancel}
+      >
+        <View style={{ flex: 1, backgroundColor: '#0008', justifyContent: 'center', padding: 16 }}>
+          <View
+            className="rounded-2xl border border-OCHER bg-DARK_BROWN"
+            style={{ maxHeight: '92%' }}
+          >
+            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 24 }}>
+              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+                コーヒーを編集
+              </Text>
+
+              <CoffeeForm
+                mode="edit"
+                initialValue={editInitialValue}
+                loading={loading}
+                error={error}
+                onSubmit={(form) => handleEditSubmit(form)}
+                onCancel={handleEditCancel}
+                submitLabel="変更を保存"
+              />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 }
