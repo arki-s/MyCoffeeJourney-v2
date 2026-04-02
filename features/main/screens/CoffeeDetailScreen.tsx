@@ -1,5 +1,6 @@
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
+import Slider from '@react-native-community/slider'
 import { CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { deleteCoffee, getBeanInclusions, getCoffeeDetail, setCoffeeBeanInclusions, updateCoffee } from '../../auth/services/coffeeService';
@@ -7,7 +8,9 @@ import { listReviewsForCoffee } from '../../auth/services/reviewService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CoffeeForm from '../components/CoffeeForm';
 import { fonts } from '../../../app/main/theme/fonts';
-import { CoffeeFormSubmitValue } from '../components/CoffeeForm.shared';
+import { CoffeeFormSubmitValue, sliderFields } from '../components/CoffeeForm.shared';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { colors } from '../../../app/main/theme/colors';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -159,13 +162,83 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
 
   const coffeeDetails = coffeeDetail ? (
     <View>
-      <Text style={{ fontSize: 18 }}>{coffeeDetail.brand?.name}</Text>
-      <Text style={{ fontSize: 18 }}>{coffeeDetail.name}</Text>
-      <Text style={{ fontSize: 18 }}>{coffeeDetail.comments}</Text>
-      <Text style={{ fontSize: 18 }}>飲んだ回数： {coffeeDetail.stats.recordCount} 回</Text>
-      <Text style={{ fontSize: 18 }}>100gごとの金額： {coffeeDetail.stats.pricePer100g} 円</Text>
-      <Text style={{ fontSize: 18 }}>スコア平均点： {coffeeDetail.stats.avgScore}</Text>
-      <Text style={{ fontSize: 18 }}>今までに飲んだ量： {coffeeDetail.stats.totalWeight} g</Text>
+      <View className='py-2 rounded-2xl border-2 border-DARK_BROWN bg-BROWN'>
+        <Text className="text-center text-OCHER" style={{ fontSize: 24, fontFamily: fonts.body }}>{coffeeDetail.brand?.name}</Text>
+        <Text className="text-center text-OCHER" style={{ fontSize: 28, fontFamily: fonts.title_regular }}>{coffeeDetail.name}</Text>
+      </View>
+      <View className="mt-4 gap-2">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
+            スコア平均点
+          </Text>
+          <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+            {coffeeDetail.stats.avgScore ?? '-'}
+          </Text>
+        </View>
+
+        <View className="flex-row items-center justify-between">
+          <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
+            飲んだ回数
+          </Text>
+          <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+            {coffeeDetail.stats.recordCount} 回
+          </Text>
+        </View>
+
+        <View className="flex-row items-center justify-between">
+          <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
+            今までに飲んだ量
+          </Text>
+          <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+            {coffeeDetail.stats.totalWeight} ｇ
+          </Text>
+        </View>
+
+        <View className="flex-row items-center justify-between">
+          <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
+            100gごとの金額
+          </Text>
+          <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+            {coffeeDetail.stats.pricePer100g ?? 0} 円
+          </Text>
+        </View>
+      </View>
+      <Text className="mt-4 text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>{coffeeDetail.comments}</Text>
+
+      <View className="mt-2 py-4">
+        <Text className="mb-4 text-center text-DARK_BROWN" style={{ fontSize: 20, fontFamily: fonts.body }}>
+          味の評価
+        </Text>
+
+        {sliderFields.map((field) => (
+          <View key={field.key} className="mb-4 flex-row items-center">
+            <Text
+              className="text-DARK_BROWN"
+              style={{ width: 72, fontSize: 16, fontFamily: fonts.body }}
+            >
+              {field.label}
+            </Text>
+            <Text
+              className="text-center text-DARK_BROWN"
+              style={{ width: 28, fontSize: 18, fontFamily: fonts.body }}
+            >
+              {coffeeDetail[field.key]}
+            </Text>
+            <View className="ml-3 flex-1">
+              <Slider
+                value={coffeeDetail[field.key]}
+                minimumValue={1}
+                maximumValue={5}
+                step={1}
+                disabled
+                minimumTrackTintColor={colors.DARK_BROWN}
+                maximumTrackTintColor={colors.WHITE}
+                thumbTintColor={colors.WHITE}
+              />
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   ) : (
     <Text style={{ fontSize: 18 }}>Loading...</Text>
@@ -182,99 +255,71 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       )
     })
     : (
-      <Text style={{ fontSize: 18 }}>まだレビューはありません。</Text>
+      <Text className="text-DARK_BROWN text-center" style={{ fontSize: 18, fontFamily: fonts.body }}>まだレビューはありません。</Text>
     );
 
   //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
   const navigation = useNavigation<RecordsNav>();
 
-  const handleHomePress = () => {
-    navigation.navigate('CoffeeHome');
-  };
-
   return (
-    <View>
-      <Text>CoffeeDetailScreen</Text>
-      <TouchableOpacity
-        onPress={() => handleHomePress()}
-        style={{
-          backgroundColor: '#34C759',
-          padding: 12,
-          marginTop: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center' }}>
-          コーヒー一覧へ戻る
-        </Text>
-      </TouchableOpacity>
+    <ScrollView
+      className="flex-1 border-2 border-BROWN bg-OCHER"
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
+    >
+      <View className="px-5 py-6">
 
-      {coffeeDetails}
-      {coffeeReviewlist}
+        {coffeeDetails}
+        {coffeeReviewlist}
 
-      <TouchableOpacity
-        onPress={() => {
-          setError(null);
-          setModalVisible("edit");
-        }}
-        style={{
-          backgroundColor: '#51c734ff',
-          padding: 12,
-          marginTop: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center' }}>
-          編集する
-        </Text>
-      </TouchableOpacity>
+        <Modal
+          visible={modalVisible === "edit"}
+          animationType="slide"
+          transparent
+          onRequestClose={handleEditCancel}
+        >
+          <View style={{ flex: 1, backgroundColor: '#0008', justifyContent: 'center', padding: 16 }}>
+            <View
+              className="rounded-2xl border border-OCHER bg-DARK_BROWN"
+              style={{ maxHeight: '92%' }}
+            >
+              <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 24 }}>
+                <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+                  コーヒーを編集
+                </Text>
 
-      <TouchableOpacity
-        onPress={() => handleDeletePress()}
-        style={{
-          backgroundColor: '#c73434ff',
-          padding: 12,
-          marginTop: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center' }}>
-          削除する
-        </Text>
-      </TouchableOpacity>
+                <CoffeeForm
+                  mode="edit"
+                  initialValue={editInitialValue}
+                  loading={loading}
+                  error={error}
+                  onSubmit={(form) => handleEditSubmit(form)}
+                  onCancel={handleEditCancel}
+                  submitLabel="変更を保存"
+                />
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+        <View className="mt-4 flex-row justify-end">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity
+              onPress={() => {
+                setError(null);
+                setModalVisible("edit");
+              }}
+            >
+              <FontAwesome name="pencil" size={28} color={colors.DARK_BROWN} />
+            </TouchableOpacity>
 
-      <Modal
-        visible={modalVisible === "edit"}
-        animationType="slide"
-        transparent
-        onRequestClose={handleEditCancel}
-      >
-        <View style={{ flex: 1, backgroundColor: '#0008', justifyContent: 'center', padding: 16 }}>
-          <View
-            className="rounded-2xl border border-OCHER bg-DARK_BROWN"
-            style={{ maxHeight: '92%' }}
-          >
-            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 24 }}>
-              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
-                コーヒーを編集
-              </Text>
-
-              <CoffeeForm
-                mode="edit"
-                initialValue={editInitialValue}
-                loading={loading}
-                error={error}
-                onSubmit={(form) => handleEditSubmit(form)}
-                onCancel={handleEditCancel}
-                submitLabel="変更を保存"
-              />
-            </ScrollView>
+            <TouchableOpacity
+              onPress={() => handleDeletePress()}
+            >
+              <FontAwesome name="trash" size={28} color={colors.DARK_BROWN} />
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </ScrollView>
   )
 }
-
-// const styles = StyleSheet.create({})

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomStackParamList } from '../../../type';
 import ReviewListScreen from '../screens/ReviewListScreen';
@@ -17,6 +17,7 @@ import MessageIcon from '../../../app/main/icons/MessageIcon';
 import SettingsIcon from '../../../app/main/icons/SettingsIcon';
 import { fonts } from '../../../app/main/theme/fonts';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const Tab = createBottomTabNavigator<BottomStackParamList>();
 
@@ -47,74 +48,95 @@ function getCurrentScreenTitle(route: { name: string; state?: unknown }) {
 export default function BottomTabs() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: true,
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ marginRight: 8 }}>
-                <CoffeeIcon color={colors.OCHER} size={24} />
+      screenOptions={({ route, navigation }) => {
+        const focusedRouteName = getFocusedRouteNameFromRoute(route) ?? route.name;
+        const showBackButton = ['CoffeeDetails', 'Brands', 'Beans', 'GrindSize'].includes(focusedRouteName);
+        const handleHeaderBackPress = () => {
+          if (focusedRouteName === 'CoffeeDetails') {
+            navigation.navigate('Coffee', { screen: 'CoffeeHome' });
+            return;
+          }
+
+          navigation.navigate('Settings', { screen: 'SettingsHome' });
+        };
+
+        return {
+          headerShown: true,
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ marginRight: 8 }}>
+                  <CoffeeIcon color={colors.OCHER} size={24} />
+                </View>
+                <Text
+                  style={{
+                    fontFamily: fonts.header_footer,
+                    fontSize: 24,
+                    color: colors.OCHER,
+                  }}
+                >
+                  My Coffee Journey
+                </Text>
               </View>
               <Text
                 style={{
                   fontFamily: fonts.header_footer,
-                  fontSize: 24,
+                  fontSize: 16,
                   color: colors.OCHER,
+                  textAlign: 'center',
+                  marginTop: 2,
                 }}
               >
-                My Coffee Journey
+                {getCurrentScreenTitle(route)}
               </Text>
             </View>
-            <Text
-              style={{
-                fontFamily: fonts.header_footer,
-                fontSize: 16,
-                color: colors.OCHER,
-                textAlign: 'center',
-                marginTop: 2,
-              }}
+          ),
+          headerLeft: showBackButton ? () => (
+            <TouchableOpacity
+              onPress={handleHeaderBackPress}
+              style={{ marginLeft: 16 }}
             >
-              {getCurrentScreenTitle(route)}
-            </Text>
-          </View>
-        ),
-        headerTitleAlign: 'center',
-        headerStyle: {
-          backgroundColor: colors.DARK_BROWN,
-          height: 104,
-        },
-        headerTitleContainerStyle: {
-          justifyContent: 'center',
-        },
-        popToTopOnBlur: true,
-        tabBarStyle: {
-          backgroundColor: colors.DARK_BROWN
-        },
-        tabBarActiveTintColor: colors.OCHER,
-        tabBarInactiveTintColor: colors.LIGHT_BROWN,
-        tabBarLabelStyle: {
-          fontFamily: fonts.header_footer,
-          fontSize: 12
-        },
-        tabBarIcon: ({ color = colors.OCHER, size = 24 }) => {
-          switch (route.name) {
-            case 'Coffee':
-              return <BeanIcon color={color} size={size} />;
-            case 'Calendar':
-              return <CalendarIcon color={color} size={size} />;
-            case 'Analysis':
-              return <AnalysisIcon color={color} size={size} />;
-            case 'Records':
-              return <CoffeeIcon color={color} size={size} />;
-            case 'Reviews':
-              return <MessageIcon color={color} size={size} />;
-            case 'Settings':
-              return <SettingsIcon color={color} size={size} />;
-            default:
-              return null;
-          }
-        },
-      })}
+              <FontAwesome5 name="arrow-circle-left" size={28} color={colors.OCHER} />
+            </TouchableOpacity>
+          ) : undefined,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: colors.DARK_BROWN,
+            height: 104,
+          },
+          headerTitleContainerStyle: {
+            justifyContent: 'center',
+          },
+          popToTopOnBlur: true,
+          tabBarStyle: {
+            backgroundColor: colors.DARK_BROWN
+          },
+          tabBarActiveTintColor: colors.OCHER,
+          tabBarInactiveTintColor: colors.LIGHT_BROWN,
+          tabBarLabelStyle: {
+            fontFamily: fonts.header_footer,
+            fontSize: 12
+          },
+          tabBarIcon: ({ color = colors.OCHER, size = 24 }) => {
+            switch (route.name) {
+              case 'Coffee':
+                return <BeanIcon color={color} size={size} />;
+              case 'Calendar':
+                return <CalendarIcon color={color} size={size} />;
+              case 'Analysis':
+                return <AnalysisIcon color={color} size={size} />;
+              case 'Records':
+                return <CoffeeIcon color={color} size={size} />;
+              case 'Reviews':
+                return <MessageIcon color={color} size={size} />;
+              case 'Settings':
+                return <SettingsIcon color={color} size={size} />;
+              default:
+                return null;
+            }
+          },
+        };
+      }}
     >
       <Tab.Screen
         name="Records"

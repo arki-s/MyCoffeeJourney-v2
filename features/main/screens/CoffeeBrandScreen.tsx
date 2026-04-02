@@ -1,11 +1,8 @@
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Brand, SettingStackParamList } from '../../../type';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import { Brand } from '../../../type';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createBrand, deleteBrand, listBrands, updateBrand } from '../../auth/services/brandService';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -21,13 +18,6 @@ export default function CoffeeBrandScreen() {
   const [editBrandNames, setEditBrandNames] = useState<Record<string, string>>({});
   const [createError, setCreateError] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
-
-  type RecordsNav = NativeStackNavigationProp<SettingStackParamList, 'Brands'>;
-  const navigation = useNavigation<RecordsNav>();
-
-  const handleSettingPress = () => {
-    navigation.navigate('SettingsHome');
-  };
 
   useEffect(() => {
     void fetchBrands();
@@ -215,10 +205,6 @@ export default function CoffeeBrandScreen() {
     <ScrollView className="flex-1 border-2 border-OCHER bg-DARK_BROWN"
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
       <View className="px-5 py-6">
-        <TouchableOpacity className="self-start" onPress={() => handleSettingPress()}>
-          <FontAwesome5 name="arrow-circle-left" size={28} color={colors.OCHER} />
-        </TouchableOpacity>
-
         <View>
           {!isCreateFormVisible ? (
             <TouchableOpacity

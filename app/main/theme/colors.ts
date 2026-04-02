@@ -7,7 +7,8 @@ export const colors = {
   DARK_BROWN : '#1C0A00', //ダークブラウン
   BROWN: '#361500', //ブラウン
   LIGHT_BROWN: '#603601', //ライトブラウン
-  OCHER:'#CC9544' //オーカー
+  OCHER:'#CC9544', //オーカー
+  WHITE: "#FFFFFF",
 }
 
 export type Colors = typeof colors;

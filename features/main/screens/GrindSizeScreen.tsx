@@ -1,11 +1,8 @@
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { GrindSize, SettingStackParamList } from '../../../type';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import { GrindSize } from '../../../type';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createGrindSize, deleteGrindSize, listGrindSizes, updateGrindSize } from '../../auth/services/grindSizeService';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -21,13 +18,6 @@ export default function GrindSizeScreen() {
   const [editGrindSizeNames, setEditGrindSizeNames] = useState<Record<string, string>>({});
   const [createError, setCreateError] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
-
-  type RecordsNav = NativeStackNavigationProp<SettingStackParamList, 'GrindSize'>;
-  const navigation = useNavigation<RecordsNav>();
-
-  const handleSettingPress = () => {
-    navigation.navigate('SettingsHome');
-  };
 
   useEffect(() => {
     void fetchGrindSizes();
@@ -216,10 +206,6 @@ export default function GrindSizeScreen() {
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
     >
       <View className="px-5 py-6">
-        <TouchableOpacity className="self-start" onPress={() => handleSettingPress()}>
-          <FontAwesome5 name="arrow-circle-left" size={28} color={colors.OCHER} />
-        </TouchableOpacity>
-
         <View>
           {!isCreateFormVisible ? (
             <TouchableOpacity
