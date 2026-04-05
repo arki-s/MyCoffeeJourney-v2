@@ -1,12 +1,10 @@
-import { ScrollView, TouchableOpacity, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import React, { useState } from 'react'
 import { CoffeeStackParamList } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useUserStore } from '../../../stores/useUserStore';
 import { createCoffee, setCoffeeBeanInclusions } from '../../auth/services/coffeeService';
-import { colors } from '../../../app/main/theme/colors';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import CoffeeForm from '../components/CoffeeForm';
 import { CoffeeFormSubmitValue, initialCoffeeFormValue } from '../components/CoffeeForm.shared';
 
@@ -18,10 +16,6 @@ export default function CoffeeCreateScreen() {
 
   type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeCreate'>;
   const navigation = useNavigation<RecordsNav>();
-
-  const handleHomePress = () => {
-    navigation.navigate('CoffeeHome');
-  };
 
   const handleCoffeeCreate = async (form: CoffeeFormSubmitValue) => {
     if (!user) return;
@@ -59,10 +53,6 @@ export default function CoffeeCreateScreen() {
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
     >
       <View className="px-5 py-6">
-        <TouchableOpacity className="self-start" onPress={handleHomePress}>
-          <FontAwesome5 name="arrow-circle-left" size={28} color={colors.OCHER} />
-        </TouchableOpacity>
-
         <CoffeeForm
           mode="create"
           initialValue={initialCoffeeFormValue}

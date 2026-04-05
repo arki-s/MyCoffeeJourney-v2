@@ -9,7 +9,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
 import SelectModal from '../components/SelectModal';
-
+import { listCoffees } from '../../auth/services/coffeeService';
 
 export default function CoffeeRecordCreateScreen() {
   const user = useUserStore((state) => state.user);
@@ -24,17 +24,18 @@ export default function CoffeeRecordCreateScreen() {
     purchase_date: string;
     start_date: string;
   }>({
-    coffee_id: '78d173e0-1c3a-440a-b13f-b1759dc71686', // テスト用 ID
+    coffee_id: '',
     weight_grams: 0,
     price_yen: 0,
     purchase_date: '',
     start_date: '',
   });
 
+  const [selectedCoffeeId, setSelectedCoffeeId] = useState<{ id: string, label: string }[]>([]);
   const [selectedGrindSizes, setSelectedGrindSizes] = useState<string[]>([]);
 
   const [grindSizes, setGrindSizes] = useState<{ id: string, label: string }[]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<"grindSize" | "coffee" | null>(null);
 
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordCreate'>;
   const navigation = useNavigation<RecordsNav>();
@@ -44,8 +45,18 @@ export default function CoffeeRecordCreateScreen() {
   };
 
   useEffect(() => {
+    fetchCoffees();
     fetchGrindSizes();
   }, [])
+
+  const fetchCoffees = async () => {
+    try {
+      const data = await listCoffees();
+      setSelectedCoffeeId(data.map((d) => { return { id: d.id, label: d.name } }));
+    } catch (error) {
+      console.error("Error fetching coffee:", error);
+    }
+  };
 
   const fetchGrindSizes = async () => {
     try {
@@ -90,34 +101,43 @@ export default function CoffeeRecordCreateScreen() {
 
   return (
     <View>
-      <Text>CoffeeRecordCreateScreen</Text>
-      {/* コーヒー名のプルダウン選択追加予定 */}
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalVisible("coffee")}
+      >
+        <Text>コーヒーを選択</Text>
+      </TouchableOpacity>
+
+      <SelectModal
+        visible={modalVisible === "coffee"}
+        options={selectedCoffeeId}
+        selectedIds={newRecord.coffee_id ? [newRecord.coffee_id] : []}
+        onChange={(ids) => {
+          setNewRecord(prev => ({ ...prev, coffee_id: ids[0] }));
+          setModalVisible(null);
+        }}
+        onClose={() => setModalVisible(null)} />
+
+      <SelectModal
+        visible={modalVisible === "grindSize"}
+        options={grindSizes}
+        selectedIds={selectedGrindSizes}
+        onChange={(ids) => setSelectedGrindSizes(ids)}
+        onClose={() => setModalVisible(null)} />
+
+
+
+      <TouchableOpacity
+        onPress={() => setModalVisible("grindSize")}
       >
         <Text>挽き目を選択</Text>
       </TouchableOpacity>
 
       <SelectModal
-        visible={modalVisible}
+        visible={modalVisible === "grindSize"}
         options={grindSizes}
         selectedIds={selectedGrindSizes}
         onChange={(ids) => setSelectedGrindSizes(ids)}
-        onClose={() => setModalVisible(false)} />
-
-      <TouchableOpacity
-        onPress={() => handleHomePress()}
-        style={{
-          backgroundColor: '#34C759',
-          padding: 12,
-          marginTop: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', textAlign: 'center' }}>
-          レコード一覧へ戻る
-        </Text>
-      </TouchableOpacity>
+        onClose={() => setModalVisible(null)} />
 
       <TextInput
         placeholder='コーヒーの量(グラム)を入力'
