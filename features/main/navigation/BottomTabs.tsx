@@ -50,9 +50,9 @@ export default function BottomTabs() {
     <Tab.Navigator
       screenOptions={({ route, navigation }) => {
         const focusedRouteName = getFocusedRouteNameFromRoute(route) ?? route.name;
-        const showBackButton = ['RecordCreate', 'CoffeeDetails', 'CoffeeCreate', 'Brands', 'Beans', 'GrindSize'].includes(focusedRouteName);
+        const showBackButton = ['RecordCreate', 'RecordDetails', 'CoffeeDetails', 'CoffeeCreate', 'Brands', 'Beans', 'GrindSize'].includes(focusedRouteName);
         const handleHeaderBackPress = () => {
-          if (focusedRouteName === 'RecordCreate') {
+          if (focusedRouteName === 'RecordCreate' || focusedRouteName === 'RecordDetails') {
             navigation.navigate('Records', { screen: 'RecordsHome' });
             return;
           }

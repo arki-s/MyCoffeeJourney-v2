@@ -114,7 +114,7 @@ export default function CoffeeRecordListScreen() {
         </Text>
       </View>
       <TouchableOpacity
-        className="mb-1 self-center rounded-full border-2 border-OCHER  bg-DARK_BROWN px-4 py-2"
+        className="mb-1 self-center rounded-full border-2 border-OCHER  bg-BROWN px-4 py-2"
         onPress={() => handleFinishPress(record.id)}
       >
         <Text className="text-md text-OCHER" style={{ fontFamily: fonts.body }}>
@@ -145,16 +145,16 @@ export default function CoffeeRecordListScreen() {
               {record.coffee?.name}
             </Text>
             <Text className="mt-1 text-md text-LIGHT_BROWN" style={{ fontFamily: fonts.body }}>
-              Finished on {new Date(record.end_date).toLocaleDateString()}
+              {new Date(record.start_date).toLocaleDateString()}〜{new Date(record.end_date).toLocaleDateString()}
             </Text>
           </View>
 
           {!record.hasReview && (
             <TouchableOpacity
-              className="mt-2 self-center border-2 border-LIGHT_BROWN rounded-full bg-DARK_BROWN px-4 py-2"
+              className="mt-2 self-center border-2 border-OCHER rounded-full bg-BROWN px-4 py-2"
               onPress={() => { setSelectedRecordId(record.id); setModalVisible("review") }}
             >
-              <Text className="text-md text-LIGHT_BROWN" style={{ fontFamily: fonts.body }}>
+              <Text className="text-md text-OCHER" style={{ fontFamily: fonts.body }}>
                 レビューを追加する
               </Text>
             </TouchableOpacity>
