@@ -56,6 +56,8 @@ export default function AnalysisScreen() {
     }
   };
 
+  const formatNumber = (value: number) => value.toLocaleString('ja-JP');
+
   const monthLabels = analysisData?.monthLabels.length
     ? analysisData.monthLabels
     : fallbackMonthLabels;
@@ -121,7 +123,7 @@ export default function AnalysisScreen() {
                 飲んだ量合計
               </Text>
               <Text className="mt-1 text-3xl text-OCHER" style={{ fontFamily: fonts.body }}>
-                {analysisData?.totals.grams ?? 0}g
+                {formatNumber(analysisData?.totals.grams ?? 0)}g
               </Text>
             </View>
 
@@ -130,7 +132,7 @@ export default function AnalysisScreen() {
                 払った金額合計
               </Text>
               <Text className="mt-1 text-3xl text-OCHER" style={{ fontFamily: fonts.body }}>
-                {analysisData?.totals.yen ?? 0}円
+                {formatNumber(analysisData?.totals.yen ?? 0)}円
               </Text>
             </View>
           </View>
