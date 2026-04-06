@@ -1,71 +1,172 @@
-import { Modal, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
+import { colors } from '../../../app/main/theme/colors'
+import { fonts } from '../../../app/main/theme/fonts'
+import SelectModal from './SelectModal'
 
 type Props = {
-  initialScore?: number; // 1-5
+  initialScore?: number;
   initialComments?: string;
   onSubmit: (data: { score: number; comments: string }) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
   error?: string | null;
-  title?: string; //コーヒー名を入れる予定
+  title?: string;
 }
 
-export default function ReviewForm(props: Props) {
+const scoreOptions = [
+  { id: '1', label: '⭐️' },
+  { id: '2', label: '⭐️⭐️' },
+  { id: '3', label: '⭐️⭐️⭐️' },
+  { id: '4', label: '⭐️⭐️⭐️⭐️' },
+  { id: '5', label: '⭐️⭐️⭐️⭐️⭐️' },
+];
 
-  const [score, setScore] = useState<number>(props.initialScore || 0);
-  const [comments, setComments] = useState<string>(props.initialComments || "");
-  const [title] = useState<string>(props.title || "レビューを追加");
+export default function ReviewForm({
+  initialScore = 0,
+  initialComments = '',
+  onSubmit,
+  onCancel,
+  loading = false,
+  error = null,
+  title = 'レビューを追加',
+}: Props) {
+  const [score, setScore] = useState<number>(initialScore);
+  const [comments, setComments] = useState<string>(initialComments);
+  const [scoreModalVisible, setScoreModalVisible] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [hideExternalError, setHideExternalError] = useState(false);
 
-  // やることリスト
-  //  props定義（initialScore, initialComments, onSubmit, onCancel, loading, error, title）
-  //  useStateでscoreとcommentsを内部管理（initial*を初期値に）
-  //  星UI（1..5をmapで並べ、選択以下を強調）PressableでonPress時にscore更新
-  //  TextInput（multiline、placeholder、value=comments、onChangeTextで更新）
-  //  errorがあれば赤字表示
-  //  キャンセル/送信ボタン（送信はloading中とscore===0でdisabled）
-  //  accessibilityLabel/testIDの付与（星、入力、ボタン）
-  //  スタイル（パディング、タップ領域、色）と押下時のフィードバック
-  //  送信時にprops.onSubmit({ score, comments })、成功後の初期化は親の判断に委ねる
+  const selectedScoreLabel = useMemo(
+    () => scoreOptions.find((option) => option.id === String(score))?.label ?? '評価を選択',
+    [score]
+  );
+
+  const displayedError = localError ?? (hideExternalError ? null : error);
+  const canSubmit = score > 0 && !loading;
+
+  const clearErrors = () => {
+    if (localError) {
+      setLocalError(null);
+    }
+
+    if (error) {
+      setHideExternalError(true);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (score === 0) {
+      setLocalError('※評価を選択してください。');
+      return;
+    }
+
+    setLocalError(null);
+    setHideExternalError(true);
+    await onSubmit({ score, comments: comments.trim() });
+  };
+
   return (
-    <Modal>
-      <Text>ReviewForm</Text>
-      <Text>{title}</Text>
-      <TextInput
-        placeholder='1-5のスコアを入力'
-        value={score ? score.toString() : ''}
-        onChangeText={(text) => {
-          const num = parseInt(text, 10);
-          if (!isNaN(num) && num >= 1 && num <= 5) {
-            setScore(num);
-          } else {
-            setScore(0); // 無効な値の場合は0にリセット
-          }
+    <Modal visible animationType="fade" transparent onRequestClose={onCancel}>
+      <View style={{ flex: 1, backgroundColor: '#0008', justifyContent: 'center', padding: 16 }}>
+        <View
+          className="rounded-2xl border border-OCHER bg-DARK_BROWN"
+          style={{ maxHeight: '92%' }}
+        >
+          <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 24 }}>
+            <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+              {title}
+            </Text>
+
+            <View className="mt-4 rounded-2xl border border-OCHER bg-BROWN px-4 py-5">
+
+              <View>
+                <Text className="mb-2 text-OCHER" style={{ fontFamily: fonts.body }}>
+                  スコア
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    clearErrors();
+                    setScoreModalVisible(true);
+                  }}
+                  disabled={loading}
+                  className="flex-row items-center justify-between rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4"
+                  style={{ opacity: loading ? 0.6 : 1 }}
+                >
+                  <Text className="flex-1 pr-3 text-OCHER" style={{ fontFamily: fonts.body_regular }}>
+                    {selectedScoreLabel}
+                  </Text>
+                  <FontAwesome5 name="chevron-right" size={14} color={colors.OCHER} />
+                </TouchableOpacity>
+              </View>
+
+              <View className="mt-5">
+                <Text className="mb-2 text-OCHER" style={{ fontFamily: fonts.body }}>
+                  コメント
+                </Text>
+                <TextInput
+                  placeholder="コメントを入力"
+                  placeholderTextColor={colors.LIGHT_BROWN}
+                  value={comments}
+                  onChangeText={(text) => {
+                    clearErrors();
+                    setComments(text);
+                  }}
+                  editable={!loading}
+                  multiline
+                  textAlignVertical="top"
+                  className="min-h-[120px] rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-3 text-OCHER"
+                  style={{ fontFamily: fonts.body_regular }}
+                />
+              </View>
+            </View>
+
+            {displayedError ? (
+              <Text className="mt-4 text-[#E9B4AF]" style={{ fontFamily: fonts.body_regular }}>
+                {displayedError}
+              </Text>
+            ) : null}
+
+            <View className="mt-4 flex-row gap-3">
+              <TouchableOpacity
+                onPress={onCancel}
+                disabled={loading}
+                className="flex-1 rounded-xl border border-OCHER px-4 py-4"
+                style={{ opacity: loading ? 0.6 : 1 }}
+              >
+                <Text className="text-center text-OCHER" style={{ fontFamily: fonts.body }}>
+                  キャンセル
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => void handleSubmit()}
+                disabled={!canSubmit}
+                className="flex-1 rounded-xl bg-OCHER px-4 py-4"
+                style={{ opacity: canSubmit ? 1 : 0.6 }}
+              >
+                <Text className="text-center text-DARK_BROWN" style={{ fontFamily: fonts.body }}>
+                  {loading ? '保存中……' : '保存'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+
+      <SelectModal
+        visible={scoreModalVisible}
+        title="評価を選択"
+        options={scoreOptions}
+        selectedIds={score ? [String(score)] : []}
+        isMulti={false}
+        onChange={(ids) => {
+          clearErrors();
+          setScore(Number(ids[0] ?? 0));
         }}
-        keyboardType='numeric'
-        maxLength={1}
-      ></TextInput>
-      <TextInput
-        placeholder='コメントを入力'
-        value={comments}
-        onChangeText={(text) => setComments(text)}
-        multiline
-      ></TextInput>
-      <TouchableOpacity
-        onPress={props.onCancel}
-        disabled={props.loading}
-      >
-        <Text>キャンセル</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => props.onSubmit({ score, comments })}
-        disabled={props.loading || score === 0}
-      >
-        <Text>保存</Text>
-      </TouchableOpacity>
-      {props.error ? <Text style={{ color: 'red' }}>{props.error}</Text> : null}
+        onClose={() => setScoreModalVisible(false)}
+      />
     </Modal>
   )
 }
-
-// const styles = StyleSheet.create({})
