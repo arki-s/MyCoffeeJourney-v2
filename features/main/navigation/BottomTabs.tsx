@@ -90,6 +90,7 @@ export default function BottomTabs() {
                   color: colors.OCHER,
                   textAlign: 'center',
                   marginTop: 2,
+                  marginBottom: 2,
                 }}
               >
                 {getCurrentScreenTitle(route)}
