@@ -6,7 +6,10 @@ import ReviewForm from '../components/ReviewForm';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { fonts } from '../../../app/main/theme/fonts';
+import { colors } from '../../../app/main/theme/colors';
 import textureImage from '../../../assets/texture.jpg';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 export default function ReviewListScreen() {
   const [reviews, setReviews] = useState<ReviewWithContext[]>([]);
@@ -79,53 +82,45 @@ export default function ReviewListScreen() {
       key={review.id}
       className="mb-4 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
     >
-      <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
+      <TouchableOpacity
+        className="absolute right-4 top-4"
+        onPress={() => handleDetailPress(review.record_id)}
+      >
+        <FontAwesome5 name="arrow-circle-right" size={28} color={colors.OCHER} />
+      </TouchableOpacity>
+      <Text className="text-xl text-OCHER" style={{ fontFamily: fonts.body }}>
         {review.record?.coffee.brand?.name}
       </Text>
-      <Text className="text-base text-OCHER" style={{ fontFamily: fonts.title_medium }}>
+      <Text className="text-2xl text-OCHER" style={{ fontFamily: fonts.body }}>
         {review.record?.coffee.name}
       </Text>
-      <Text className="mt-1 text-sm text-OCHER" style={{ fontFamily: fonts.body_regular }}>
+      <Text className="mt-1 text-base text-OCHER" style={{ fontFamily: fonts.body_bold }}>
         {review.record?.start_date} ~ {review.record?.end_date}
       </Text>
       <View className="mt-2 flex-row items-center">
-        <Text className="text-base text-OCHER" style={{ fontFamily: fonts.body_bold }}>
-          評価: {review.score}/5
+        <Text className="text-base text-OCHER" style={{ fontFamily: fonts.body }}>
+          {'⭐️'.repeat(review.score)}
         </Text>
       </View>
       {review.comments && (
-        <Text className="mt-2 text-sm text-OCHER" style={{ fontFamily: fonts.body_regular }}>
+        <Text className="mt-2 text-base text-OCHER" style={{ fontFamily: fonts.body }}>
           {review.comments}
         </Text>
       )}
 
-      <View >
+      <View className="mt-4 flex-row justify-end space-x-4">
         <TouchableOpacity
-          className="flex-1 rounded-full border border-[#6A1B1A] px-4 py-2"
-          onPress={() => handleDetailPress(review.record_id)}
-        >
-          <Text className="text-center text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_bold }}>
-            詳細画面へ
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="flex-1 rounded-full bg-[#6A1B1A] px-4 py-2"
           onPress={() => handleEditPress(review.id, review.score, review.comments)}
         >
-          <Text className="text-center text-sm text-white" style={{ fontFamily: fonts.body_bold }}>
-            編集
-          </Text>
+          <FontAwesome name="pencil" size={28} color={colors.OCHER} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="ml-4"
+          onPress={() => handleDeletePress(review.id)}
+        >
+          <FontAwesome name="trash" size={28} color={colors.OCHER} />
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        className="mt-2 self-start rounded-full border border-[#A23E48] px-4 py-2"
-        onPress={() => handleDeletePress(review.id)}
-      >
-        <Text className="text-sm text-[#A23E48]" style={{ fontFamily: fonts.body_bold }}>
-          削除
-        </Text>
-      </TouchableOpacity>
     </View>
   ));
 

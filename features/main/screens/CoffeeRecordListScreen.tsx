@@ -96,7 +96,7 @@ export default function CoffeeRecordListScreen() {
       className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
     >
       <TouchableOpacity
-        className="self-end"
+        className="absolute right-4 top-4"
         onPress={() => handleDetailPress(record.id)}
       >
         <FontAwesome5 name="arrow-circle-right" size={28} color={colors.OCHER} />
@@ -108,7 +108,7 @@ export default function CoffeeRecordListScreen() {
         <Text className="text-2xl text-OCHER" style={{ fontFamily: fonts.body }}>
           {record.coffee?.name}
         </Text>
-        <Text className="mt-1 text-md text-OCHER" style={{ fontFamily: fonts.body }}>
+        <Text className="mt-1 text-md text-OCHER" style={{ fontFamily: fonts.body_bold }}>
           Started on {new Date(record.start_date).toLocaleDateString()}
         </Text>
       </View>
@@ -131,7 +131,7 @@ export default function CoffeeRecordListScreen() {
           className="mb-3 rounded-2xl border-2 border-LIGHT_BROWN bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
         >
           <TouchableOpacity
-            className="self-end"
+            className="absolute right-4 top-4"
             onPress={() => handleDetailPress(record.id)}
           >
             <FontAwesome5 name="arrow-circle-right" size={28} color={colors.LIGHT_BROWN} />
@@ -143,7 +143,7 @@ export default function CoffeeRecordListScreen() {
             <Text className="text-2xl text-LIGHT_BROWN" style={{ fontFamily: fonts.body }}>
               {record.coffee?.name}
             </Text>
-            <Text className="mt-1 text-md text-LIGHT_BROWN" style={{ fontFamily: fonts.body }}>
+            <Text className="mt-1 text-md text-LIGHT_BROWN" style={{ fontFamily: fonts.body_bold }}>
               {new Date(record.start_date).toLocaleDateString()}〜{new Date(record.end_date).toLocaleDateString()}
             </Text>
           </View>
