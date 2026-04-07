@@ -3,9 +3,10 @@
     "name": "MyCoffeeJourney-v2",
     "slug": "MyCoffeeJourney-v2",
     "scheme": "mycoffee",
+    "jsEngine": "jsc",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/cup_brown.png",
+    "icon": "./assets/app-icon-1024.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -14,14 +15,16 @@
       "backgroundColor": "#3B0D0C"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.akiwind.MyCoffeeJourneyv2"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/coffeecup.png",
         "backgroundColor": "#3B0D0C"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.akiwind.MyCoffeeJourneyv2"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -77,29 +77,29 @@ export default function ReviewListScreen() {
   const reviewItems = reviews.map((review) => (
     <View
       key={review.id}
-      className="mb-3 rounded-2xl border border-[#E6DACE] bg-white/90 px-4 py-4"
+      className="mb-4 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
     >
-      <Text className="text-lg text-[#3B0D0C]" style={{ fontFamily: fonts.title_bold }}>
+      <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.title_bold }}>
         {review.record?.coffee.brand?.name}
       </Text>
-      <Text className="text-base text-[#6A1B1A]" style={{ fontFamily: fonts.title_medium }}>
+      <Text className="text-base text-OCHER" style={{ fontFamily: fonts.title_medium }}>
         {review.record?.coffee.name}
       </Text>
-      <Text className="mt-1 text-sm text-[#6A1B1A]" style={{ fontFamily: fonts.body_regular }}>
+      <Text className="mt-1 text-sm text-OCHER" style={{ fontFamily: fonts.body_regular }}>
         {review.record?.start_date} ~ {review.record?.end_date}
       </Text>
       <View className="mt-2 flex-row items-center">
-        <Text className="text-base text-[#A23E48]" style={{ fontFamily: fonts.body_bold }}>
+        <Text className="text-base text-OCHER" style={{ fontFamily: fonts.body_bold }}>
           評価: {review.score}/5
         </Text>
       </View>
       {review.comments && (
-        <Text className="mt-2 text-sm text-[#3B0D0C]" style={{ fontFamily: fonts.body_regular }}>
+        <Text className="mt-2 text-sm text-OCHER" style={{ fontFamily: fonts.body_regular }}>
           {review.comments}
         </Text>
       )}
 
-      <View className="mt-3 flex-row gap-2">
+      <View >
         <TouchableOpacity
           className="flex-1 rounded-full border border-[#6A1B1A] px-4 py-2"
           onPress={() => handleDetailPress(review.record_id)}
@@ -145,7 +145,7 @@ export default function ReviewListScreen() {
               </Text>
             </View>
           ) : (
-            <View className="mt-4">{reviewItems}</View>
+            <View>{reviewItems}</View>
           )}
         </View>
 
