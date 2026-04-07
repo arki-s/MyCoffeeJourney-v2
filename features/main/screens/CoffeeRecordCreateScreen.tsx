@@ -278,9 +278,6 @@ export default function CoffeeRecordCreateScreen() {
           <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
             日付
           </Text>
-          <Text className="mt-2 text-OCHER" style={{ fontFamily: fonts.body_regular }}>
-            購入日と飲み始めた日を設定してください。
-          </Text>
 
           <View className="mt-5 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
             <Text className="text-OCHER" style={{ fontFamily: fonts.body }}>

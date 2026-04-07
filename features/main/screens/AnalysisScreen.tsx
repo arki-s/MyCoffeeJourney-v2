@@ -138,11 +138,8 @@ export default function AnalysisScreen() {
           </View>
 
           <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
-            <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+            <Text className="mb-4 text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
               よく飲んでいるコーヒー
-            </Text>
-            <Text className="mt-1 mb-4 text-sm text-OCHER" style={{ fontFamily: fonts.body_regular }}>
-              ランキング形式で表示しています
             </Text>
             {rankingItems}
           </View>

@@ -222,9 +222,6 @@ export default function RecordForm(props: Props) {
         <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
           日付
         </Text>
-        <Text className="mt-2 text-OCHER" style={{ fontFamily: fonts.body_regular }}>
-          登録済みの日付を必要に応じて修正してください。
-        </Text>
 
         <View className="mt-5 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
           <Text className="text-OCHER" style={{ fontFamily: fonts.body }}>
