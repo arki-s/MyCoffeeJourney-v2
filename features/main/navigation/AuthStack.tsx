@@ -13,7 +13,7 @@ const headerOptions: NativeStackNavigationOptions = {
   header: () => (
     <View
       style={{
-        height: 104,
+        height: 120,
         backgroundColor: colors.DARK_BROWN,
         alignItems: 'center',
         justifyContent: 'flex-end',

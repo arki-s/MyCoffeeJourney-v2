@@ -53,6 +53,7 @@ export const useSessionWatcher = () => {
 
     // アプリがすでに起動している状態で、リンクからのトークンを取得
     const subLink = Linking.addEventListener("url", async ({ url }) => {
+      logAuthLinkError(url, 'runtime');
       if (didSetSessionFromLink.current) return;
       const { access_token, refresh_token } = parseTokensFromUrl(url);
       if (access_token && refresh_token) {
@@ -67,6 +68,7 @@ export const useSessionWatcher = () => {
       try {
         const initialUrl = await Linking.getInitialURL();
         if (!initialUrl || didSetSessionFromLink.current) return;
+        logAuthLinkError(initialUrl, 'initial');
         const { access_token, refresh_token } = parseTokensFromUrl(initialUrl);
         if (access_token && refresh_token) {
           didSetSessionFromLink.current = true;
@@ -100,5 +102,29 @@ function parseTokensFromUrl(url: string): { access_token?: string; refresh_token
     };
   } catch {
     return {};
+  }
+}
+
+function logAuthLinkError(url: string, source: 'runtime' | 'initial') {
+  try {
+    const parsed = new URL(url);
+    const hash = parsed.hash.startsWith('#') ? parsed.hash.slice(1) : '';
+    const params = new URLSearchParams(hash);
+    const error = params.get('error');
+    const errorCode = params.get('error_code');
+    const description = params.get('error_description');
+
+    if (!error && !errorCode && !description) {
+      return;
+    }
+
+    console.warn(`auth link error (${source}):`, {
+      error,
+      errorCode,
+      description,
+      url,
+    });
+  } catch (parseError) {
+    console.warn(`auth link parse error (${source}):`, parseError);
   }
 }

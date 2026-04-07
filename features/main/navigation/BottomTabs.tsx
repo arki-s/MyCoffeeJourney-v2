@@ -90,7 +90,6 @@ export default function BottomTabs() {
                   color: colors.OCHER,
                   textAlign: 'center',
                   marginTop: 2,
-                  marginBottom: 2,
                 }}
               >
                 {getCurrentScreenTitle(route)}
@@ -108,7 +107,7 @@ export default function BottomTabs() {
           headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: colors.DARK_BROWN,
-            height: 104,
+            height: 120,
           },
           headerTitleContainerStyle: {
             justifyContent: 'center',

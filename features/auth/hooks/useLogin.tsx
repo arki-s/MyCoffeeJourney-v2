@@ -1,38 +1,61 @@
-import { useCallback, useState } from "react";
-import { supabase } from "../../../lib/supabase";
-import { makeRedirectUri } from "expo-auth-session";
+import { useCallback, useState } from 'react'
+import { supabase } from '../../../lib/supabase'
+
+export const OTP_RESEND_COOLDOWN_SECONDS = 30
 
 export const useLogin = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false)
+  const [verifying, setVerifying] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const loginWithEmail = useCallback(async (email: string) => {
-    setLoading(true);
-    setError(null);
+  const requestEmailOtp = useCallback(async (email: string) => {
+    setSending(true)
+    setError(null)
 
-    const redirectTo = makeRedirectUri({ path: "auth-callback" });
-    // console.log("redirectTo:", redirectTo);
-
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: redirectTo,
-      }
-    });
+      },
+    })
 
-    setLoading(false);
+    setSending(false)
 
-    if (error) {
-      setError(error.message);
-      return false;
+    if (otpError) {
+      setError(otpError.message)
+      return false
     }
-    return true;
-  }, []);
+
+    return true
+  }, [])
+
+  const verifyEmailOtp = useCallback(async (email: string, token: string) => {
+    setVerifying(true)
+    setError(null)
+
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    })
+
+    setVerifying(false)
+
+    if (verifyError) {
+      setError(verifyError.message)
+      return false
+    }
+
+    return true
+  }, [])
 
   return {
-    loginWithEmail,
-    loading,
+    requestEmailOtp,
+    verifyEmailOtp,
+    sending,
+    verifying,
+    loading: sending || verifying,
     error,
-  };
-};
+    resendCooldownSeconds: OTP_RESEND_COOLDOWN_SECONDS,
+  }
+}

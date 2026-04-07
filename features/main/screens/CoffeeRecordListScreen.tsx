@@ -9,7 +9,6 @@ import ReviewForm from '../components/ReviewForm';
 import { createReview } from '../../auth/services/reviewService';
 import { fonts } from '../../../app/main/theme/fonts';
 import { colors } from '../../../app/main/theme/colors';
-// @ts-expect-error: image module declaration unavailable in this project
 import textureImage from '../../../assets/texture.jpg';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Octicons from '@expo/vector-icons/Octicons';
