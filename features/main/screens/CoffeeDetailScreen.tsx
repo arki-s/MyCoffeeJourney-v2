@@ -14,6 +14,63 @@ import { colors } from '../../../app/main/theme/colors';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
+const MAX_STARS = 5;
+const STAR_SIZE = 18;
+const STAR_GAP = 2;
+const STAR_ROW_WIDTH = MAX_STARS * STAR_SIZE + (MAX_STARS - 1) * STAR_GAP;
+
+function renderStars(color: string) {
+  return Array.from({ length: MAX_STARS }, (_, index) => (
+    <FontAwesome
+      key={`${color}-${index}`}
+      name="star"
+      size={STAR_SIZE}
+      color={color}
+      style={index === MAX_STARS - 1 ? undefined : { marginRight: STAR_GAP }}
+    />
+  ));
+}
+
+function renderAverageScore(avgScore: number | null) {
+  const normalizedScore = avgScore == null
+    ? 0
+    : Math.max(0, Math.min(avgScore, MAX_STARS));
+  const filledWidth = (normalizedScore / MAX_STARS) * STAR_ROW_WIDTH;
+
+  return (
+    <View className="flex-row items-center justify-end" style={{ minWidth: 164 }}>
+      <View style={{ width: STAR_ROW_WIDTH, height: STAR_SIZE, position: 'relative' }}>
+        <View className="flex-row">
+          {renderStars(colors.GRAY)}
+        </View>
+
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: filledWidth,
+            height: STAR_SIZE,
+            overflow: 'hidden',
+          }}
+        >
+          <View className="flex-row">
+            {renderStars(colors.DARK_BROWN)}
+          </View>
+        </View>
+      </View>
+
+      <Text
+        className="ml-2 text-right text-DARK_BROWN"
+        style={{ minWidth: 36, fontSize: 18, fontFamily: fonts.body }}
+      >
+        {avgScore == null ? '-' : normalizedScore.toFixed(1)}
+      </Text>
+    </View>
+  );
+}
+
 export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRouteProp }) {
   const [coffeeDetail, setCoffeeDetail] = useState<CoffeeDetail>();
   const [coffeeReviews, setCoffeeReviews] = useState<CoffeeReviewItem[]>([]);
@@ -160,9 +217,11 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     [coffee, includedBeans]
   );
 
+  const avgScore = coffeeDetail?.stats.avgScore ?? null;
+
   const coffeeDetails = coffeeDetail ? (
     <View>
-      <View className='py-2 rounded-2xl border-2 border-DARK_BROWN bg-BROWN'>
+      <View className='py-2 rounded-2xl bg-DARK_BROWN'>
         <Text className="text-center text-OCHER" style={{ fontSize: 24, fontFamily: fonts.body }}>{coffeeDetail.brand?.name}</Text>
         <Text className="text-center text-OCHER" style={{ fontSize: 28, fontFamily: fonts.title_regular }}>{coffeeDetail.name}</Text>
       </View>
@@ -171,9 +230,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
           <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
             スコア平均点
           </Text>
-          <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
-            {coffeeDetail.stats.avgScore ?? '-'}
-          </Text>
+          {renderAverageScore(avgScore)}
         </View>
 
         <View className="flex-row items-center justify-between">
@@ -248,9 +305,9 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     coffeeReviews.map((r) => {
       return (
         <View key={r.record_id}>
-          <Text style={{ fontSize: 18 }}>飲んだ期間：{r.start_date}〜{r.end_date}</Text>
-          <Text style={{ fontSize: 18 }}>{r.score}</Text>
-          <Text style={{ fontSize: 18 }}>{r.comments}</Text>
+          <Text style={{ fontSize: 18 }}>{'⭐️'.repeat(r.score)}</Text>
+          <Text style={{ fontSize: 18, fontFamily: fonts.body }}>{r.start_date}〜{r.end_date}</Text>
+          <Text style={{ fontSize: 18, fontFamily: fonts.body }}>{r.comments}</Text>
         </View>
       )
     })

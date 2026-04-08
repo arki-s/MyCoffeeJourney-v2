@@ -186,7 +186,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
 
   const recordDetails = recordDetail ? (
     <View>
-      <View className="py-2 rounded-2xl border-2 border-DARK_BROWN bg-BROWN">
+      <View className="py-2 rounded-2xl bg-DARK_BROWN">
         <Text className="text-center text-OCHER" style={{ fontSize: 24, fontFamily: fonts.body }}>
           {recordDetail.coffee?.brand?.name ?? 'ブランド未設定'}
         </Text>
@@ -249,20 +249,34 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
         </View>
       </View>
 
+      <View className="mt-4 flex-row justify-end">
+        <View className="flex-row items-center gap-4">
+          <TouchableOpacity
+            onPress={() => {
+              setError(null);
+              setModalVisible('edit');
+            }}
+          >
+            <FontAwesome name="pencil" size={24} color={colors.DARK_BROWN} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => void handleDeletePress()}>
+            <FontAwesome name="trash" size={24} color={colors.DARK_BROWN} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <View className="mt-2 py-4">
         <Text className="mb-4 text-center text-DARK_BROWN" style={{ fontSize: 20, fontFamily: fonts.body }}>
           レビュー
         </Text>
 
         <View className="gap-2">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
-              スコア
-            </Text>
-            <Text className="text-right text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
-              {review?.score ?? '未評価'}
-            </Text>
-          </View>
+
+          <Text className="text-left text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+            {review?.score ? '⭐️'.repeat(review.score) : '未評価'}
+          </Text>
+
         </View>
 
         <Text className="mt-4 text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
@@ -357,22 +371,6 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
           />
         )}
 
-        <View className="mt-4 flex-row justify-end">
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity
-              onPress={() => {
-                setError(null);
-                setModalVisible('edit');
-              }}
-            >
-              <FontAwesome name="pencil" size={28} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => void handleDeletePress()}>
-              <FontAwesome name="trash" size={28} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
     </ScrollView>
   )
