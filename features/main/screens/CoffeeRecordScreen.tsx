@@ -10,7 +10,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors } from '../../../app/main/theme/colors';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
 import ReviewForm from '../components/ReviewForm';
-import { createReview } from '../../auth/services/reviewService';
+import { createReview, deleteReview, updateReview } from '../../auth/services/reviewService';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
@@ -26,6 +26,8 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const [error, setError] = useState<string | null>(null);
   const [canEditEndDate, setCanEditEndDate] = useState<boolean>(false);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState<boolean>(false);
+  const [editingReview, setEditingReview] = useState<{ id: string; score: number; comments: string | null } | null>(null);
+  const [deleteReviewConfirmVisible, setDeleteReviewConfirmVisible] = useState<boolean>(false);
 
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
   const navigation = useNavigation<RecordsNav>();
@@ -126,6 +128,11 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     setModalVisible(null);
   };
 
+  const handleReviewEditCancel = () => {
+    setError(null);
+    setEditingReview(null);
+  };
+
   const handleReviewSubmit = async (score: number, comments: string) => {
     if (!id) return;
 
@@ -160,6 +167,40 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     }
   };
 
+  const handleReviewUpdate = async ({ score, comments }: { score: number; comments: string }) => {
+    if (!id || !editingReview) return;
+
+    try {
+      setError(null);
+      setLoading(true);
+      await updateReview(editingReview.id, score, comments);
+      await fetchRecordDetail(id);
+      setEditingReview(null);
+    } catch (reviewError) {
+      console.error('Error updating review:', reviewError);
+      setError('※レビューの更新に失敗しました。もう一度お試しください。');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReviewDelete = async () => {
+    if (!id || !review || typeof review !== 'object' || !('id' in review)) return;
+
+    try {
+      setError(null);
+      setLoading(true);
+      await deleteReview(review.id);
+      await fetchRecordDetail(id);
+      setDeleteReviewConfirmVisible(false);
+    } catch (reviewError) {
+      console.error('Error deleting review:', reviewError);
+      setError('※レビューの削除に失敗しました。もう一度お試しください。');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formattedPrice = useMemo(
     () => (recordDetail?.price_yen ?? 0).toLocaleString('ja-JP'),
     [recordDetail?.price_yen]
@@ -189,7 +230,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
 
   const recordDetails = recordDetail ? (
     <View>
-      <View className="py-2 rounded-2xl bg-DARK_BROWN">
+      <View className="py-2 rounded-2xl bg-DARK_BROWN ios:shadow-md android:elevation-md">
         <Text className="text-center text-OCHER" style={{ fontSize: 24, fontFamily: fonts.body }}>
           {recordDetail.coffee?.brand?.name ?? 'ブランド未設定'}
         </Text>
@@ -279,19 +320,45 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
           レビュー
         </Text>
 
-        <View className="gap-2">
+        {hasReview && (
+          <View className='mb-4 border-2 border-DARK_BROWN rounded-2xl bg-LIGHT_BROWN px-4 py-4 ios:shadow-md android:elevation-md'>
 
-          <Text className="text-left text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
-            {review?.score ? '⭐️'.repeat(review.score) : '未評価'}
-          </Text>
+            <Text className="text-left text-DARK_BROWN" style={{ minWidth: 96, fontSize: 18, fontFamily: fonts.body }}>
+              {review?.score ? '⭐️'.repeat(review.score) : '未評価'}
+            </Text>
 
-        </View>
 
-        <Text className="mt-4 text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
-          {hasReview && typeof review === 'object' && 'comments' in review && review.comments?.trim()
-            ? review.comments
-            : 'コメントなし'}
-        </Text>
+            <Text className="mt-2 text-OCHER" style={{ fontSize: 18, fontFamily: fonts.body }}>
+              {hasReview && typeof review === 'object' && 'comments' in review && review.comments?.trim()
+                ? review.comments
+                : 'コメントなし'}
+            </Text>
+
+            <View className="mt-4 flex-row justify-end">
+              <View className="flex-row items-center gap-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    setError(null);
+                    if (review && typeof review === 'object' && 'id' in review) {
+                      setEditingReview(review);
+                    }
+                  }}
+                >
+                  <FontAwesome name="pencil" size={24} color={colors.OCHER} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setError(null);
+                    setDeleteReviewConfirmVisible(true);
+                  }}
+                >
+                  <FontAwesome name="trash" size={24} color={colors.OCHER} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   ) : (
@@ -379,11 +446,30 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
           />
         )}
 
+        {editingReview && (
+          <ReviewForm
+            initialScore={editingReview.score}
+            initialComments={editingReview.comments ?? ''}
+            onSubmit={handleReviewUpdate}
+            onCancel={handleReviewEditCancel}
+            loading={loading}
+            error={error}
+            title="レビューを編集"
+          />
+        )}
+
         <DeleteConfirmModal
           visible={deleteConfirmVisible}
           selectedItemName={recordDetail?.coffee?.name ?? 'このレコード'}
           onConfirm={() => void handleDeletePress()}
           onClose={() => setDeleteConfirmVisible(false)}
+        />
+
+        <DeleteConfirmModal
+          visible={deleteReviewConfirmVisible}
+          selectedItemName={recordDetail?.coffee?.name ?? 'このレビュー'}
+          onConfirm={() => void handleReviewDelete()}
+          onClose={() => setDeleteReviewConfirmVisible(false)}
         />
 
       </View>

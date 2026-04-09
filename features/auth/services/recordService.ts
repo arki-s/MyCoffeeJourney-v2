@@ -248,7 +248,7 @@ export async function getRecordDetail(id:string): Promise<RecordDetail>{
 
   const { data, error } = await supabase
     .from("drinking_records")
-    .select("*, coffee:coffee_id (name, brand:brand_id(name)), reviews (score, comments)")
+    .select("*, coffee:coffee_id (name, brand:brand_id(name)), reviews (id, score, comments)")
     .eq("user_id", user.id)
     .eq("id", id)
     .order("created_at", {ascending:false})

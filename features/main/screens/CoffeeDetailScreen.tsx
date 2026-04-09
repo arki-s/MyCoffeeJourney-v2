@@ -1,15 +1,17 @@
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import Slider from '@react-native-community/slider'
-import { CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { BottomStackParamList, CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
+import { CompositeNavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
 import { deleteCoffee, getBeanInclusions, getCoffeeDetail, setCoffeeBeanInclusions, updateCoffee } from '../../auth/services/coffeeService';
 import { listReviewsForCoffee } from '../../auth/services/reviewService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import CoffeeForm from '../components/CoffeeForm';
 import { fonts } from '../../../app/main/theme/fonts';
 import { CoffeeFormSubmitValue, sliderFields } from '../components/CoffeeForm.shared';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
@@ -40,6 +42,13 @@ function renderAverageScore(avgScore: number | null) {
 
   return (
     <View className="flex-row items-center justify-end" style={{ minWidth: 164 }}>
+      <Text
+        className="mr-2 text-right text-DARK_BROWN"
+        style={{ minWidth: 36, fontSize: 18, fontFamily: fonts.body }}
+      >
+        {avgScore == null ? '-' : normalizedScore.toFixed(1)}
+      </Text>
+
       <View style={{ width: STAR_ROW_WIDTH, height: STAR_SIZE, position: 'relative' }}>
         <View className="flex-row">
           {renderStars(colors.GRAY)}
@@ -62,12 +71,7 @@ function renderAverageScore(avgScore: number | null) {
         </View>
       </View>
 
-      <Text
-        className="ml-2 text-right text-DARK_BROWN"
-        style={{ minWidth: 36, fontSize: 18, fontFamily: fonts.body }}
-      >
-        {avgScore == null ? '-' : normalizedScore.toFixed(1)}
-      </Text>
+
     </View>
   );
 }
@@ -224,7 +228,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
 
   const coffeeDetails = coffeeDetail ? (
     <View>
-      <View className='py-2 rounded-2xl bg-DARK_BROWN'>
+      <View className='py-2 rounded-2xl bg-DARK_BROWN ios:shadow-md android:elevation-md'>
         <Text className="text-center text-OCHER" style={{ fontSize: 24, fontFamily: fonts.body }}>{coffeeDetail.brand?.name}</Text>
         <Text className="text-center text-OCHER" style={{ fontSize: 28, fontFamily: fonts.title_regular }}>{coffeeDetail.name}</Text>
       </View>
@@ -307,10 +311,23 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   const coffeeReviewlist = coffeeReviews.length > 0 ?
     coffeeReviews.map((r) => {
       return (
-        <View key={r.record_id}>
-          <Text style={{ fontSize: 18 }}>{'⭐️'.repeat(r.score)}</Text>
-          <Text style={{ fontSize: 18, fontFamily: fonts.body }}>{r.start_date}〜{r.end_date}</Text>
-          <Text style={{ fontSize: 18, fontFamily: fonts.body }}>{r.comments}</Text>
+        <View key={r.record_id} className='mb-4 border-2 border-DARK_BROWN rounded-2xl bg-LIGHT_BROWN px-4 py-4 ios:shadow-md android:elevation-md'>
+          <View className="mb-4 flex-row justify-between">
+
+            <Text style={{ fontSize: 18 }}>{'⭐️'.repeat(r.score)}</Text>
+            <TouchableOpacity
+              className=""
+              onPress={() => handleDetailPress(r.record_id)}
+            >
+              <FontAwesome5 name="arrow-circle-right" size={24} color={colors.OCHER} />
+            </TouchableOpacity>
+          </View>
+
+
+          <Text className="text-OCHER" style={{ fontSize: 18, fontFamily: fonts.body }}>{r.start_date}〜{r.end_date}</Text>
+          <Text className="text-OCHER" style={{ fontSize: 18, fontFamily: fonts.body }}>{r.comments}</Text>
+
+
         </View>
       )
     })
@@ -319,8 +336,18 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     );
 
   //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
-  type RecordsNav = NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>;
+  type RecordsNav = CompositeNavigationProp<
+    NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>,
+    BottomTabNavigationProp<BottomStackParamList>
+  >;
   const navigation = useNavigation<RecordsNav>();
+
+  const handleDetailPress = (recordId: string) => {
+    navigation.navigate('Records', {
+      screen: 'RecordDetails',
+      params: { id: recordId },
+    });
+  };
 
   return (
     <ScrollView
@@ -330,6 +357,29 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       <View className="px-5 py-6">
 
         {coffeeDetails}
+
+        <View className="mb-4 flex-row justify-end">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity
+              onPress={() => {
+                setError(null);
+                setModalVisible("edit");
+              }}
+            >
+              <FontAwesome name="pencil" size={24} color={colors.DARK_BROWN} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setDeleteConfirmVisible(true)}
+            >
+              <FontAwesome name="trash" size={24} color={colors.DARK_BROWN} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text className="mb-2 text-center text-DARK_BROWN" style={{ fontSize: 20, fontFamily: fonts.body }}>
+          レビュー履歴
+        </Text>
         {coffeeReviewlist}
 
         <Modal
@@ -361,24 +411,6 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
             </View>
           </View>
         </Modal>
-        <View className="mt-4 flex-row justify-end">
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity
-              onPress={() => {
-                setError(null);
-                setModalVisible("edit");
-              }}
-            >
-              <FontAwesome name="pencil" size={28} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setDeleteConfirmVisible(true)}
-            >
-              <FontAwesome name="trash" size={28} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
-          </View>
-        </View>
 
         <DeleteConfirmModal
           visible={deleteConfirmVisible}

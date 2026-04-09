@@ -117,8 +117,10 @@ export type RecordLite = {
   coffee: CoffeeLite } | null;
 
 export type ReviewLite = {
-  score: string;
-  comments: string | null} | null;
+  id: string;
+  score: number;
+  comments: string | null;
+} | null;
 
 export type ReviewWithContext = Review & {
   record: RecordLite;
