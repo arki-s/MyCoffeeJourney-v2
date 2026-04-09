@@ -82,18 +82,15 @@ export default function RecordEventModal({
             </Text>
 
             <View className="mt-4 rounded-2xl border border-OCHER bg-BROWN px-4 py-5">
-              <Text className="mt-2 text-OCHER" style={{ fontFamily: fonts.body_regular }}>
-                該当日に飲んでいたコーヒーの記録一覧
-              </Text>
 
               {isFetching ? (
-                <View className="mt-5 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
+                <View className="mt-2 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
                   <Text className="text-OCHER" style={{ fontFamily: fonts.body_regular }}>
                     読み込み中……
                   </Text>
                 </View>
               ) : records.length === 0 ? (
-                <View className="mt-5 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
+                <View className="mt-2 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4">
                   <Text className="text-OCHER" style={{ fontFamily: fonts.body_regular }}>
                     この日に該当するレコードはありません。
                   </Text>
@@ -103,7 +100,7 @@ export default function RecordEventModal({
                   <TouchableOpacity
                     key={record.id}
                     onPress={() => handleRecordPress(record.id)}
-                    className="mt-5 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4"
+                    className="mt-2 rounded-xl border border-OCHER bg-DARK_BROWN px-4 py-4"
                   >
                     <View className="flex-row items-start justify-between">
                       <View className="flex-1 pr-3">
