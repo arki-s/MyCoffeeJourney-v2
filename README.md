@@ -20,7 +20,7 @@
 - 飲み始めた豆の記録
 - 飲み終えた豆のレビュー記録
 - 飲用履歴カレンダー表示
-- コーヒー情報一覧＆検索／お気に入り管理
+- コーヒー情報一覧
 - 飲用データ分析（集計・グラフ表示）
 
 ---
@@ -31,7 +31,7 @@
 
 - **Supabase**
   - PostgreSQL ベースの RDB
-  - 認証：Email 対応
+  - 認証：OTP 対応
   - ストレージ：画像アップロードも将来的に検討
 
 ### フロントエンド
@@ -41,11 +41,120 @@
 - nativewind（Tailwind 記法でスタイリング）
 - react-native-calendars（カレンダー表示）
 - @react-native-community/datetimepicker（日付入力）
+- @react-native-community/slider（味わい評価のスライダー）
 
 ### 状態管理
 
 - Zustand
 - Context API との併用検討可能性あり
+
+### ER図
+
+- ユーザーごとのコーヒー記録を中心に、ブランド・豆・挽き目はマスタとして分離しています。
+- 飲用中の記録と飲用後のレビューを分けることで、記録フェーズと評価フェーズを分離した構成にしています。
+
+```mermaid
+erDiagram
+    users {
+        uuid id PK
+        text display_name
+        text icon_url
+        timestamptz created_at
+    }
+
+    coffee_brands {
+        uuid id PK
+        text name
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    coffee_beans {
+        uuid id PK
+        text name
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    coffee {
+        uuid id PK
+        text name
+        text comments
+        text photo_url
+        int roast_level
+        int body
+        int sweetness
+        int fruity
+        int bitter
+        int aroma
+        uuid brand_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    coffee_bean_inclusions {
+        uuid id PK
+        uuid coffee_id FK
+        uuid bean_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    grind_sizes {
+        uuid id PK
+        text name
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    drinking_records {
+        uuid id PK
+        int weight_grams
+        int price_yen
+        date start_date
+        date end_date
+        date purchase_date
+        uuid coffee_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    drinking_grind_sizes {
+        uuid id PK
+        uuid grind_size_id FK
+        uuid record_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    reviews {
+        uuid id PK
+        int score
+        text comments
+        uuid record_id FK
+        uuid user_id FK
+        timestamptz created_at
+    }
+
+    users ||--o{ coffee_brands : owns
+    users ||--o{ coffee_beans : owns
+    users ||--o{ coffee : owns
+    users ||--o{ grind_sizes : owns
+    users ||--o{ drinking_records : owns
+    users ||--o{ reviews : owns
+    users ||--o{ coffee_bean_inclusions : owns
+    users ||--o{ drinking_grind_sizes : owns
+
+    coffee_brands ||--o{ coffee : categorizes
+    coffee ||--o{ drinking_records : recorded_as
+    drinking_records ||--|| reviews : has
+
+    coffee ||--o{ coffee_bean_inclusions : includes
+    coffee_beans ||--o{ coffee_bean_inclusions : used_in
+
+    grind_sizes ||--o{ drinking_grind_sizes : linked_to
+    drinking_records ||--o{ drinking_grind_sizes : uses
+```
 
 ---
 
