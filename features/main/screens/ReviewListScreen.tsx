@@ -85,15 +85,17 @@ export default function ReviewListScreen() {
       key={review.id}
       className="mb-4 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
     >
-      <TouchableOpacity
-        className="absolute right-4 top-4"
-        onPress={() => handleDetailPress(review.record_id)}
-      >
-        <FontAwesome5 name="arrow-circle-right" size={28} color={colors.OCHER} />
-      </TouchableOpacity>
-      <Text className="text-xl text-OCHER" style={{ fontFamily: fonts.body }}>
-        {review.record?.coffee.brand?.name}
-      </Text>
+      <View className="flex-row justify-between">
+        <Text className="text-xl text-OCHER" style={{ fontFamily: fonts.body }}>
+          {review.record?.coffee.brand?.name}
+        </Text>
+        <TouchableOpacity
+          onPress={() => handleDetailPress(review.record_id)}
+        >
+          <FontAwesome5 name="arrow-circle-right" size={28} color={colors.OCHER} />
+        </TouchableOpacity>
+
+      </View>
       <Text className="text-2xl text-OCHER" style={{ fontFamily: fonts.body }}>
         {review.record?.coffee.name}
       </Text>
