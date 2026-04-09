@@ -12,6 +12,7 @@ import { listGrindSizes } from '../../auth/services/grindSizeService';
 import ReviewForm from '../components/ReviewForm';
 import { createReview } from '../../auth/services/reviewService';
 import { formatLocalYYYYMMDD } from '../../../utils/date';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 type CoffeeRecordScreenRouteProp = RouteProp<RecordsStackParamList, 'RecordDetails'>;
 
@@ -24,6 +25,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [canEditEndDate, setCanEditEndDate] = useState<boolean>(false);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState<boolean>(false);
 
   type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
   const navigation = useNavigation<RecordsNav>();
@@ -110,6 +112,7 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
     try {
       setLoading(true);
       await deleteDrinkingRecord(id);
+      setDeleteConfirmVisible(false);
       navigation.navigate('RecordsHome');
     } catch (deleteError) {
       console.error('Error deleting record', deleteError);
@@ -260,7 +263,12 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
             <FontAwesome name="pencil" size={24} color={colors.DARK_BROWN} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => void handleDeletePress()}>
+          <TouchableOpacity
+            onPress={() => {
+              setError(null);
+              setDeleteConfirmVisible(true);
+            }}
+          >
             <FontAwesome name="trash" size={24} color={colors.DARK_BROWN} />
           </TouchableOpacity>
         </View>
@@ -370,6 +378,13 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
             error={error}
           />
         )}
+
+        <DeleteConfirmModal
+          visible={deleteConfirmVisible}
+          selectedItemName={recordDetail?.coffee?.name ?? 'このレコード'}
+          onConfirm={() => void handleDeletePress()}
+          onClose={() => setDeleteConfirmVisible(false)}
+        />
 
       </View>
     </ScrollView>

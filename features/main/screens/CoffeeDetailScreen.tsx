@@ -11,6 +11,7 @@ import { fonts } from '../../../app/main/theme/fonts';
 import { CoffeeFormSubmitValue, sliderFields } from '../components/CoffeeForm.shared';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { colors } from '../../../app/main/theme/colors';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -103,6 +104,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState<boolean>(false);
   const { id } = route.params;
 
   useEffect(() => {
@@ -159,6 +161,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
     setLoading(true)
     try {
       await deleteCoffee(id);
+      setDeleteConfirmVisible(false);
       navigation.navigate('CoffeeHome');
     } catch (error) {
       console.error("Error deleting coffee", error);
@@ -370,12 +373,19 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => handleDeletePress()}
+              onPress={() => setDeleteConfirmVisible(true)}
             >
               <FontAwesome name="trash" size={28} color={colors.DARK_BROWN} />
             </TouchableOpacity>
           </View>
         </View>
+
+        <DeleteConfirmModal
+          visible={deleteConfirmVisible}
+          selectedItemName={coffeeDetail?.name ?? 'このコーヒー'}
+          onConfirm={() => void handleDeletePress()}
+          onClose={() => setDeleteConfirmVisible(false)}
+        />
       </View>
     </ScrollView>
   )

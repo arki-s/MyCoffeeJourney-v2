@@ -10,6 +10,7 @@ import { colors } from '../../../app/main/theme/colors';
 import textureImage from '../../../assets/texture.jpg';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import DeleteConfirmModal from '../components/DeleteConfirmModal';
 
 export default function ReviewListScreen() {
   const [reviews, setReviews] = useState<ReviewWithContext[]>([]);
@@ -17,6 +18,7 @@ export default function ReviewListScreen() {
   const [, setScore] = useState<number>(0);
   const [, setComments] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   type TabsNav = BottomTabNavigationProp<BottomStackParamList, 'Reviews'>;
   const navigation = useNavigation<TabsNav>();
@@ -70,6 +72,7 @@ export default function ReviewListScreen() {
     if (!id) return;
     try {
       await deleteReview(id);
+      setDeleteTarget(null);
       fetchReviews();
     } catch (error) {
       console.error("Error deleting review:", error);
@@ -116,7 +119,10 @@ export default function ReviewListScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           className="ml-4"
-          onPress={() => handleDeletePress(review.id)}
+          onPress={() => setDeleteTarget({
+            id: review.id,
+            name: review.record?.coffee.name ?? 'このレビュー',
+          })}
         >
           <FontAwesome name="trash" size={28} color={colors.OCHER} />
         </TouchableOpacity>
@@ -152,9 +158,18 @@ export default function ReviewListScreen() {
             onCancel={() => setModalVisible(null)}
           />
         )}
+
+        <DeleteConfirmModal
+          visible={deleteTarget !== null}
+          selectedItemName={deleteTarget?.name ?? 'このレビュー'}
+          onConfirm={() => {
+            if (deleteTarget) {
+              void handleDeletePress(deleteTarget.id);
+            }
+          }}
+          onClose={() => setDeleteTarget(null)}
+        />
       </ScrollView>
     </ImageBackground>
   )
 }
-
-// const styles = StyleSheet.create({})
