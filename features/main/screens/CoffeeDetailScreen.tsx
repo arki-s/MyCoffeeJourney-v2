@@ -14,6 +14,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
+import DeleteBlockModal from '../components/DeleteBlockModal';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -108,6 +109,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteBlockType, setDeleteBlockType] = useState<"coffee" | "error" | null>(null);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState<boolean>(false);
   const { id } = route.params;
 
@@ -169,6 +171,25 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       navigation.navigate('CoffeeHome');
     } catch (error) {
       console.error("Error deleting coffee", error);
+
+      setDeleteConfirmVisible(false);
+
+      const errorCode =
+        typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      if (errorCode === "23503") {
+        // 外部キー制約。関連データがあるので削除不可。
+        setDeleteBlockType("coffee");
+      } else {
+        // それ以外は汎用エラー扱い。
+        setDeleteBlockType("error");
+      }
+
     } finally {
       setLoading(false)
     }
@@ -420,6 +441,14 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
           onClose={() => setDeleteConfirmVisible(false)}
         />
       </View>
+
+      {deleteBlockType && (
+        <DeleteBlockModal
+          visible
+          selectedItemName={deleteBlockType}
+          onClose={() => setDeleteBlockType(null)}
+        />
+      )}
     </ScrollView>
   )
 }

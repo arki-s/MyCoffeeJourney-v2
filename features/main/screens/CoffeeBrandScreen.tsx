@@ -6,6 +6,7 @@ import { createBrand, deleteBrand, listBrands, updateBrand } from '../../auth/se
 import { colors } from '../../../app/main/theme/colors';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import DeleteBlockModal from '../components/DeleteBlockModal';
 
 export default function CoffeeBrandScreen() {
   const user = useUserStore((state) => state.user);
@@ -18,6 +19,7 @@ export default function CoffeeBrandScreen() {
   const [editBrandNames, setEditBrandNames] = useState<Record<string, string>>({});
   const [createError, setCreateError] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [deleteBlockType, setDeleteBlockType] = useState<"brand" | "error" | null>(null);
 
   useEffect(() => {
     void fetchBrands();
@@ -75,6 +77,23 @@ export default function CoffeeBrandScreen() {
       await fetchBrands();
     } catch (error) {
       console.error("Error deleting brand:", error);
+
+      const errorCode =
+        typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      if (errorCode === "23503") {
+        // 外部キー制約。関連データがあるので削除不可。
+        setDeleteBlockType("brand");
+      } else {
+        // それ以外は汎用エラー扱い。
+        setDeleteBlockType("error");
+      }
+
     } finally {
       setLoading(false);
     }
@@ -283,6 +302,14 @@ export default function CoffeeBrandScreen() {
           {brandsList}
         </View>
       </View>
+
+      {deleteBlockType && (
+        <DeleteBlockModal
+          visible
+          selectedItemName={deleteBlockType}
+          onClose={() => setDeleteBlockType(null)}
+        />
+      )}
     </ScrollView>
   )
 }

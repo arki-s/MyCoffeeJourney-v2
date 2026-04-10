@@ -6,6 +6,7 @@ import { createBean, deleteBean, listBeans, updateBean } from '../../auth/servic
 import { colors } from '../../../app/main/theme/colors';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import DeleteBlockModal from '../components/DeleteBlockModal';
 
 export default function CoffeeBeanScreen() {
   const user = useUserStore((state) => state.user);
@@ -18,6 +19,7 @@ export default function CoffeeBeanScreen() {
   const [editBeanNames, setEditBeanNames] = useState<Record<string, string>>({});
   const [createError, setCreateError] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [deleteBlockType, setDeleteBlockType] = useState<"beans" | "error" | null>(null);
 
   useEffect(() => {
     void fetchBeans();
@@ -75,6 +77,23 @@ export default function CoffeeBeanScreen() {
       await fetchBeans();
     } catch (error) {
       console.error("Error deleting bean:", error);
+
+      const errorCode =
+        typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      if (errorCode === "23503") {
+        // 外部キー制約。関連データがあるので削除不可。
+        setDeleteBlockType("beans");
+      } else {
+        // それ以外は汎用エラー扱い。
+        setDeleteBlockType("error");
+      }
+
     } finally {
       setLoading(false);
     }
@@ -285,6 +304,14 @@ export default function CoffeeBeanScreen() {
           {beansList}
         </View>
       </View>
+
+      {deleteBlockType && (
+        <DeleteBlockModal
+          visible
+          selectedItemName={deleteBlockType}
+          onClose={() => setDeleteBlockType(null)}
+        />
+      )}
     </ScrollView>
   )
 }

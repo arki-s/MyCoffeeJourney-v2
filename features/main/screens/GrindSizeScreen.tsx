@@ -6,6 +6,7 @@ import { createGrindSize, deleteGrindSize, listGrindSizes, updateGrindSize } fro
 import { colors } from '../../../app/main/theme/colors';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import DeleteBlockModal from '../components/DeleteBlockModal';
 
 export default function GrindSizeScreen() {
   const user = useUserStore((state) => state.user);
@@ -18,6 +19,7 @@ export default function GrindSizeScreen() {
   const [editGrindSizeNames, setEditGrindSizeNames] = useState<Record<string, string>>({});
   const [createError, setCreateError] = useState<string | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
+  const [deleteBlockType, setDeleteBlockType] = useState<"grindSize" | "error" | null>(null);
 
   useEffect(() => {
     void fetchGrindSizes();
@@ -75,6 +77,23 @@ export default function GrindSizeScreen() {
       await fetchGrindSizes();
     } catch (error) {
       console.error("Error deleting grindsize:", error);
+
+      const errorCode =
+        typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          typeof error.code === "string"
+          ? error.code
+          : undefined;
+
+      if (errorCode === "23503") {
+        // 外部キー制約。関連データがあるので削除不可。
+        setDeleteBlockType("grindSize");
+      } else {
+        // それ以外は汎用エラー扱い。
+        setDeleteBlockType("error");
+      }
+
     } finally {
       setLoading(false);
     }
@@ -285,6 +304,14 @@ export default function GrindSizeScreen() {
           {grindSizesList}
         </View>
       </View>
+
+      {deleteBlockType && (
+        <DeleteBlockModal
+          visible
+          selectedItemName={deleteBlockType}
+          onClose={() => setDeleteBlockType(null)}
+        />
+      )}
     </ScrollView>
   )
 }
