@@ -17,7 +17,10 @@ export type BottomStackParamList = {
 export type RecordsStackParamList = {
   RecordsHome: undefined;
   RecordCreate: undefined;
-  RecordDetails: { id: string | undefined };
+  RecordDetails: {
+    id: string | undefined;
+    returnTo?: RecordDetailsReturnTo;
+  };
 };
 
 export type CoffeeStackParamList = {
@@ -33,6 +36,12 @@ export type SettingStackParamList = {
   Beans:undefined;
   GrindSize:undefined;
 };
+
+export type RecordDetailsReturnTo =
+  | { tab: 'Records'; screen: 'RecordsHome' }
+  | { tab: 'Reviews' }
+  | { tab: 'Calendar' }
+  | { tab: 'Coffee'; screen: 'CoffeeDetails'; params: { id: string } };
 
 export type Coffee = {
   id: string;

@@ -52,7 +52,11 @@ export default function CoffeeRecordListScreen() {
   };
 
   const handleDetailPress = (id: string) => {
-    navigation.navigate('RecordDetails', { id });
+    // Records一覧から開いた詳細は、同じ一覧へ戻せるように戻り先を明示する。
+    navigation.navigate('RecordDetails', {
+      id,
+      returnTo: { tab: 'Records', screen: 'RecordsHome' },
+    });
   };
 
   const handleFinishPress = (id: string) => {

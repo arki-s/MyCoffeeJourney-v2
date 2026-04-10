@@ -26,7 +26,8 @@ export default function ReviewListScreen() {
   const handleDetailPress = (id: string) => {
     navigation.navigate('Records', {
       screen: 'RecordDetails',
-      params: { id },
+      // Reviewsから遷移した詳細は、ヘッダー戻るでReviewsタブへ返すために遷移元を渡す。
+      params: { id, returnTo: { tab: 'Reviews' } },
     });
   };
 

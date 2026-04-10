@@ -345,7 +345,8 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   const handleDetailPress = (recordId: string) => {
     navigation.navigate('Records', {
       screen: 'RecordDetails',
-      params: { id: recordId },
+      // CoffeeDetails配下のレビューから開いた詳細は、同じコーヒー詳細へ戻すために元画面を持たせる。
+      params: { id: recordId, returnTo: { tab: 'Coffee', screen: 'CoffeeDetails', params: { id } } },
     });
   };
 

@@ -1,12 +1,14 @@
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
-import { RecordDetail, RecordsStackParamList } from '../../../type';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { BottomStackParamList, RecordDetail, RecordsStackParamList } from '../../../type';
+import { CompositeNavigationProp, RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { deleteDrinkingRecord, finishDrinkingRecord, getDrinkingGrindSizes, getRecordDetail, updateFinishedDrinkingRecord, updateUnfinishedDrinkingRecord } from '../../auth/services/recordService';
 import RecordForm from '../components/RecordForm';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { fonts } from '../../../app/main/theme/fonts';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import { listGrindSizes } from '../../auth/services/grindSizeService';
 import ReviewForm from '../components/ReviewForm';
@@ -29,8 +31,64 @@ export default function CoffeeRecordScreen({ route }: { route: CoffeeRecordScree
   const [editingReview, setEditingReview] = useState<{ id: string; score: number; comments: string | null } | null>(null);
   const [deleteReviewConfirmVisible, setDeleteReviewConfirmVisible] = useState<boolean>(false);
 
-  type RecordsNav = NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>;
+  type RecordsNav = CompositeNavigationProp<
+    NativeStackNavigationProp<RecordsStackParamList, 'RecordDetails'>,
+    BottomTabNavigationProp<BottomStackParamList>
+  >;
   const navigation = useNavigation<RecordsNav>();
+
+  useFocusEffect(
+    useCallback(() => {
+      const parentNavigation = navigation.getParent();
+
+      if (!parentNavigation) {
+        return undefined;
+      }
+
+      const handleParentHeaderBackPress = () => {
+        const returnTo = route.params.returnTo;
+
+        if (returnTo?.tab === 'Coffee') {
+          navigation.navigate('Coffee', {
+            screen: returnTo.screen,
+            params: returnTo.params,
+          });
+          return;
+        }
+
+        if (returnTo?.tab === 'Reviews' || returnTo?.tab === 'Calendar') {
+          navigation.navigate(returnTo.tab);
+          return;
+        }
+
+        if (returnTo?.tab === 'Records') {
+          navigation.navigate('RecordsHome');
+          return;
+        }
+
+        navigation.navigate('RecordsHome');
+      };
+
+      parentNavigation.setOptions({
+        // RecordDetailsが表示中の間だけ、画面自身が持つreturnToで親ヘッダーの戻り先を差し替える。
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={handleParentHeaderBackPress}
+            style={{ marginLeft: 16 }}
+          >
+            <FontAwesome5 name="arrow-circle-left" size={28} color={colors.OCHER} />
+          </TouchableOpacity>
+        ),
+      });
+
+      return () => {
+        // blur時に共有ヘッダーを元へ戻さないと、一覧へ戻っても戻るボタンの残骸が残る。
+        parentNavigation.setOptions({
+          headerLeft: undefined,
+        });
+      };
+    }, [navigation, route.params.returnTo])
+  );
 
   useEffect(() => {
     if (id) {

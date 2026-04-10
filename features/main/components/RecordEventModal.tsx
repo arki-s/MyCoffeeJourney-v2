@@ -63,7 +63,8 @@ export default function RecordEventModal({
     onCancel()
     navigation.navigate('Records', {
       screen: 'RecordDetails',
-      params: { id },
+      // Calendarの日別モーダルから開いた詳細は、カレンダータブへ戻せるようにする。
+      params: { id, returnTo: { tab: 'Calendar' } },
     })
   }
 
