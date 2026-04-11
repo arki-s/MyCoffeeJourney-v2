@@ -69,17 +69,17 @@ export default function SettingScreen() {
                   挽き目管理画面へ
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => { }}
                 className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
               >
                 <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
                   データ全削除（未実装）
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 onPress={logout}
-                className="mt-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md"
+                className="mt-3 rounded-2xl border-2 border-OCHER bg-BROWN px-4 py-4 ios:shadow-md android:elevation-md"
               >
                 <Text className='text-center text-2xl text-OCHER' style={{ fontFamily: fonts.body }}>
                   ログアウト
@@ -92,5 +92,3 @@ export default function SettingScreen() {
     </ImageBackground>
   )
 }
-
-// const styles = StyleSheet.create({})

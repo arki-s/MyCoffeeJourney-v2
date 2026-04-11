@@ -1,4 +1,4 @@
-import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ImageBackground, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { BottomStackParamList, CoffeeStackParamList, CoffeeWithBrand } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -16,6 +16,17 @@ import Octicons from '@expo/vector-icons/Octicons';
 export default function CoffeeListScreen() {
   const [coffees, setCoffees] = useState<CoffeeWithBrand[]>([]);
   const [needsInitialSetup, setNeedsInitialSetup] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const normalizedSearchText = searchText.trim().toLowerCase();
+
+  const filteredCoffees = coffees.filter((coffee) => {
+    if (normalizedSearchText === '') return true;
+
+    return (
+      coffee.name.toLowerCase().includes(normalizedSearchText) ||
+      coffee.brandName.toLowerCase().includes(normalizedSearchText)
+    );
+  });
 
   const fetchScreenData = useCallback(async () => {
     const [coffeeResult, beanResult, brandResult, grindSizeResult] = await Promise.allSettled([
@@ -76,7 +87,20 @@ export default function CoffeeListScreen() {
     navigation.navigate('Settings', { screen: 'SettingsHome' });
   };
 
-  const coffeeItems = coffees.map((coffee) => (
+  const searchCoffees = (
+    <TextInput
+      placeholder="コーヒー・ブランド名で検索"
+      placeholderTextColor={colors.BROWN}
+      value={searchText}
+      onChangeText={setSearchText}
+      autoCapitalize="none"
+      autoCorrect={false}
+      style={{ fontFamily: fonts.body, color: colors.BROWN }}
+      className="mb-3 rounded-xl border-2 border-DARK_BROWN bg-OCHER px-4 py-2"
+    />
+  );
+
+  const coffeeItems = filteredCoffees.map((coffee) => (
     <TouchableOpacity
       key={coffee.id}
       onPress={() => handleDetailPress(coffee.id)}
@@ -131,7 +155,18 @@ export default function CoffeeListScreen() {
               </Text>
             </View>
           ) : coffees.length > 0 ? (
-            <View>{coffeeItems}</View>
+            <View>
+              {searchCoffees}
+              {filteredCoffees.length === 0 ? (
+                <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
+                  <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+                    検索条件に一致するコーヒーはありません。
+                  </Text>
+                </View>
+              ) : (
+                coffeeItems
+              )}
+            </View>
           ) : null}
 
         </View>
@@ -147,5 +182,3 @@ export default function CoffeeListScreen() {
     </ImageBackground>
   )
 }
-
-// const styles = StyleSheet.create({})
