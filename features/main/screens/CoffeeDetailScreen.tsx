@@ -1,8 +1,8 @@
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import Slider from '@react-native-community/slider'
 import { BottomStackParamList, CoffeeDetail, CoffeeReviewItem, CoffeeStackParamList } from '../../../type';
-import { CompositeNavigationProp, RouteProp, useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { deleteCoffee, getBeanInclusions, getCoffeeDetail, setCoffeeBeanInclusions, updateCoffee } from '../../auth/services/coffeeService';
 import { listReviewsForCoffee } from '../../auth/services/reviewService';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { colors } from '../../../app/main/theme/colors';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
 import DeleteBlockModal from '../components/DeleteBlockModal';
+import { ScreenSkeletonCard, ScreenSkeletonLine, ScreenStatusOverlay } from '../components/ScreenLoading';
 
 type CoffeeScreenRouteProp = RouteProp<CoffeeStackParamList, 'CoffeeDetails'>;
 
@@ -107,64 +108,80 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
   });
   const [includedBeans, setIncludedBeans] = useState<string[]>([]);
   const [modalVisible, setModalVisible] = useState<"edit" | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteBlockType, setDeleteBlockType] = useState<"coffee" | "error" | null>(null);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState<boolean>(false);
+  const hasLoadedOnceRef = useRef(false);
   const { id } = route.params;
 
-  useEffect(() => {
-    fetchCoffeeDetail(id);
-    fetchReviewItems(id);
-  }, []);
+  const fetchCoffeeScreenData = useCallback(async (mode: 'screen' | 'silent' = 'screen') => {
+    // 初回読込と再取得を分離して、詳細画面の点滅を防ぐ。
+    if (mode === 'screen') {
+      if (hasLoadedOnceRef.current) {
+        setIsRefreshing(true);
+      } else {
+        setIsInitialLoading(true);
+      }
+    }
 
-  const fetchCoffeeDetail = async (id: string) => {
-    setLoading(true);
     try {
-      const detail = await getCoffeeDetail(id);
-      setCoffeeDetail(detail);
-      setCoffee({
-        id: id,
-        name: detail.name,
-        comments: detail.comments ?? '',
-        photo_url: detail.photo_url ?? '',
-        roast_level: detail.roast_level,
-        body: detail.body,
-        sweetness: detail.sweetness,
-        fruity: detail.fruity,
-        bitter: detail.bitter,
-        aroma: detail.aroma,
-        brand_id: detail.brand_id
-      });
+      const [detailResult, reviewResult] = await Promise.allSettled([
+        getCoffeeDetail(id),
+        listReviewsForCoffee(id),
+      ]);
 
-      try {
-        const beans = await getBeanInclusions(id);
-        setIncludedBeans(beans);
-      } catch (error) {
-        console.error("Error fetching bean inclusion", error);
+      if (detailResult.status === 'fulfilled') {
+        const detail = detailResult.value;
+        setCoffeeDetail(detail);
+        setCoffee({
+          id,
+          name: detail.name,
+          comments: detail.comments ?? '',
+          photo_url: detail.photo_url ?? '',
+          roast_level: detail.roast_level,
+          body: detail.body,
+          sweetness: detail.sweetness,
+          fruity: detail.fruity,
+          bitter: detail.bitter,
+          aroma: detail.aroma,
+          brand_id: detail.brand_id
+        });
+
+        try {
+          const beans = await getBeanInclusions(id);
+          setIncludedBeans(beans);
+        } catch (beanError) {
+          console.error("Error fetching bean inclusion", beanError);
+        }
+      } else {
+        console.error("Error fetching coffee detail", detailResult.reason);
       }
 
-    } catch (error) {
-      console.error("Error fetching coffee detail", error);
+      if (reviewResult.status === 'fulfilled') {
+        setCoffeeReviews(reviewResult.value);
+      } else {
+        console.error("Error fetching reviews", reviewResult.reason);
+      }
     } finally {
-      setLoading(false);
+      if (mode === 'screen') {
+        hasLoadedOnceRef.current = true;
+        setIsInitialLoading(false);
+        setIsRefreshing(false);
+      }
     }
-  };
+  }, [id]);
 
-  const fetchReviewItems = async (id: string) => {
-    setLoading(true);
-    try {
-      const reviews = await listReviewsForCoffee(id);
-      setCoffeeReviews(reviews);
-    } catch (error) {
-      console.error("Error fetching reviews", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useFocusEffect(
+    useCallback(() => {
+      void fetchCoffeeScreenData();
+    }, [fetchCoffeeScreenData])
+  );
 
   const handleDeletePress = async () => {
-    setLoading(true)
+    setIsSubmitting(true)
     try {
       await deleteCoffee(id);
       setDeleteConfirmVisible(false);
@@ -191,14 +208,14 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       }
 
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
   };
 
   async function handleEditSubmit(form: CoffeeFormSubmitValue) {
     try {
       setError(null);
-      setLoading(true);
+      setIsSubmitting(true);
       await updateCoffee(
         coffee.id,
         form.name,
@@ -213,13 +230,13 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
         form.aroma
       );
       await setCoffeeBeanInclusions(id, form.includedBeans);
-      await fetchCoffeeDetail(id);
+      await fetchCoffeeScreenData('silent');
       setModalVisible(null);
     } catch (error) {
       console.error("Error updating coffee:", error);
       setError('※コーヒーの更新に失敗しました。もう一度お試しください。');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -326,7 +343,11 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       </View>
     </View>
   ) : (
-    <Text style={{ fontSize: 18 }}>Loading...</Text>
+    <View className="rounded-2xl border-2 border-DARK_BROWN bg-BROWN px-4 py-4">
+      <Text className="text-center text-DARK_BROWN" style={{ fontSize: 18, fontFamily: fonts.body }}>
+        コーヒー情報を取得できませんでした。
+      </Text>
+    </View>
   );
 
   const coffeeReviewlist = coffeeReviews.length > 0 ?
@@ -356,7 +377,65 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       <Text className="text-DARK_BROWN text-center" style={{ fontSize: 18, fontFamily: fonts.body }}>まだレビューはありません。</Text>
     );
 
-  //削除時は関連するrecordもreviewもgrindsizeも何もかも消える処理が必要、アラート必要
+  const detailSkeleton = (
+    <View>
+      <ScreenSkeletonCard borderColor={colors.DARK_BROWN} backgroundColor={colors.DARK_BROWN}>
+        <ScreenSkeletonLine width="42%" height={18} style={{ alignSelf: 'center', marginBottom: 12 }} />
+        <ScreenSkeletonLine width="60%" height={28} style={{ alignSelf: 'center' }} />
+      </ScreenSkeletonCard>
+
+      <View style={{ marginTop: 16, marginBottom: 16 }}>
+        {[0, 1, 2, 3].map((index) => (
+          <View
+            key={`metric-${index}`}
+            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}
+          >
+            <ScreenSkeletonLine width="34%" height={16} />
+            <ScreenSkeletonLine width="28%" height={16} />
+          </View>
+        ))}
+      </View>
+
+      <ScreenSkeletonLine width="100%" height={14} style={{ marginBottom: 8 }} />
+      <ScreenSkeletonLine width="72%" height={14} style={{ marginBottom: 24 }} />
+
+      <View style={{ marginBottom: 20 }}>
+        <ScreenSkeletonLine width="28%" height={18} style={{ alignSelf: 'center', marginBottom: 16 }} />
+        {sliderFields.map((field) => (
+          <View key={field.key} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+            <ScreenSkeletonLine width={64} height={14} />
+            <ScreenSkeletonLine width={24} height={14} style={{ marginLeft: 12 }} />
+            <ScreenSkeletonLine width="60%" height={10} style={{ marginLeft: 16 }} />
+          </View>
+        ))}
+      </View>
+
+      <View className="mb-4 flex-row justify-end">
+        <View className="flex-row items-center gap-4">
+          <ScreenSkeletonLine width={24} height={24} />
+          <ScreenSkeletonLine width={24} height={24} />
+        </View>
+      </View>
+
+      <ScreenSkeletonLine width="32%" height={18} style={{ alignSelf: 'center', marginBottom: 12 }} />
+      {[0, 1].map((index) => (
+        <ScreenSkeletonCard
+          key={`review-${index}`}
+          borderColor={colors.DARK_BROWN}
+          backgroundColor={colors.LIGHT_BROWN}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 }}>
+            <ScreenSkeletonLine width="26%" height={16} />
+            <ScreenSkeletonLine width={24} height={24} />
+          </View>
+          <ScreenSkeletonLine width="48%" height={14} style={{ marginBottom: 12 }} />
+          <ScreenSkeletonLine width="100%" height={14} style={{ marginBottom: 8 }} />
+          <ScreenSkeletonLine width="76%" height={14} />
+        </ScreenSkeletonCard>
+      ))}
+    </View>
+  );
+
   type RecordsNav = CompositeNavigationProp<
     NativeStackNavigationProp<CoffeeStackParamList, 'CoffeeDetails'>,
     BottomTabNavigationProp<BottomStackParamList>
@@ -377,32 +456,42 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
     >
       <View className="px-5 py-6">
+        {isInitialLoading ? (
+          detailSkeleton
+        ) : (
+          <>
+            <ScreenStatusOverlay visible={isRefreshing} label="詳細を更新中…" />
+            {coffeeDetails}
 
-        {coffeeDetails}
+            <View className="mb-4 flex-row justify-end">
+              <View className="flex-row items-center gap-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    setError(null);
+                    setModalVisible("edit");
+                  }}
+                  disabled={isSubmitting || !coffeeDetail}
+                  style={{ opacity: isSubmitting || !coffeeDetail ? 0.6 : 1 }}
+                >
+                  <FontAwesome name="pencil" size={24} color={colors.DARK_BROWN} />
+                </TouchableOpacity>
 
-        <View className="mb-4 flex-row justify-end">
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity
-              onPress={() => {
-                setError(null);
-                setModalVisible("edit");
-              }}
-            >
-              <FontAwesome name="pencil" size={24} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setDeleteConfirmVisible(true)}
+                  disabled={isSubmitting || !coffeeDetail}
+                  style={{ opacity: isSubmitting || !coffeeDetail ? 0.6 : 1 }}
+                >
+                  <FontAwesome name="trash" size={24} color={colors.DARK_BROWN} />
+                </TouchableOpacity>
+              </View>
+            </View>
 
-            <TouchableOpacity
-              onPress={() => setDeleteConfirmVisible(true)}
-            >
-              <FontAwesome name="trash" size={24} color={colors.DARK_BROWN} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <Text className="mb-2 text-center text-DARK_BROWN" style={{ fontSize: 20, fontFamily: fonts.body }}>
-          レビュー履歴
-        </Text>
-        {coffeeReviewlist}
+            <Text className="mb-2 text-center text-DARK_BROWN" style={{ fontSize: 20, fontFamily: fonts.body }}>
+              レビュー履歴
+            </Text>
+            {coffeeReviewlist}
+          </>
+        )}
 
         <Modal
           visible={modalVisible === "edit"}
@@ -423,7 +512,7 @@ export default function CoffeeDetailScreen({ route }: { route: CoffeeScreenRoute
                 <CoffeeForm
                   mode="edit"
                   initialValue={editInitialValue}
-                  loading={loading}
+                  loading={isSubmitting}
                   error={error}
                   onSubmit={(form) => handleEditSubmit(form)}
                   onCancel={handleEditCancel}

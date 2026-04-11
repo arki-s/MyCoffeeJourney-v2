@@ -1,5 +1,5 @@
 import { ImageBackground, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { BottomStackParamList, CoffeeStackParamList, CoffeeWithBrand } from '../../../type';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -12,11 +12,15 @@ import { fonts } from '../../../app/main/theme/fonts';
 import { colors } from '../../../app/main/theme/colors';
 import textureImage from '../../../assets/texture.jpg';
 import Octicons from '@expo/vector-icons/Octicons';
+import { ScreenSkeletonCard, ScreenSkeletonLine, ScreenStatusOverlay } from '../components/ScreenLoading';
 
 export default function CoffeeListScreen() {
   const [coffees, setCoffees] = useState<CoffeeWithBrand[]>([]);
   const [needsInitialSetup, setNeedsInitialSetup] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const hasLoadedOnceRef = useRef(false);
   const normalizedSearchText = searchText.trim().toLowerCase();
 
   const filteredCoffees = coffees.filter((coffee) => {
@@ -29,6 +33,13 @@ export default function CoffeeListScreen() {
   });
 
   const fetchScreenData = useCallback(async () => {
+    // 初回読込と再取得を分けて、空状態のちらつきを防ぐ。
+    if (hasLoadedOnceRef.current) {
+      setIsRefreshing(true);
+    } else {
+      setIsInitialLoading(true);
+    }
+
     const [coffeeResult, beanResult, brandResult, grindSizeResult] = await Promise.allSettled([
       listCoffees(),
       listBeans(),
@@ -61,6 +72,10 @@ export default function CoffeeListScreen() {
     setNeedsInitialSetup(
       beanCount === 0 || brandCount === 0 || grindSizeCount === 0
     );
+
+    hasLoadedOnceRef.current = true;
+    setIsInitialLoading(false);
+    setIsRefreshing(false);
   }, []);
 
   useFocusEffect(
@@ -137,6 +152,31 @@ export default function CoffeeListScreen() {
     </View>
   );
 
+  const coffeeListSkeleton = (
+    <View>
+      <ScreenSkeletonCard
+        style={{ borderWidth: 2, borderColor: colors.DARK_BROWN, backgroundColor: colors.OCHER }}
+      >
+        <ScreenSkeletonLine height={18} width="48%" />
+      </ScreenSkeletonCard>
+
+      {[0, 1, 2].map((index) => (
+        <ScreenSkeletonCard key={index}>
+          <ScreenSkeletonLine
+            width="40%"
+            height={16}
+            style={{ alignSelf: 'center', marginBottom: 12 }}
+          />
+          <ScreenSkeletonLine
+            width="62%"
+            height={24}
+            style={{ alignSelf: 'center' }}
+          />
+        </ScreenSkeletonCard>
+      ))}
+    </View>
+  );
+
   return (
     <ImageBackground
       source={textureImage}
@@ -145,33 +185,40 @@ export default function CoffeeListScreen() {
     >
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
         <View className="px-5 py-6">
-          {needsInitialSetup && initialSetupNotice}
+          {isInitialLoading ? (
+            coffeeListSkeleton
+          ) : (
+            <>
+              <ScreenStatusOverlay visible={isRefreshing} label="コーヒーを更新中…" />
+              {needsInitialSetup && initialSetupNotice}
 
-          {coffees.length === 0 && !needsInitialSetup ? (
-            <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
-              <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
-                登録されているコーヒーはありません。
-                {'\n'}追加しましょう！
-              </Text>
-            </View>
-          ) : coffees.length > 0 ? (
-            <View>
-              {searchCoffees}
-              {filteredCoffees.length === 0 ? (
+              {coffees.length === 0 && !needsInitialSetup ? (
                 <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
                   <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
-                    検索条件に一致するコーヒーはありません。
+                    登録されているコーヒーはありません。
+                    {'\n'}追加しましょう！
                   </Text>
                 </View>
-              ) : (
-                coffeeItems
-              )}
-            </View>
-          ) : null}
+              ) : coffees.length > 0 ? (
+                <View>
+                  {searchCoffees}
+                  {filteredCoffees.length === 0 ? (
+                    <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4">
+                      <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
+                        検索条件に一致するコーヒーはありません。
+                      </Text>
+                    </View>
+                  ) : (
+                    coffeeItems
+                  )}
+                </View>
+              ) : null}
+            </>
+          )}
 
         </View>
       </ScrollView>
-      {!needsInitialSetup && (
+      {!isInitialLoading && !needsInitialSetup && (
         <TouchableOpacity
           className="absolute bottom-6 right-5 h-16 w-16 items-center justify-center rounded-full border-2 border-OCHER bg-DARK_BROWN ios:shadow-md android:elevation-md"
           onPress={() => handleCreatePress()}
