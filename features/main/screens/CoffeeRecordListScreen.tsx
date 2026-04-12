@@ -275,7 +275,14 @@ export default function CoffeeRecordListScreen() {
                     </Text>
                   </View>
                   {showOngoingEmptyState ? (
-                    <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4 ios:shadow-md android:elevation-md">
+                    <View className="mb-3 rounded-2xl border-2 border-OCHER bg-DARK_BROWN px-4 py-4"
+                      style={{
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.18,
+                        shadowRadius: 4,
+                        elevation: 3,
+                      }}>
                       <Text className="text-lg text-OCHER" style={{ fontFamily: fonts.body }}>
                         現在飲んでいるコーヒーはありません。
                         {'\n'}登録しましょう！
@@ -316,5 +323,3 @@ export default function CoffeeRecordListScreen() {
     </ImageBackground>
   )
 }
-
-// const styles = StyleSheet.create({})
